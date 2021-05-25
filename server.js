@@ -3,12 +3,10 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
 const apiRoutes = require('./routes/api');
-//const cors = require('cors');
-const PORT = process.env.PORT || 8080;
+const { port, mongodbUri } = require('./config');
 
 // Mongo DB ======================================
-const MONGODB_URI = 'mongodb+srv://user1:JordanRutty@cluster0.f2kxt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-mongoose.connect(MONGODB_URI || 'mongodb://localhost/mern_stack', {
+mongoose.connect(mongodbUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -48,5 +46,5 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
 
-app.listen(PORT, console.log(`Server is Listening at ${PORT}`));
+app.listen(port, console.log(`Server is Listening at ${port}`));
 //________________________________________________
