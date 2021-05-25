@@ -1,9 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const path = require('path');
 const apiRoutes = require('./routes/api');
-require('dotenv').config();
 
 const PORT = process.env.PORT || 8080;
 
@@ -17,19 +16,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 mongoose.connection.on('connected', () => {
     console.log("Mongoose is connected!");
 })
-
-/*
-const newBlogPost = new BlogPost(data); // new instance of model
-
-newBlogPost.save((error) => {
-    if (error) {
-        console.log('save failed');
-    } else {
-        console.log('save success');
-    }
-});
-//*/
-
 //________________________________________________
 
 
