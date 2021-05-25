@@ -65,7 +65,7 @@ const HelloComponent = () => {
       // Set as mounted
       setMounted(true);
     }
-  });
+  }, [isMounted]);
 
   return (<div>
     <h1>Hello World!</h1>

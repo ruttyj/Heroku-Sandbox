@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
 const apiRoutes = require('./routes/api');
-const { port, mongodbUri } = require('./config');
+require('dotenv').config();
+
+const PORT = process.env.PORT || 8080;
 
 // Mongo DB ======================================
-mongoose.connect(mongodbUri, {
+console.log('path', process.env.MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -46,5 +49,5 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
 
-app.listen(port, console.log(`Server is Listening at ${port}`));
+app.listen(PORT, console.log(`Server is Listening at ${PORT}`));
 //________________________________________________
