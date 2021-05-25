@@ -3,11 +3,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const apiRoutes = require('./routes/api');
-
+const socketIO = require('socket.io');
+const http = require('http');
 const PORT = process.env.PORT || 8080;
 
+
 // Mongo DB ======================================
-console.log('path', process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -19,21 +20,34 @@ mongoose.connection.on('connected', () => {
 //________________________________________________
 
 
+
 // Express =======================================
 // HTTP request logger
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+const server = express();
+server.use(express.json());
+server.use(express.urlencoded({ extended: false }));
 
-//app.use(cors()); // cross domain
-app.use(morgan('tiny')); // http logging
-app.use('/api', apiRoutes); 
+//server.use(cors()); // cross domain
+server.use('/api', apiRoutes); 
 
 
 // run built app on Heroku
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+  server.use(express.static('client/build'));
+} else {
+  server.use(morgan('tiny')); // http logging
 }
+const httpServer = http.createServer(server);
+httpServer.listen(PORT, console.log(`Server is Listening at ${PORT}`));
+//________________________________________________
 
-app.listen(PORT, console.log(`Server is Listening at ${PORT}`));
+
+
+// SocketIO ======================================
+const io = socketIO(httpServer);
+io.on('connection', (socket) => {
+  console.log('Socket connected!');
+  socket.on('disconnect', () => console.log('Socket disconnected'));
+});
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
 //________________________________________________

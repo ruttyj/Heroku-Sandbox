@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import * as io from 'socket.io-client';
+
 
 const HelloComponent = () => {
   const [isMounted, setMounted] = useState<boolean>(false);
@@ -12,7 +14,7 @@ const HelloComponent = () => {
   };
   const [formState, setFormState] = useState(initialFormState);
   const [listState, setListState] = useState([]);
-
+  const [timeState, setTimeState] = useState("");
 
 
   const handleOnChange = (e: any) => {
@@ -61,6 +63,12 @@ const HelloComponent = () => {
 
   useEffect(() => {
     if (!isMounted) {
+      console.log("mounted");
+      const socket = io.connect();
+      socket.on('time', (timeString: string) => {
+        setTimeState(timeString);
+      });
+
       getBlogPost();
       // Set as mounted
       setMounted(true);
@@ -69,6 +77,7 @@ const HelloComponent = () => {
 
   return (<div>
     <h1>Hello World!</h1>
+    {JSON.stringify(timeState)}
     <form>
       <div className={"form-input"}>
         <input 
