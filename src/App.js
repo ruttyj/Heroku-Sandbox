@@ -2,6 +2,7 @@ module.exports = class App
 {
   constructor() {
     this.mServices = new Map();
+    this.mManagers = new Map();
     this.mProviders = [];
   }
 
@@ -22,5 +23,13 @@ module.exports = class App
 
   getService(name) {
     return this.mServices.get(name);
+  }
+
+  addManager(name, value) {
+    this.mManagers.set(name, value);
+  }
+
+  getManager(name) {
+    return this.mManagers.get(name);
   }
 }

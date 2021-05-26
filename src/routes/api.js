@@ -1,5 +1,5 @@
 const express = require('express');
-const BlogPost = require('../models/blogPost');
+const BlogPost = require('../models/mongodb/BlogPost');
 const router = express.Router();
 
 router.get('/list', (req, res) => {
