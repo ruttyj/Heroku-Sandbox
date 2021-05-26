@@ -8,15 +8,25 @@ module.exports = class App
 
   start() {
     const app = this;
+
+    // @TODO this does not handle providers during execution
     this.mProviders.forEach(provider => {
       provider.register(app);
     })
+  }
+
+  //=================================
+  // Providers
+  _getProviderCount() {
+    return this.mProviders.length;
   }
 
   addProvider(provider) {
       this.mProviders.push(provider);
   }
 
+  //=================================
+  // Services
   addService(name, value) {
     this.mServices.set(name, value);
   }
@@ -25,6 +35,8 @@ module.exports = class App
     return this.mServices.get(name);
   }
 
+  //=================================
+  // Managers
   addManager(name, value) {
     this.mManagers.set(name, value);
   }
