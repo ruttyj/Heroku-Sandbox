@@ -23,6 +23,16 @@ module.exports = class MasterProvider extends BastProvider
         console.log('Socket disconnected:', socket.id);
         connectionManager.destroyConnection(socket.id);
       });
+
+      socket.on('connection_type', () => {
+        socket.emit('connection_type', connection.getType());
+      });
+
+      socket.on('set_connection_type', (value) => {
+        connection.setType(value);
+        socket.emit('connection_type', connection.getType());
+      });
+
     });
     setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
   

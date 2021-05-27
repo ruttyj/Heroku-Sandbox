@@ -3,6 +3,7 @@ module.exports = class Connection
   constructor()
   {
     this.mId = '0';
+    this.mType = 'default';
     this.mApp = null;
     this.mSocket = null;
     this.mRoom = null;
@@ -22,6 +23,18 @@ module.exports = class Connection
       return this.mId;
   }
 
+  /*******************************************************
+   *                         Type
+   *******************************************************/
+  setType(value)
+  {
+      this.mType = value;
+  }
+
+  getType()
+  {
+      return this.mType;
+  }
 
   /*******************************************************
    *                         Socket

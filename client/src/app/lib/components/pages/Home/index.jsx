@@ -11,10 +11,10 @@ export default () => {
     isConnected,
     getSocket,
   } = useConnectionContext();
+  const socket = getSocket();
 
   // Set listeners
   useEffect(() => {
-    const socket = getSocket();
     if (isConnected) {
       socket.on('time', (timeString) => {
         setTimeState(timeString);
@@ -28,6 +28,8 @@ export default () => {
     <h1>Hello World!</h1>
     {JSON.stringify(timeState)}
     <JoinRoomForm/>
-    
+    <button onClick={() => {socket.emit("connection_type")}}>get connection type</button>
+    <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set type "lobby"</button>
+    <button onClick={() => {socket.emit("set_connection_type", "room")}}>set type "room"</button>
   </div>);
 }

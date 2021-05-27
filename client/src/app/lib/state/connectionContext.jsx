@@ -9,23 +9,36 @@ const useConnection = (initial = {}) => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [isMounted, setMounted] = useState(false);
 
-  const onMount = () => {
+  function getSocket() {
+    return clientSocket.current;
+  }
+
+  function onMount () {
     console.log("mounted");
-    clientSocket.current = io.connect();
+
+    // Connect to socket
+    const socket = io.connect();
+    clientSocket.current = socket;
     setIsConnected(true);
   }
+
+  function addListeners() {
+    const socket = getSocket();
+
+    socket.on("connection_type", (data) => {
+      console.log("connection_type", data);
+    })
+  }
+
+  
 
   useEffect(() => {
     if (!isMounted) {
       onMount();
+      addListeners();
       setMounted(true);
     }
   }, [isMounted]);
-
-
-  function getSocket() {
-    return clientSocket.current;
-  }
 
   return {
     isConnected,
