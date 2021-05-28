@@ -1,6 +1,9 @@
 const SocketHandler = require('../../lib/ActionHandler');
 const RoomModel = require('../../models/mongodb/Room/Model');
       
+// ==============================================================
+// Get Room
+// ==============================================================
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();

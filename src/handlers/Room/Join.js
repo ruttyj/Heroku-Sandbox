@@ -1,11 +1,15 @@
 const SocketHandler = require('../../lib/ActionHandler');
 const RoomModel = require('../../models/mongodb/Room/Model');
-      
+
+// ==============================================================
+// Join Room
+// ==============================================================
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();
     const socket = connection.getSocket();
     const value = req.getPayload();
+    //---------------------------------
 
     let roomCode = value;
     let roomTitle = roomCode;
@@ -29,7 +33,9 @@ module.exports = class extends SocketHandler {
           status: "failure",
           msg: "error"
         });
+        socket.emit('connection_type', connection.getType()); 
       } else {
+        connection.setType('room');
         // let know succeeded to create
         socket.emit('create_room', {
           status: "success",
@@ -38,12 +44,14 @@ module.exports = class extends SocketHandler {
 
         // sent roomd data to client
         socket.emit('room', roomData);
+        socket.emit('connection_type', connection.getType()); 
       }
     }
     newModel.save(onModelSave);
 
-    socket.emit('connection_type', connection.getType());    
+     
 
+    //---------------------------------
     this.next(eventKey, req, res);
   }
 }

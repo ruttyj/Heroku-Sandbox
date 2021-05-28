@@ -3,12 +3,8 @@ const express = require('express');
 const morgan = require('morgan');
 const http = require('http');
 const BastProvider = require('./BaseProvider');
-
 const apiRoutes = require('../routes/api');
 
-
-
-// MongoDb IO Provider
 module.exports = class ExpressProvider extends BastProvider {
   register(app)
   {
@@ -22,7 +18,7 @@ module.exports = class ExpressProvider extends BastProvider {
 
     // run built app in production
     if (process.env.NODE_ENV === 'production') {
-      server.use(express.static('client/build'));
+      server.use(express.static('client/build')); // build client
     } else {
       server.use(morgan('tiny')); // http logging
     }

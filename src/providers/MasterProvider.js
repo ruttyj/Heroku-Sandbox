@@ -1,10 +1,6 @@
 const BaseProvider = require('./BaseProvider');
 const ConnectionManager = require('../managers/socket/ConnectionManager');
-
-const RoomModel = require('../models/mongodb/Room/Model');
-      
 const socketHandlerRegistry = require('./socketRegistery');
-
 module.exports = class MasterProvider extends BaseProvider 
 {
   register(app) 
@@ -12,7 +8,6 @@ module.exports = class MasterProvider extends BaseProvider
     // Register Connection Manager
     const connectionManager = new ConnectionManager();
     app.addManager('connection', connectionManager)
-  
   
     // On socket connection
     const io = app.getService('socketio');
@@ -30,7 +25,6 @@ module.exports = class MasterProvider extends BaseProvider
         connectionManager.destroyConnection(socket.id);
       });
 
-
       // Execute socket handlers
       socketHandlerRegistry.getPublicKeys().forEach((eventKey) => {
         socket.on(eventKey, (payload) => {
@@ -38,10 +32,6 @@ module.exports = class MasterProvider extends BaseProvider
         });
       })
      
-
-      
-
-
     });
     setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
   
