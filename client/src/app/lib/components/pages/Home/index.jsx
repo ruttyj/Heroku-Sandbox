@@ -9,6 +9,7 @@ export default () => {
   const { 
     isConnected,
     getSocket,
+    connectionState, setConnectionState
   } = useConnectionContext();
   const socket = getSocket();
 
@@ -40,8 +41,8 @@ export default () => {
       });
 
       socket.on('connection_type', (data) => {
-        setCompState({
-          ...compState,
+        setConnectionState({
+          ...connectionState,
           connection_type: data,
         })
       })
@@ -49,8 +50,8 @@ export default () => {
 
       socket.on('room_list', (payload) => {
         console.log('room_list', payload);
-        setCompState({
-          ...compState,
+        setConnectionState({
+          ...connectionState,
           room_list: payload.data,
         })
       })
@@ -66,7 +67,7 @@ export default () => {
   }, [isConnected])
 
   let bodyContent = "";
-  switch(compState.connection_type){
+  switch(connectionState.connection_type){
     case "room":
       bodyContent = (<div>
         Room body
@@ -97,7 +98,7 @@ export default () => {
     <JoinRoomForm/>
     <h3>Connection Type:</h3>
     <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
-    <pre>{JSON.stringify(compState.connection_type, null, 2)}</pre>
+    <pre>{JSON.stringify(connectionState.connection_type, null, 2)}</pre>
     <br/>
     <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set type "lobby"</button>
     <button onClick={() => {socket.emit("set_connection_type", "room")}}>set type "room"</button>
@@ -105,6 +106,6 @@ export default () => {
     <hr/>
     <h3>Connection State:</h3>
     <button onClick={() => {socket.emit("get_room_list")}}>get room list</button>
-    <pre>{JSON.stringify(compState, null, 2)}</pre>
+    <pre>{JSON.stringify(connectionState, null, 2)}</pre>
   </div>);
 }

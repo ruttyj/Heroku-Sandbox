@@ -6,8 +6,12 @@ const useConnection = (initial = {}) => {
   const [isConnected, setIsConnected]   = useState(false);
   const clientSocket = useRef(null);
   const [roomCode, setRoomCode] = useState(null);
-  const [roomCodeInput, setRoomCodeInput] = useState("");
   const [isMounted, setMounted] = useState(false);
+
+  const [connectionState, setConnectionState] = useState({
+    connection_type: null,
+    room_list: [],
+  });
 
   function getSocket() {
     return clientSocket.current;
@@ -44,7 +48,7 @@ const useConnection = (initial = {}) => {
     isConnected,
     getSocket,
     roomCode, setRoomCode,
-    roomCodeInput, setRoomCodeInput
+    connectionState, setConnectionState,
   }
 }
 
