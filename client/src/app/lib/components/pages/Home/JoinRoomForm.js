@@ -4,7 +4,7 @@ import { useConnectionContext } from '../../../state/connectionContext';
 
 export default () => {
   const initialFormState = {
-    room: "",
+    code: "",
   };
   const [formState, setFormState] = useState(initialFormState);
 
@@ -25,11 +25,11 @@ export default () => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (isConnected) {
-      if (formState.room.length > 0) {
+      if (formState.code.length > 0) {
         const socket = getSocket();
         
         // @TODO
-      
+        socket.emit("join_room", formState.code)
       } 
     }
   }
@@ -38,7 +38,7 @@ export default () => {
     <form>
       {isConnected}
       <div className="form-input">
-        <input type="text" name="room" value={formState.room} placeholder="Room code" onChange={handleOnChange}/>
+        <input type="text" name="code" value={formState.room} placeholder="Room code" onChange={handleOnChange}/>
       </div>
       <button onClick={onSubmit}>
         Join
