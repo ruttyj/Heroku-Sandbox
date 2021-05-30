@@ -3,15 +3,19 @@ module.exports = class App
   constructor() {
     this.mServices = new Map();
     this.mManagers = new Map();
+    this.mHanderRegistry = new Map();
     this.mProviders = [];
   }
 
   start() {
     const app = this;
 
-    // @TODO this does not handle providers during execution
     this.mProviders.forEach(provider => {
       provider.register(app);
+    })
+
+    this.mProviders.forEach(provider => {
+      provider.boot(app);
     })
   }
 
@@ -43,5 +47,15 @@ module.exports = class App
 
   getManager(name) {
     return this.mManagers.get(name);
+  }
+
+  //=================================
+  // Managers
+  addHanderRegistry(name, value) {
+    this.mHanderRegistry.set(name, value);
+  }
+
+  getHanderRegistry(name) {
+    return this.mHanderRegistry.get(name);
   }
 }

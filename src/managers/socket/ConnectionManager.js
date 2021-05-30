@@ -20,7 +20,6 @@ module.exports = class ConnectionManager
 
   destroyConnection(id) {
     if (this.mConnections.has(id)) {
-      console.log('Connection destroied');
       this.mConnections.delete(id);
     }
   }

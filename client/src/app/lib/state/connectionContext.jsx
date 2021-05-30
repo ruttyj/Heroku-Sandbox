@@ -2,39 +2,29 @@ import * as React from "react";
 import { useState, useRef, useEffect } from 'react';
 import * as io from 'socket.io-client';
 
-const useConnection = (initial = {}) => {
+const useConnection = () => {
   const [isConnected, setIsConnected]   = useState(false);
   const clientSocket = useRef(null);
-  const [roomCode, setRoomCode] = useState(null);
   const [isMounted, setMounted] = useState(false);
-
-  const [connectionState, setConnectionState] = useState({
-    connection_type: null,
-    room_list: [],
-  });
 
   function getSocket() {
     return clientSocket.current;
   }
 
   function onMount () {
-    console.log("mounted");
-
     // Connect to socket
     const socket = io.connect();
     clientSocket.current = socket;
     setIsConnected(true);
   }
 
+  // For debugging
   function addListeners() {
     const socket = getSocket();
-
     socket.on("connection_type", (data) => {
       console.log("connection_type", data);
     })
   }
-
-  
 
   useEffect(() => {
     if (!isMounted) {
@@ -46,9 +36,7 @@ const useConnection = (initial = {}) => {
 
   return {
     isConnected,
-    getSocket,
-    roomCode, setRoomCode,
-    connectionState, setConnectionState,
+    getSocket
   }
 }
 

@@ -1,11 +1,14 @@
 import ReactDOM from 'react-dom';
 import { ConnectionStateProvider } from './app/lib/state/connectionContext';
+import { BufferedStateProvider } from './app/lib/state/bufferedContext';
 import HomePage from './app/lib/components/pages/Home';
 
 const App = () => {
   return (
     <ConnectionStateProvider>
-      <HomePage />
+      <BufferedStateProvider>
+        <HomePage />
+      </BufferedStateProvider>
     </ConnectionStateProvider>
   )
 }

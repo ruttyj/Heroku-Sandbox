@@ -6,8 +6,8 @@ module.exports = class Connection
     this.mType = 'default';
     this.mApp = null;
     this.mSocket = null;
-    this.mRoom = null;
-    this.mPerson = null;
+    this.mRoomId = null;
+    this.mPersonId = null;
   }
 
   /*******************************************************
@@ -78,28 +78,28 @@ module.exports = class Connection
   /*******************************************************
    *                         Room
    *******************************************************/
-  setRoom(value)
+  setRoomId(value)
   {
-    this.mRoom = value;
+    this.mRoomId = value;
   }
 
-  getRoom()
+  getRoomId()
   {
-    return this.mRoom;
+    return this.mRoomId;
   }
 
 
   /*******************************************************
    *                         Person
    *******************************************************/
-  setPerson(value)
+  setPersonId(value)
   {
-    this.mPerson = value;
+    this.mPersonId = value;
   }
 
-  getPerson()
+  getPersonId()
   {
-    return this.mPerson;
+    return this.mPersonId;
   }
 
 

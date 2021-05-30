@@ -4,4 +4,9 @@ module.exports = class
   {
 
   }
+
+  boot(app) 
+  {
+
+  }
 }

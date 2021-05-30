@@ -1,5 +1,3 @@
-const classNames = require("classname");
-
 const {
   isPlainObject: _isPlainObject,
   forEach: _forEach,
@@ -48,23 +46,6 @@ const functionMutator = (fn) =>
 const identityMutator = functionMutator;
 const makeSeq = (num, fn = identity) => Array.from(Array(num).keys()).map(fn);
 
-// Flatten the mess of classes given as props into a usable attribute
-// @usage <div {...classes(["a1", "b1", ["c1", ["d1"]]], "e1", ["f1"], "g1 h1")} /> produces <div className={classNames("a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1")}/>
-function classes(...args) {
-  let _args = [];
-  if (isDef(args)) {
-    args.forEach((arg) => {
-      if (isDef(arg)) {
-        if (isArr(arg)) {
-          _args = [..._args, ...arg.flat(0)];
-        } else if (isStr(arg)) {
-          _args = [..._args, ...arg.split(" ")];
-        }
-      }
-    });
-  }
-  return { className: classNames(..._args) };
-}
 
 //==================================================
 
@@ -1068,8 +1049,6 @@ module.exports = {
   trueFunc,
   emptyFun,
   makeSeq,
-
-  classes,
 
   // Object / Array helpers
   removeByFn,
