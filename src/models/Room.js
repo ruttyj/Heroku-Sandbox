@@ -1,12 +1,12 @@
-const PersonManager = require('./PersonManager');
+const PersonContainer = require('../containers/Person');
 
 module.exports = class Connection 
 {
-  constructor()
+  constructor(data={})
   {
-    this.mId = '0';
-    this.mCode = 'default';
-    this.mPersonManager = new PersonManager();
+    this.mId = data.id || 0;
+    this.mCode = data.code || 'default';
+    this.mPeople = new PersonContainer();
   }
 
   /*******************************************************
@@ -35,6 +35,28 @@ module.exports = class Connection
       return this.mCode;
   }
 
+  /*******************************************************
+   *                      People
+   *******************************************************/
+  addPerson(person)
+  {
+    this.mPeople.add(person);
+  }
+
+  removePerson(personId)
+  {
+    this.mPeople.remove(personId);
+  }
+
+  hasPerson(personId)
+  {
+    return this.mPeople.has(personId);
+  }
+
+  hasPeople()
+  {
+    return !this.mPeople.isEmpty();
+  }
 
   /*******************************************************
    *                      Serialize
@@ -44,6 +66,8 @@ module.exports = class Connection
     return {
       id: this.getId(),
       code: this.getCode(),
+      personCount: this.mPeople.count(),
+      people: this.mPeople.keys(),
     }
   }
 }

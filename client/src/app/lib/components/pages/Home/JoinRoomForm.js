@@ -4,7 +4,7 @@ import { useConnectionContext } from '../../../state/connectionContext';
 
 export default () => {
   const initialFormState = {
-    code: "",
+    code: "test",
   };
   const [formState, setFormState] = useState(initialFormState);
 
@@ -38,7 +38,7 @@ export default () => {
     <form>
       {isConnected}
       <div className="form-input">
-        <input type="text" name="code" value={formState.room} placeholder="Room code" onChange={handleOnChange}/>
+        <input type="text" name="code" value={formState.code} placeholder="Room code" onChange={handleOnChange}/>
       </div>
       <button onClick={onSubmit}>
         Join

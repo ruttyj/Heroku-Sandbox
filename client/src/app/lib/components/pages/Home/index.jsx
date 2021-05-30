@@ -20,7 +20,9 @@ export default () => {
     if (!isMounted) {
       console.log('Home component mounted');
       const initialState = {
+        connection: null,
         me: null,
+        room: null,
         connection_type: null,
         room_list: [],
       }
@@ -37,6 +39,20 @@ export default () => {
       socket.on('time', (timeString) => {
         set(['time'], timeString);
       });
+
+      socket.on('connection', (data) => {
+        set(['connection'], data);
+      })
+
+
+      socket.on('leave_room', (data) => {
+        console.log('left room');
+      })
+      
+
+      socket.on('room', (data) => {
+        set(['room'], data);
+      })
 
       socket.on('connection_type', (data) => {
         set(['connection_type'], data);
@@ -74,7 +90,7 @@ export default () => {
     
     case "default":
       bodyContent = (<div>
-        <RegisterForm/>
+        Default
       </div>)
       break;
     
@@ -88,13 +104,17 @@ export default () => {
     <div>
       <h1>Hello World!</h1>
       <JoinRoomForm/>
+      <RegisterForm/>
       <h3>Connection Type:</h3>
       <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
       <pre>{JSON.stringify(get(['connection_type']), null, 2)}</pre>
       <br/>
-      <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set type "lobby"</button>
-      <button onClick={() => {socket.emit("set_connection_type", "room")}}>set type "room"</button>
-      <button onClick={() => {socket.emit("get_room_list")}}>get room list</button>
+      <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set set_connection_type "lobby"</button>
+      <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
+      <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
+      <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
+
+      
       {bodyContent}
       <hr/>
       <h3>State:</h3>

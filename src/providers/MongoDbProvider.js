@@ -1,9 +1,9 @@
 require('dotenv').config();
-const BastProvider = require('./BaseProvider');
+const BaseProvider = require('./BaseProvider');
 const mongoose = require('mongoose');
 
 // MongoDb IO Provider
-module.exports = class MongoDbProvider extends BastProvider {
+module.exports = class MongoDbProvider extends BaseProvider {
   register(app)
   {
     // Mongo DB ======================================

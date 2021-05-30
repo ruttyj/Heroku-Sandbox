@@ -88,6 +88,17 @@ module.exports = class Connection
     return this.mRoomId;
   }
 
+  getRoom()
+  {
+    let roomId = this.getRoomId();
+    if (roomId) {
+      const app = this.getApp();
+      const roomManager = app.getManager('room');
+      return roomManager.get(roomId);
+    }
+    
+    return null;
+  }
 
   /*******************************************************
    *                         Person
@@ -102,6 +113,18 @@ module.exports = class Connection
     return this.mPersonId;
   }
 
+  getPerson()
+  {
+    let personId = this.getPersonId();
+    if (personId) {
+      const app = this.getApp();
+      const personManager = app.getManager('person');
+      return personManager.get(personId);
+    }
+    
+    return null;
+  }
+
 
   /*******************************************************
    *                      Serialize
@@ -110,8 +133,9 @@ module.exports = class Connection
   {
     return {
       id: this.getId(),
-      room: this.getRoom().getCode(),
-      person: this.getPerson().serialize(),
+      type: this.getType(),
+      personId: this.getPersonId(),
+      roomId: this.getRoomId(),
     }
   }
 }

@@ -451,10 +451,6 @@ const makeMap = function(
     return mMap.size;
   }
 
-  function isEmpty() {
-    return getCount() === 0;
-  }
-
   function forEach(fn) {
     mMap.forEach((val, key, map) => fn(val, key, map));
   }
@@ -491,14 +487,6 @@ const makeMap = function(
     let result = undefined;
     mMap.forEach((val, key, map) => {
       if (!isDef(result) && fn(val, key, map)) result = val;
-    });
-    return result;
-  }
-
-  function _makeMap(fn = identity) {
-    let result = [];
-    mMap.forEach((val, key, map) => {
-      result.push(fn(val, key, map));
     });
     return result;
   }

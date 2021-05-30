@@ -1,5 +1,4 @@
 const SocketHandler = require('../../lib/ActionHandler');
-const RoomModel = require('../../models/mongodb/Room/Model');
 
 // ==============================================================
 // Join Room
@@ -7,7 +6,9 @@ const RoomModel = require('../../models/mongodb/Room/Model');
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();
+    const app = connection.getApp();
     const socket = connection.getSocket();
+    const roomManager = app.getManager('room');
     const value = req.getPayload();
     //---------------------------------
 
@@ -24,33 +25,35 @@ module.exports = class extends SocketHandler {
       state: "{}",
     }
 
-    // Save Model to DB
-    const newModel = new RoomModel(roomData);
-    const onModelSave = (error) => {
-      if (error) {
-        connection.setType('room');
-        socket.emit('create_room', {
-          status: "failure",
-          msg: "error"
-        });
-        socket.emit('connection_type', connection.getType()); 
+
+
+
+    let room;
+    let roomId = connection.getRoomId();
+    if (roomId) {
+      room = roomManager.get(roomId);
+    } else {
+      if (roomManager.existsCode(roomCode)) {
+        room  = roomManager.getByCode(roomCode);
       } else {
-        connection.setType('room');
-        // let know succeeded to create
-        socket.emit('create_room', {
-          status: "success",
-          msg: "success"
-        });
-
-        // sent roomd data to client
-        socket.emit('room', roomData);
-        socket.emit('connection_type', connection.getType()); 
+        room = roomManager.make(roomData);
       }
+      connection.setRoomId(room.getId());
+      connection.setType('room');
     }
-    newModel.save(onModelSave);
 
-     
 
+    // addPerson
+    let personId = connection.getPersonId();
+    let personManager = app.getManager('person');
+    let person = personManager.get(personId);
+    if (person) {
+      room.addPerson(person);
+    }
+
+    socket.emit('room', room.serialize());
+    socket.emit('connection', connection.serialize());
+    socket.emit('connection_type', connection.getType());
     //---------------------------------
     this.next(eventKey, req, res);
   }

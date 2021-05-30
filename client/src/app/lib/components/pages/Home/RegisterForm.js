@@ -12,6 +12,7 @@ export default () => {
     isConnected,
     getSocket,
   } = useConnectionContext();
+  const socket = getSocket();
 
   const handleOnChange = (e) => {
     let value = e.target.value;
@@ -26,7 +27,6 @@ export default () => {
     e.preventDefault();
     if (isConnected) {
       if (formState.name.length > 0) {
-        const socket = getSocket();
         socket.emit("register_person", formState.name);
       } 
     }
@@ -40,6 +40,10 @@ export default () => {
       <button onClick={onSubmit}>
         Register
       </button>
+      <button onClick={() => {socket.emit('unregister_person')}}>
+        unregister_person
+      </button>
+      
     </form>
     {JSON.stringify([formState, isConnected], null, 2)}
   </div>)

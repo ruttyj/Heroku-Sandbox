@@ -51,11 +51,11 @@ module.exports = class App
 
   //=================================
   // Managers
-  addHanderRegistry(name, value) {
+  addRegistry(name, value) {
     this.mHanderRegistry.set(name, value);
   }
 
-  getHanderRegistry(name) {
+  getRegistry(name) {
     return this.mHanderRegistry.get(name);
   }
 }

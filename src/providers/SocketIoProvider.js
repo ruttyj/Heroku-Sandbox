@@ -1,8 +1,8 @@
 const socketIO = require('socket.io');
-const BastProvider = require('./BaseProvider');
+const BaseProvider = require('./BaseProvider');
 
 // Socket IO Provider
-module.exports = class SocketIoProvider extends BastProvider {
+module.exports = class SocketIoProvider extends BaseProvider {
   register(app)
   {
     const httpServer = app.getService('http');

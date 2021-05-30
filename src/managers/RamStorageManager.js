@@ -6,18 +6,44 @@ module.exports = class
     this.mTopId = 0;
   }
 
-  makePerson(data)
+  make(data)
   {
     const model = this.create(data);
     this.store(model);
     return model;
   }
 
+  has(id)
+  {
+    return this.mList.has(id);
+  }
+
   get(id)
   {
-    if (this.mList.has(id))
+    if (this.has(id))
       return this.mList.get(id);
     return null; 
+  }
+
+  keyedList()
+  {
+    let results = {};
+    this.mList.forEach((value, key) => {
+      results[key] = value;
+    })
+
+    return results;
+  }
+
+
+  list()
+  {
+    let results = [];
+    this.mList.forEach((value) => {
+      results.push(value);
+    })
+
+    return results;
   }
 
   create(data)

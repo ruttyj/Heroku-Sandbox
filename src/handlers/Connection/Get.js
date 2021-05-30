@@ -1,7 +1,7 @@
 const SocketHandler = require('../../lib/ActionHandler');
       
 // ==============================================================
-// Get Connection Type
+// Get Connection
 // ==============================================================
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
@@ -9,6 +9,7 @@ module.exports = class extends SocketHandler {
     const socket = connection.getSocket();
     //---------------------------------
 
+    socket.emit('connection', connection.serialize())
     socket.emit('connection_type', connection.getType());
 
     //---------------------------------

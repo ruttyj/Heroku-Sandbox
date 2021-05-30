@@ -7,19 +7,17 @@ const RoomModel = require('../../models/mongodb/Room/Model');
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();
+    const app = connection.getApp();
+    const roomManager = app.getManager('room');
     const socket = connection.getSocket();
-    const value = req.getPayload();
     //---------------------------------
-    RoomModel.find({})
-      .then((data) => {
-        socket.emit('room_list', {
-          status: "success",
-          data: data
-        });
-      })
-      .catch((error) => {
-        console.log('error:', error)
-      });
+
+    let rooms = roomManager.list();
+    socket.emit('room_list', {
+      status: "success",
+      data: rooms
+    });
+
     //---------------------------------
     this.next(eventKey, req, res);
   }
