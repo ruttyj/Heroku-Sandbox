@@ -63,6 +63,17 @@ module.exports = class Connection
     return !this.mPeople.isEmpty();
   }
 
+
+  emitToEveryone(eventType, payload)
+  {
+    this.mPeople.emitToEveryone(eventType, payload);
+  }
+
+  emitToEveryoneElse(model, eventType, payload)
+  {
+    this.mPeople.emitToEveryone(model, eventType, payload);
+  }
+
   /*******************************************************
    *                      Serialize
    *******************************************************/

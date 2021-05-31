@@ -3,6 +3,7 @@ import { useConnectionContext } from '../../../state/connectionContext';
 import { useBufferedStateContext  } from '../../../state/bufferedContext';
 import JoinRoomForm from './JoinRoomForm';
 import RegisterForm from './RegisterForm';
+import ChatForm from './ChatForm';
 
 export default () => {
   const [isMounted, setMounted] = useState(false);
@@ -39,6 +40,13 @@ export default () => {
       
       socket.on('time', (timeString) => {
         set(['time'], timeString);
+      });
+
+      socket.on('message', (messageModel) => {
+        console.log('message', messageModel);
+        let chatMessages = get(['chat_messages'], []);
+        chatMessages = [...chatMessages, messageModel];
+        set(['chat_messages'], chatMessages);
       });
 
       socket.on('connection', (data) => {
@@ -79,7 +87,7 @@ export default () => {
   switch(get(['connection_type'])){
     case "room":
       bodyContent = (<div>
-        Room body
+        <ChatForm/>
       </div>)
       break;
     
@@ -113,10 +121,10 @@ export default () => {
     <div>
       <h1>Hello World!</h1>
       
-      
       <h3>Connection Type:</h3>
-      <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
       <pre>{JSON.stringify(get(['connection_type']), null, 2)}</pre>
+      <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
+
       <br/>
       <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set set_connection_type "lobby"</button>
       <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
