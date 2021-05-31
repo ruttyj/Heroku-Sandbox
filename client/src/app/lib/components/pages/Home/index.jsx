@@ -25,6 +25,7 @@ export default () => {
         room: null,
         connection_type: null,
         room_list: [],
+        chat_messages: [],
       }
       set([], initialState);
       setMounted(true);
@@ -83,8 +84,16 @@ export default () => {
       break;
     
     case "lobby":
+      let lobbyContent = "";
+
+      if (!get(['connection', 'personId'])) {
+        lobbyContent = <RegisterForm/>;
+      } else if(!get(['connection', 'roomId'])) {
+        lobbyContent = <JoinRoomForm/>;
+      }
+      
       bodyContent = (<div>
-        Lobby body
+        {lobbyContent}
       </div>)
       break;
     
@@ -103,8 +112,8 @@ export default () => {
   return (
     <div>
       <h1>Hello World!</h1>
-      <JoinRoomForm/>
-      <RegisterForm/>
+      
+      
       <h3>Connection Type:</h3>
       <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
       <pre>{JSON.stringify(get(['connection_type']), null, 2)}</pre>

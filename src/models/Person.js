@@ -6,6 +6,7 @@ module.exports = class Connection
     this.mType = data.type || null;
     this.mRoomCode = data.roomCode || null;
     this.mName = data.name || "";
+    this.mConnection = null;
   }
 
   // Id ---------------------------------
@@ -52,13 +53,69 @@ module.exports = class Connection
     this.mRoomCode = value;
   }
 
+
+  // Connection --------------------------
+  connect(connection)
+  {
+    this.mConnection = connection;
+  }
+
+  getConnection()
+  {
+    return this.mConnection;
+  }
+
+  disconnect()
+  {
+    this.mConnection = null;
+  }
+
+
+  // Socket ------------------------------
+  getSocket()
+  {
+    const connection = this.getConnection();
+    if (connection) {
+      return connection.getSocket();
+    }
+    return null;
+  }
+
+  hasSocket()
+  {
+    return this.getSocket() !== null;
+  }
+
+  getSocketId()
+  {
+    const connection = this.getConnection();
+    if (connection) {
+      const socket = connection.getSocket();
+      if (socket) {
+        return socket.id;
+      }
+    }
+    return null;
+  }
+
+  emit(eventType, payload)
+  {
+    const socket = this.getSocket();
+    if (socket) {
+      socket.emit(eventType, payload);
+      return true;
+    }
+    return false;
+  }
+
   serialize()
   {
     return {
-      id:       this.mId,
-      type:     this.mType,
-      roomCode: this.mRoomCode,
-      name:     this.mName,
+      id:         this.mId,
+      roomCode:   this.mRoomCode,
+      type:       this.mType,
+      name:       this.mName,
+      socketId:   this.getSocketId(),
     }
   }
 }

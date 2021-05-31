@@ -23,6 +23,39 @@ module.exports = class
     return null;
   }
 
+  getEveryoneElse(model)
+  {
+    let myId = model.getId();
+    let result = [];
+    this.mList.forEach((model, key) => {
+      if (key !== myId) {
+        result.push(model);
+      }
+    })
+
+    return result;
+  }
+
+  getEveryone()
+  {
+    return this.list();
+  }
+
+  emitToEveryone(eventType, payload)
+  {
+    this.getEveryone().forEach(person => {
+      person.emit(eventType, payload);
+    })
+  }
+
+  emitToEveryoneElse(model, eventType, payload)
+  {
+    this.getEveryoneElse(model).forEach(person => {
+      person.emit(eventType, payload);
+    })
+  }
+
+
   remove(id)
   {
     this.mList.remove(id);

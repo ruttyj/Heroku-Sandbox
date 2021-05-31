@@ -11,7 +11,7 @@ const RequireRegistered = require('../handlers/Person/RequireRegistered');
 const UnregisterPerson  = require('../handlers/Person/Unregister');
 
 // Rooms ========================================================
-const RequireInRoom     = require('../handlers/Room/RequireInRoom');
+const RequireConnectedToRoom     = require('../handlers/Room/RequireConnectedToRoom');
 const JoinRoom          = require('../handlers/Room/Join');
 const ListRooms         = require('../handlers/Room/List');
 const LeaveRoom         = require('../handlers/Room/Leave');
@@ -24,13 +24,16 @@ socketRegistry.registerPublic('get_connection',       new GetConnection());
 
 socketRegistry.registerPublic('get_connection_type',  new GetConnectionType());
 socketRegistry.registerPublic('set_connection_type',  new SetConnectionType());
-// persons
+
+// person
 socketRegistry.registerPublic('register_person',      new RegisterPerson());
 socketRegistry.registerPublic('unregister_person',    new RequireRegistered(new UnregisterPerson()));
+
 // room
 socketRegistry.registerPublic('join_room',            new JoinRoom());
 socketRegistry.registerPublic('get_room_list',        new ListRooms());
-socketRegistry.registerPublic('leave_room',           new RequireInRoom(new LeaveRoom()));
-socketRegistry.registerPublic('list_people_in_room',  new RequireInRoom(new ListPeopleInRoom()));
+socketRegistry.registerPublic('leave_room',           new RequireConnectedToRoom(new LeaveRoom()));
+socketRegistry.registerPublic('list_people_in_room',  new RequireConnectedToRoom(new ListPeopleInRoom()));
+
 
 module.exports = socketRegistry;

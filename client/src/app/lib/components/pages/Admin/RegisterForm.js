@@ -40,6 +40,10 @@ export default () => {
       <button onClick={onSubmit}>
         Register
       </button>
+      <button onClick={() => {socket.emit('unregister_person')}}>
+        unregister_person
+      </button>
+      
     </form>
     {JSON.stringify([formState, isConnected], null, 2)}
   </div>)

@@ -9,6 +9,7 @@ module.exports = class extends SocketHandler {
     const app = connection.getApp();
     const personManager = app.getManager('person');
     const socket = connection.getSocket();
+    const eventRegistry = app.getRegistry('socket');
     const name = req.getPayload();
     //---------------------------------
     let person;
@@ -21,11 +22,14 @@ module.exports = class extends SocketHandler {
 
     personId = person.getId();
     person.setName(name);
+    person.connect(connection);
     personManager.store(person);
     connection.setPersonId(personId);
 
     let serialized = person.serialize();
     socket.emit('me', serialized);
+
+    eventRegistry.execute('get_connection', connection);
 
     //---------------------------------
     this.next(eventKey, req, res);

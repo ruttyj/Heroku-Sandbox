@@ -9,7 +9,7 @@ module.exports = class extends SocketHandler {
     const socket = connection.getSocket();
     const app = connection.getApp();
    
-    const personId = req.get('personId');
+    const personId = req.get('myPersonId');
     const personManager = req.get('personManager');
     personManager.remove(personId);
     connection.setPersonId(null);

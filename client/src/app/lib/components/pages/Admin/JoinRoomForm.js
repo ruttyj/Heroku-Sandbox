@@ -4,7 +4,7 @@ import { useConnectionContext } from '../../../state/connectionContext';
 
 export default () => {
   const initialFormState = {
-    name: "jordan",
+    code: "test",
   };
   const [formState, setFormState] = useState(initialFormState);
 
@@ -12,7 +12,6 @@ export default () => {
     isConnected,
     getSocket,
   } = useConnectionContext();
-  const socket = getSocket();
 
   const handleOnChange = (e) => {
     let value = e.target.value;
@@ -26,19 +25,23 @@ export default () => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (isConnected) {
-      if (formState.name.length > 0) {
-        socket.emit("register_person", formState.name);
+      if (formState.code.length > 0) {
+        const socket = getSocket();
+        
+        // @TODO
+        socket.emit("join_room", formState.code)
       } 
     }
   }
   
   return (<div>
     <form>
+      {isConnected}
       <div className="form-input">
-        <input type="text" name="name" value={formState.name} placeholder="Your name" onChange={handleOnChange}/>
+        <input type="text" name="code" value={formState.code} placeholder="Room code" onChange={handleOnChange}/>
       </div>
       <button onClick={onSubmit}>
-        Register
+        Join
       </button>
     </form>
     {JSON.stringify([formState, isConnected], null, 2)}

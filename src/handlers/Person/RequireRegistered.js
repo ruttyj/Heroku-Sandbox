@@ -18,8 +18,8 @@ module.exports = class extends SocketHandler {
     let person = connection.getPerson();
     if (person) {
       // Set context
-      req.set('personId', person.getId());
-      req.set('person', person);
+      req.set('myPersonId', person.getId());
+      req.set('me', person);
       req.set('personManager', personManager);
 
       // Execute next handler

@@ -43,6 +43,11 @@ module.exports = class Connection
     this.mPeople.add(person);
   }
 
+  getAllPeople()
+  {
+    return this.mPeople.list();
+  }
+
   removePerson(personId)
   {
     this.mPeople.remove(personId);
