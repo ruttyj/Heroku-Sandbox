@@ -1,21 +1,19 @@
 const SocketHandler = require('../../lib/ActionHandler');
-const RoomModel = require('../../models/mongodb/Room/Model');
-      
+
 // ==============================================================
-// Get Room
+// Notify Room Updated
 // ==============================================================
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
-    const connection = req.getConnection();
-    const app = connection.getApp();
-    const roomManager = app.getManager('room');
-    const socket = connection.getSocket();
+    const room = req.get('room');
     //---------------------------------
 
-    let rooms = roomManager.list().map(room => room.serialize());
-    socket.emit('room_list', {
-      status: "success",
-      data: rooms
+    // Notify everyone subscribed to this room
+    //  For now that is only the people in that room
+    let roomSerialized = room.serialize();
+    room.getEveryone().forEach((person) => {
+      let personConnection = person.getConnection();
+      personConnection.emit('room', roomSerialized);
     });
 
     //---------------------------------

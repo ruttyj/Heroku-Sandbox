@@ -1,5 +1,5 @@
 const SocketHandler = require('../../../lib/ActionHandler');
-const Message = require('../../../models/Chat/Message');
+const Typing = require('../../../models/Chat/Typing');
 // ==============================================================
 // Send Message
 // ==============================================================
@@ -10,13 +10,12 @@ module.exports = class extends SocketHandler {
     const value = req.getPayload();
     //---------------------------------
 
-    const message = new Message({
-      type: 'message',
-      message: value,
+    const typing = new Typing({
+      isTyping: value == true,
       authorId: me.getId(),
     });
 
-    room.emitToEveryone('message', message.serialize());
+    room.emitToEveryoneElse('typing', typing.serialize());
 
     //---------------------------------
     this.next(eventKey, req, res);

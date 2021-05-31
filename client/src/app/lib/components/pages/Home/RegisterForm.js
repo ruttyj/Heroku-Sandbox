@@ -41,6 +41,5 @@ export default () => {
         Register
       </button>
     </form>
-    {JSON.stringify([formState, isConnected], null, 2)}
   </div>)
 }

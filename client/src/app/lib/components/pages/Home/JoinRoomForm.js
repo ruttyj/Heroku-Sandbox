@@ -44,6 +44,5 @@ export default () => {
         Join
       </button>
     </form>
-    {JSON.stringify([formState, isConnected], null, 2)}
   </div>)
 }

@@ -4,7 +4,7 @@ import { useConnectionContext } from '../../../state/connectionContext';
 
 export default () => {
   const initialFormState = {
-    message: "Hello World!",
+    message: "😜",
   };
   const [formState, setFormState] = useState(initialFormState);
 
@@ -41,6 +41,5 @@ export default () => {
         Send
       </button>
     </form>
-    {JSON.stringify([formState, isConnected], null, 2)}
   </div>)
 }

@@ -86,12 +86,40 @@ module.exports = class
     return result;
   }
 
+  keyed()
+  {
+    let result = {};
+    this.mList.forEach((model, key) => {
+      result[key] = model;
+    })
+
+    return result;
+  }
+
   list()
   {
     let result = [];
     this.mList.forEach((model) => {
       result.push(model);
     })
+
+    return result;
+  }
+
+  serialize()
+  {
+    let items = {};
+    let order = [];
+
+    this.mList.forEach((model, key) => {
+      items[key] = model.serialize();
+      order.push(key);
+    })
+
+    let result = {
+      items,
+      order
+    };
 
     return result;
   }

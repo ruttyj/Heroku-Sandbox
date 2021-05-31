@@ -43,9 +43,24 @@ module.exports = class Connection
     this.mPeople.add(person);
   }
 
+  getPersonContainer()
+  {
+    return this.mPeople;
+  }
+
   getAllPeople()
   {
     return this.mPeople.list();
+  }
+
+  getEveryone()
+  {
+    return this.getAllPeople();
+  }
+
+  getEveryoneElse(model)
+  {
+    return this.mPeople.getEveryoneElse(model);
   }
 
   removePerson(personId)

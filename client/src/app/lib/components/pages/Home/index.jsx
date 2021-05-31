@@ -27,6 +27,7 @@ export default () => {
         connection_type: null,
         room_list: [],
         chat_messages: [],
+        room_people_all_keyed: {},
       }
       set([], initialState);
       setMounted(true);
@@ -74,6 +75,13 @@ export default () => {
       socket.on('room_list', (payload) => {
         set(['room_list'], payload.data);
       })
+
+
+      socket.on('room_people_all_keyed', (payload) => {
+        console.log('room_people_all_keyed', payload);
+        set(['people'], payload);
+      })
+      
 
       socket.emit("get_connection_type");
       socket.emit('get_room_list');
@@ -130,6 +138,8 @@ export default () => {
       <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
       <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
       <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
+      <button onClick={() => {socket.emit("get_room_people_all_keyed")}}>room_people_all_keyed</button>
+      <button onClick={() => {socket.emit("notify_room_updated")}}>notify_room_updated</button>
 
       
       {bodyContent}

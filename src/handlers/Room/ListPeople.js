@@ -15,8 +15,14 @@ module.exports = class extends SocketHandler {
     const room = req.get('room');
     //---------------------------------
 
-    
+    let result = {
+      items: {},
+      order: [],
+    };
+    let personContainer = room.getPersonContainer();
+    result = personContainer.serialize();
 
+    room.emitToEveryone('room_people_all_keyed', result);
 
     // Exxecute next handler
     this.next(eventKey, req, res);

@@ -8,8 +8,10 @@ module.exports = class extends SocketHandler {
     const connection = req.getConnection();
     const app = connection.getApp();
     const socket = connection.getSocket();
+    const socketHandlers = app.getRegistry('socket');
     const roomManager = app.getManager('room');
     const value = req.getPayload();
+
     //---------------------------------
 
     let roomCode = value;
@@ -24,9 +26,6 @@ module.exports = class extends SocketHandler {
       mode: "in_setup",
       state: "{}",
     }
-
-
-
 
     let room;
     let roomId = connection.getRoomId();
@@ -49,11 +48,16 @@ module.exports = class extends SocketHandler {
     let person = personManager.get(personId);
     if (person) {
       room.addPerson(person);
+      socketHandlers.execute('get_room_people_all_keyed', connection);
     }
 
-    socket.emit('room', room.serialize());
+    socketHandlers.execute('notify_room_updated', connection, room.getId());
+
     socket.emit('connection', connection.serialize());
     socket.emit('connection_type', connection.getType());
+
+
+
     //---------------------------------
     this.next(eventKey, req, res);
   }

@@ -18,6 +18,7 @@ module.exports = class Registry {
     return !(!this.mEvents.private[identifier]);
   }
 
+
   registerPublic(identifier, handlerChain) {
     if (!this.mEvents.public[identifier])
       this.mEvents.public[identifier] = handlerChain;
@@ -27,9 +28,19 @@ module.exports = class Registry {
     return Object.keys(this.mEvents.public);
   }
 
+  
+
   registerPrivate(identifier, handlerChain) {
     if (!this.mEvents.private[identifier])
       this.mEvents.private[identifier] = handlerChain;
+  }
+
+  public(identifier, handlerChain) {
+    this.registerPublic(identifier, handlerChain);
+  }
+
+  private(identifier, handlerChain) {
+    this.registerPrivate(identifier, handlerChain);
   }
 
   execute(eventKey, connection, payload) {
@@ -40,17 +51,22 @@ module.exports = class Registry {
     // Response
     const res = new ActionResponse();
 
+    let listener;
+
     // Execute
-    if (this.mEvents.public[eventKey]) {
-      let listener = this.mEvents.public[eventKey];
+    if (!listener && this.mEvents.public[eventKey]) {
+      listener = this.mEvents.public[eventKey];
+      console.log('public listener', eventKey, listener);
 
-      if (!listener) {
-        this.mEvents.private[eventKey];
-      }
+    }
 
-      if (listener) {
-        return listener.execute(eventKey, req, res);
-      }
+    if (!listener && this.mEvents.private[eventKey]) {
+      listener = this.mEvents.private[eventKey];
+      console.log('private listener', eventKey, listener);
+    }
+
+    if (listener) {
+      return listener.execute(eventKey, req, res);
     }
 
     return null;

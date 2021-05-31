@@ -1,31 +1,46 @@
-module.exports = class ActionRequest {
+module.exports = class ActionRequest
+{
 
-    constructor(connection) {
+    constructor(connection)
+    {
         this.mConnection = connection;
         this.mContext = new Map();
     }
 
-    getConnection() {
+    getConnection()
+    {
         return this.mConnection;
     }
 
-    getSocket() {
-        return this.getConnection().getSocket();
+    hasConnection()
+    {
+      return this.getConnection() == true;
     }
 
-    getContext() {
+    getSocket()
+    {
+      if(this.hasConnection())
+        return this.getConnection().getSocket();
+      return null;
+    }
+
+    getContext()
+    {
         return this.mContext;
     }
 
-    get(contextKey ) {
+    get(contextKey)
+    {
         return this.getContext().get(contextKey);
     }
 
-    set(contextKey, value ) {
+    set(contextKey, value)
+    {
         return this.getContext().set(contextKey, value);
     }
 
-    getPayload() {
+    getPayload()
+    {
         return this.getContext().get('payload');
     }
 }
