@@ -58,7 +58,7 @@ module.exports = class
 
   remove(id)
   {
-    this.mList.remove(id);
+    this.mList.delete(id);
   }
   
   has(id)

@@ -7,10 +7,12 @@ module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();
     const socket = connection.getSocket();
-    const app = connection.getApp();
-   
     const personId = req.get('myPersonId');
     const personManager = req.get('personManager');
+    //---------------------------------
+
+    console.log('Unregister');
+   
     personManager.remove(personId);
     connection.setPersonId(null);
 

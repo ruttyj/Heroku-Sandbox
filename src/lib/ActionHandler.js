@@ -1,14 +1,23 @@
-module.exports = class ActionHandler {
-  constructor(next = null) {
-      this.mNext = next;
+module.exports = class ActionHandler
+{
+  constructor(next = null)
+  {
+      this.setNext(next);
   }
 
-  isFailure(eventKey, req, res) {
+  setNext(next = null)
+  {
+    this.mNext = next;
+  }
+
+  isFailure(eventKey, req, res) 
+  {
       return res.isFailure();
   }
 
   // Executes on the way down the chain & can be interupted
-  execute(eventKey, req, res) {
+  execute(eventKey, req, res) 
+  {
       if (!this.isFailure(eventKey, req, res)) {
           // Override implementation here
           
@@ -17,11 +26,13 @@ module.exports = class ActionHandler {
   }
 
   // Executes on the way up the chain
-  finish(eventKey, req, res) {
+  finish(eventKey, req, res) 
+  {
       // Override implementation here
   }
 
-  next(eventKey, req, res) {
+  next(eventKey, req, res) 
+  {
       if (!this.isFailure(eventKey, req, res)) {
           if (this.mNext){
               this.mNext.execute(eventKey, req, res);

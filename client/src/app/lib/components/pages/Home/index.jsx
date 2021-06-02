@@ -61,6 +61,7 @@ export default () => {
       
 
       socket.on('room', (data) => {
+        console.log('room', data);
         set(['room'], data);
       })
 
@@ -129,8 +130,8 @@ export default () => {
     <div>
       <h1>Hello World!</h1>
       
-      <h3>Connection Type:</h3>
-      <pre>{JSON.stringify(get(['connection_type']), null, 2)}</pre>
+      <RegisterForm/>
+      <JoinRoomForm/>
       <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
 
       <br/>
@@ -138,8 +139,11 @@ export default () => {
       <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
       <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
       <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
-      <button onClick={() => {socket.emit("get_room_people_all_keyed")}}>room_people_all_keyed</button>
+      <button onClick={() => {socket.emit("notify_room_people_all_keyed")}}>room_people_all_keyed</button>
       <button onClick={() => {socket.emit("notify_room_updated")}}>notify_room_updated</button>
+      <button onClick={() => {socket.emit("get_current_room")}}>get_current_room</button>
+
+      
 
       
       {bodyContent}

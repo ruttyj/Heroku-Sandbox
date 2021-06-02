@@ -10,23 +10,25 @@ module.exports = class extends SocketHandler {
     const app = connection.getApp();
     const socket = connection.getSocket();
     const eventRegistry = app.getRegistry('socket');
+    const room = req.get('room');
     //---------------------------------
+
+    console.log('leave_room');
+    
+    // Remove connnection association to room   
     connection.setRoomId(null);
     connection.setType('lobby');
 
-    // @TODO
-    // If room is empty destroy room
-    // roomManager
+    // Remove person
+    const personId = req.get('personId');
+    room.removePerson(personId);
 
     // Notify of leave room
     socket.emit('room', null);
-    eventRegistry.execute('get_connection', connection);
     socket.emit('leave_room', true);
+    eventRegistry.execute('get_connection', connection);
 
-    // Notify of room destruction
-    // @TODO
-    
-
+    //---------------------------------
     // Exxecute next handler
     this.next(eventKey, req, res);
   }

@@ -43,6 +43,10 @@ module.exports = class Connection
     this.mPeople.add(person);
   }
 
+  getPeople(){
+    return this.getPersonContainer();
+  }
+
   getPersonContainer()
   {
     return this.mPeople;
@@ -98,7 +102,6 @@ module.exports = class Connection
       id: this.getId(),
       code: this.getCode(),
       personCount: this.mPeople.count(),
-      people: this.mPeople.keys(),
     }
   }
 }

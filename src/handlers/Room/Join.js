@@ -48,9 +48,8 @@ module.exports = class extends SocketHandler {
     let person = personManager.get(personId);
     if (person) {
       room.addPerson(person);
-      socketHandlers.execute('get_room_people_all_keyed', connection);
+      socketHandlers.execute('notify_room_people_all_keyed', connection, room.getId());
     }
-
     socketHandlers.execute('notify_room_updated', connection, room.getId());
 
     socket.emit('connection', connection.serialize());

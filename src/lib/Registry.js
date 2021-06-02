@@ -18,29 +18,18 @@ module.exports = class Registry {
     return !(!this.mEvents.private[identifier]);
   }
 
-
-  registerPublic(identifier, handlerChain) {
-    if (!this.mEvents.public[identifier])
-      this.mEvents.public[identifier] = handlerChain;
-  }
-
   getPublicKeys() {
     return Object.keys(this.mEvents.public);
   }
 
-  
-
-  registerPrivate(identifier, handlerChain) {
-    if (!this.mEvents.private[identifier])
-      this.mEvents.private[identifier] = handlerChain;
-  }
-
   public(identifier, handlerChain) {
-    this.registerPublic(identifier, handlerChain);
+    if (!this.mEvents.public[identifier])
+      this.mEvents.public[identifier] = handlerChain;
   }
 
   private(identifier, handlerChain) {
-    this.registerPrivate(identifier, handlerChain);
+    if (!this.mEvents.private[identifier])
+      this.mEvents.private[identifier] = handlerChain;
   }
 
   execute(eventKey, connection, payload) {

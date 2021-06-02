@@ -1,7 +1,7 @@
 const SocketHandler = require('../../../lib/ActionHandler');
 const Typing = require('../../../models/Chat/Typing');
 // ==============================================================
-// Send Message
+// Is Typing
 // ==============================================================
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {

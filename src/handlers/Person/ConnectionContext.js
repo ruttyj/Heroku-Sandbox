@@ -19,14 +19,14 @@ module.exports = class extends SocketHandler {
     if (person) {
       // Set context
       req.set('myPersonId', person.getId());
-      req.set('personId', person.getId());
       req.set('me', person);
       req.set('personManager', personManager);
 
       // Execute next handler
-      this.next(eventKey, req, res);
       return;
     }
+
+    this.next(eventKey, req, res);
 
     // else failure
     res.setIsFailure(true);
