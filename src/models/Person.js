@@ -20,15 +20,16 @@ module.exports = class Connection
     this.mId = value;
   }
 
-  // Name ------------------------------
-  getName()
+
+  // Status ------------------------------
+  getStatus()
   {
-    return this.mName;
+    return this.mStatus;
   }
 
-  setName(value)
+  setStatus(value)
   {
-    this.mName = value;
+    this.mStatus = value;
   }
 
   // Type ------------------------------
@@ -40,6 +41,17 @@ module.exports = class Connection
   setType(value)
   {
     this.mType = value;
+  }
+
+  // Name ------------------------------
+  getName()
+  {
+    return this.mName;
+  }
+
+  setName(value)
+  {
+    this.mName = value;
   }
 
   // RoomCode ------------------------------

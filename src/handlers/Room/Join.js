@@ -40,6 +40,8 @@ module.exports = class extends SocketHandler {
       connection.setRoomId(room.getId());
       connection.setType('room');
     }
+    req.set('roomId', roomId);
+    req.set('room', room);
 
 
     // addPerson

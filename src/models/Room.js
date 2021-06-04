@@ -1,5 +1,5 @@
 const PersonContainer = require('../containers/Person');
-
+const ChatTranscript = require('./Chat/Transcript');
 module.exports = class Connection 
 {
   constructor(data={})
@@ -7,6 +7,7 @@ module.exports = class Connection
     this.mId = data.id || 0;
     this.mCode = data.code || 'default';
     this.mPeople = new PersonContainer();
+    this.mChat = new ChatTranscript();
   }
 
   /*******************************************************
@@ -91,6 +92,16 @@ module.exports = class Connection
   emitToEveryoneElse(model, eventType, payload)
   {
     this.mPeople.emitToEveryone(model, eventType, payload);
+  }
+
+
+
+  /*******************************************************
+   *                        Chat
+   *******************************************************/
+  getChat()
+  {
+    return this.mChat;
   }
 
   /*******************************************************

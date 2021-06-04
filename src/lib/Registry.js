@@ -45,13 +45,10 @@ module.exports = class Registry {
     // Execute
     if (!listener && this.mEvents.public[eventKey]) {
       listener = this.mEvents.public[eventKey];
-      console.log('public listener', eventKey, listener);
-
     }
 
     if (!listener && this.mEvents.private[eventKey]) {
       listener = this.mEvents.private[eventKey];
-      console.log('private listener', eventKey, listener);
     }
 
     if (listener) {

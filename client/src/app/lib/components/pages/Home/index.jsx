@@ -50,6 +50,12 @@ export default () => {
         set(['chat_messages'], chatMessages);
       });
 
+
+      socket.on('chat_transcript', (transcript) => {
+        let chatMessages = transcript.messages;
+        set(['chat_messages'], chatMessages);
+      })
+
       socket.on('connection', (data) => {
         set(['connection'], data);
       })
