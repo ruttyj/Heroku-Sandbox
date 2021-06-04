@@ -25,6 +25,8 @@ const GetCurrentRoom                                      = require('../handlers
 const ListRooms                                           = require('../handlers/Room/List');
 const LeaveRoom                                           = require('../handlers/Room/Leave');
 
+const RemovePersonFromRoom                                = require('../handlers/Room/Person/Remove');
+
 // Chat =========================================================
 const SendMessage                                         = require('../handlers/Room/Chat/Message');
 const NotifyIsTyping                                      = require('../handlers/Room/Chat/Typing');
@@ -38,7 +40,7 @@ const GetChatTranscript                                   = require('../handlers
 socketRegistry.public('get_connection',                     new GetConnection());
 socketRegistry.public('get_connection_type',                new GetConnectionType());
 socketRegistry.public('set_connection_type',                new SetConnectionType());
-socketRegistry.public('disconnect',                         new ExecuteMultiple(['leave_room', 'unregister_person'])); 
+socketRegistry.public('disconnect',                         new ExecuteMultiple(['room_disconnect', 'unregister_person'])); 
 
 // Person =======================================================
 socketRegistry.public('register_person',                    new RegisterPerson());
@@ -51,11 +53,9 @@ socketRegistry.private('notify_room_updated',               new ContextFromRoomI
 socketRegistry.public('get_current_room',                   new RequireRoomConnection(new GetCurrentRoom(new GetPeopleInRoom())));
 socketRegistry.public('get_room_list',                      new ListRooms());
 socketRegistry.public('join_room',                          new RequireRegistered(new JoinRoom(requireRegisteredInRoom(new GetChatTranscript()))));
-socketRegistry.public('leave_room',                         requireRegisteredInRoom(
-                                                              new LeaveRoom(
-                                                                new NotifyEveryoneInRoomOfAllPeople())
-                                                              )
-                                                            );
+socketRegistry.public('leave_room',                         requireRegisteredInRoom(new LeaveRoom(new RemovePersonFromRoom(new NotifyEveryoneInRoomOfAllPeople()))));
+socketRegistry.public('room_disconnect',                    requireRegisteredInRoom(new LeaveRoom(new RemovePersonFromRoom(new NotifyEveryoneInRoomOfAllPeople()))));
+
 
 // Chat =========================================================
 socketRegistry.public('message',                            requireRegisteredInRoom(new SendMessage()));

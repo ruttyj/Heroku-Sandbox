@@ -37,10 +37,10 @@ export default () => {
   return (<div>
 
     {get(['chat_messages']).map((message) => {
-
+      let myId = get(['me', 'id']);
+      let isMyMessage = message.authorId == myId;
       let personName = String(get(['people', 'items', message.authorId, 'name'], 'Someone'))
-
-      return (<div className="chat-item">
+      return (<div className={['chat-item', isMyMessage ? 'chat-item-mine' : 'chat-item-other'].join(' ')}>
         <div className={["chat-message-author"]}>
           {personName}
         </div>
@@ -49,8 +49,11 @@ export default () => {
         </div>
       </div>)
     })}
+
+
+
     <form>
-      <div className="form-input">
+      <div className="form-input chat-form">
         <input type="text" name="message" value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
       </div>
       <button onClick={onSubmit}>

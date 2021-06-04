@@ -4,6 +4,8 @@ import { useBufferedStateContext  } from '../../../state/bufferedContext';
 import JoinRoomForm from './JoinRoomForm';
 import RegisterForm from './RegisterForm';
 import ChatForm from './ChatForm';
+import Sidebar from './Sidebar/Sidebar';
+import './style.css';
 
 export default () => {
   const [isMounted, setMounted] = useState(false);
@@ -91,7 +93,9 @@ export default () => {
       
 
       socket.emit("get_connection_type");
-      socket.emit('get_room_list');
+      
+      socket.emit('register_person', 'Tyler');
+      socket.emit('join_room', 'test');
       
     } else if (socket) {
       socket.off('time');
@@ -132,31 +136,48 @@ export default () => {
       </div>)
   }
 
+
+  let content = '';
+
+
+  switch (get(['mode'], 'chat')) {
+      case 'chat': 
+      content = <div>
+        <h1>Hello World!</h1>
+        
+        <RegisterForm/>
+        <JoinRoomForm/>
+        <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
+
+        <br/>
+        <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set set_connection_type "lobby"</button>
+        <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
+        <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
+        <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
+        <button onClick={() => {socket.emit("notify_room_people_all_keyed")}}>room_people_all_keyed</button>
+        <button onClick={() => {socket.emit("notify_room_updated")}}>notify_room_updated</button>
+        <button onClick={() => {socket.emit("get_current_room")}}>get_current_room</button>
+
+        
+
+        
+        {bodyContent}
+        <hr/>
+        <h3>State:</h3>
+      </div>
+      break;
+    default: 
+      content = <div>Default page</div>
+  }
+
+
   return (
-    <div>
-      <h1>Hello World!</h1>
-      
-      <RegisterForm/>
-      <JoinRoomForm/>
-      <button onClick={() => {socket.emit("get_connection_type")}}>get connection type</button>
-
-      <br/>
-      <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set set_connection_type "lobby"</button>
-      <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
-      <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
-      <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
-      <button onClick={() => {socket.emit("notify_room_people_all_keyed")}}>room_people_all_keyed</button>
-      <button onClick={() => {socket.emit("notify_room_updated")}}>notify_room_updated</button>
-      <button onClick={() => {socket.emit("get_current_room")}}>get_current_room</button>
-
-      
-
-      
-      {bodyContent}
-      <hr/>
-      <h3>State:</h3>
-      <pre>{JSON.stringify(get(), null, 2)}</pre>
-      
+    <div className={["flex"]}>
+      <Sidebar/>
+      <div className={["body"]}>
+        {content}
+        <pre>{JSON.stringify(get(), null, 2)}</pre>
+      </div>
     </div>
   );
 }
