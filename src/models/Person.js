@@ -6,7 +6,7 @@ module.exports = class Connection
     this.mType = data.type || null;
     this.mRoomCode = data.roomCode || null;
     this.mName = data.name || "";
-    this.mConnection = null;
+    this.mConnection = 'connected';
   }
 
   // Id ---------------------------------
@@ -125,6 +125,7 @@ module.exports = class Connection
     return {
       id:         this.mId,
       roomCode:   this.mRoomCode,
+      status:     this.mStatus,
       type:       this.mType,
       name:       this.mName,
       socketId:   this.getSocketId(),
