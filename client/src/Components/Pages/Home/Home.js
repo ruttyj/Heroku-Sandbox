@@ -17,10 +17,11 @@ import {
   ArrowToolTip,
   wallpapers,
   PhotoSizeSelectActualIcon,
-  createDebugger,
-  createWindowA,
-  createWallpaperWindow,
 } from "../../Imports";
+import createThreeJsWindow from './ThreeJsWindow';
+import createDebugger from './DebugWindow';
+import createChatWindow from './ChatWindow';
+import createWallpaperWindow from './BackgroundPicker';
 import { useBufferedStateContext  } from "../../../state/bufferedContext";
 import { useConnectionContext } from "../../../state/connectionContext";
 
@@ -54,12 +55,11 @@ function Home(props) {
       
       set([], {
         theme: {
-          wallpaper: els(wallpapers[9], wallpapers[0]), // set default url
+          wallpaper: els(wallpapers[4], wallpapers[0]), // set default url
         }
       })
       windowManager.init();
-      createWindowA(windowManager, true);
-      createWallpaperWindow(windowManager, false);
+      createChatWindow(windowManager, true);
       //-------------------
       setMounted(true);
     }
@@ -151,6 +151,16 @@ function Home(props) {
   };
 
 
+  const openChatWindow = () => {
+    let window = windowManager.getWindowByKey("chat");
+    if (isDef(window)) {
+      windowManager.setFocused(window.id);
+    } else {
+      createChatWindow(windowManager, true);
+    }
+  };
+
+
   // Create Task bar items
   let taskBarItems = {};
   windowManager.getOrderedWindows().forEach((window) => {
@@ -190,6 +200,14 @@ function Home(props) {
         <div {...classes("button")} onClick={() => openDebuggerV2()}>
           <BugReportIcon />
         </div>
+
+        <div {...classes("button")} onClick={() => createThreeJsWindow(windowManager, true)}>
+          <BugReportIcon />
+        </div>
+        <div {...classes("button")} onClick={() => openChatWindow()}>
+          <BugReportIcon />
+        </div>
+        
       </AppSidebar>
       <FillContainer>
         <FillHeader>
@@ -264,7 +282,9 @@ function Home(props) {
                     windowManager.setTaskbarOrder(newOrder);
                   }}
                 />
-                {get(['time'])}
+                <div {...classes('system-clock')}>
+                {String(get(['time'])).split(" ")[0]}
+                </div>
               </div>
             </BlurredWrapper>
           </div>

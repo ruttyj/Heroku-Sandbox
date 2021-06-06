@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from 'react';
 import utils from '../Utils/';
+import { debounce } from "lodash";
 
 const {
   isDef,
@@ -13,6 +14,13 @@ const {
   setImmutableValue,
   deleteImmutableValue,
 } = utils;
+
+/**
+ * Buffered Context
+ * 
+ * This context stores all its information in a ref and pushes the data to state after 1 ms of inactivity.
+ * This is ment to batch state changes together and prevent excessive rendering.
+ */
 const useBufferedState = () => {
 
   // used to trigger state change
@@ -21,6 +29,13 @@ const useBufferedState = () => {
   // values will be primarily read from this buffer
   const bufferedState = useRef({});
   
+  /**
+   * Flush consolidates all the updates within a time frame into a single setState
+   */
+  const _flush = debounce(async function() {
+    flush();
+  }, 1);
+
   function flush() 
   {
     setState(bufferedState.current);
@@ -34,25 +49,25 @@ const useBufferedState = () => {
   function set(path, value) 
   {
     bufferedState.current = setImmutableValue(bufferedState.current, path, value);
-    flush();
+    _flush();
   }
 
   function remove(path)
   {
     bufferedState.current = deleteImmutableValue(bufferedState.current, path);
-    flush();
+    _flush();
   }
 
   function inc(path=[], value=1)
   {
     set(path, parseFloat(get(path, 0)) + value);
-    flush();
+    _flush();
   }
 
   function dec(path=[], value=1)
   {
     set(path, parseFloat(get(path, 0)) - value);
-    flush();
+    _flush();
   }
 
   function is(A, B = undefined, C = undefined)
@@ -98,7 +113,7 @@ const useBufferedState = () => {
     } else {
       // You mean delete right, or keep same value?????
     }
-    flush();
+    _flush();
   }
   function swap(path = [], key1, key2)
   {

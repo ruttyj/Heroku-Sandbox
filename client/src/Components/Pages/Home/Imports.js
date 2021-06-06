@@ -21,12 +21,6 @@ import wallpapers from "../../../Data/Wallpapers";
 import PhotoSizeSelectActualIcon from "@material-ui/icons/PhotoSizeSelectActual";
 import TextField from "@material-ui/core/TextField";
 import PublicIcon from "@material-ui/icons/Public";
-import {
-  createDebugger,
-  createTrooperIframe,
-  createWindowA,
-  createWallpaperWindow,
-} from "./CreateWindow";
 import "./Home.scss";
 
 export {
@@ -56,8 +50,4 @@ export {
   PhotoSizeSelectActualIcon,
   TextField,
   PublicIcon,
-  createDebugger,
-  createTrooperIframe,
-  createWindowA,
-  createWallpaperWindow,
 };

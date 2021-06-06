@@ -661,19 +661,21 @@ const DragWindow = withResizeDetector(function(props) {
               <FillContent
                 classNames={[
                   "window-content",
-                  "tint-bkgd",
                   "column",
                   disablePointerEvents && "disable-pointer-events",
                 ]}
               >
-                {childContents}
+                <FillContainer>
+                  <FillContent
+                    classNames={[
+                      "column",
+                      disablePointerEvents && "disable-pointer-events",
+                    ]}
+                  >
+                    {childContents}
+                  </FillContent>
+                </FillContainer>
               </FillContent>
-
-              {isDef(actions)
-                ? isFunc(actions)
-                  ? actions(childArgs)
-                  : actions
-                : ""}
             </FillContainer>
           </div>
         </div>
