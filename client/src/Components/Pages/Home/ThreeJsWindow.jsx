@@ -7,8 +7,8 @@ import FillHeader from "../../Containers/FillContainer/FillHeader";
 import { useConnectionContext } from "../../../state/connectionContext";
 import { useBufferedStateContext  } from '../../../state/bufferedContext';
 import * as THREE from 'three';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { Canvas, extend, useFrame, useLoader, useThree } from 'react-three-fiber';
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
 import { Suspense, useCallback, useMemo, useRef } from 'react';
 import circleImg from '../../../assets/particle.png';
 extend({OrbitControls})
@@ -30,7 +30,7 @@ function CameraControls(){
       ref={controlsRef}
       args={[camera, domElement]}
       autoRotate
-      autoRotateSpeed={-0.2}
+      autoRotateSpeed={0}
     />
   );
 }
@@ -39,12 +39,12 @@ function Points() {
   const imgTex = useLoader(THREE.TextureLoader, circleImg);
   const bufferRef = useRef();
 
-  let t = 0;
+  const time = useRef(0);
   let f = 0.002;
   let a = 3;
-  const graph = useCallback((x, z) => {
-    return Math.sin(f * (x ** 2 + z ** 2 + t)) * a;
-  }, [t, f, a])
+  const graph = (x, z) => {
+    return Math.sin(f * (x ** 2 + z ** 2 + time.current)) * a;
+  }
 
   const count = 100
   const sep = 3
@@ -64,7 +64,7 @@ function Points() {
   }, [count, sep, graph])
 
   useFrame(() => {
-    t += 15
+    time.current += 15
     
     const positions = bufferRef.current.array;
 
@@ -98,7 +98,7 @@ function Points() {
         attach="material"
         map={imgTex}
         color={0x00AAFF}
-        size={0.5}
+        size={1.0}
         sizeAttenuation
         transparent={false}
         alphaTest={0.5}

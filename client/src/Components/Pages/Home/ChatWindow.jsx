@@ -62,7 +62,7 @@ function ChatWindow(props) {
 function createChatWindow(windowManager, isFocused = true) {
   // Dragable Lists window
   windowManager.createWindow({
-    title: "Window A",
+    title: "Chat",
     key: 'chat',
     isFocused,
     position: {
@@ -70,8 +70,8 @@ function createChatWindow(windowManager, isFocused = true) {
       top: 50
     },
     size: {
-      width: 700,
-      height: 700
+      width: 400,
+      height: 500
     },
     children: (props) => {
       return (

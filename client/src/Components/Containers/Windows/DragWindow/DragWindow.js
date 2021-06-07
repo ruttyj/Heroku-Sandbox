@@ -506,7 +506,7 @@ const DragWindow = withResizeDetector(function(props) {
   let lockResizeLabel = isResizeDisabled ? "Resize disabled" : "Resize enabled";
 
   let rightHeaderActionContents = (
-    <div {...classes("actions", "row", "right")} style={{ width: "102px" }}>
+    <div {...classes("actions", "row", "right")}>
       <div {...classes("button")} onClick={handleClick}>
         <MoreVertIcon />
       </div>

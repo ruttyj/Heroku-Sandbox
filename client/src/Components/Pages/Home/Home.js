@@ -22,9 +22,14 @@ import createThreeJsWindow from './ThreeJsWindow';
 import createDebugger from './DebugWindow';
 import createChatWindow from './ChatWindow';
 import createWallpaperWindow from './BackgroundPicker';
+import createSocketWindow from './SocketWindow';
 import { useBufferedStateContext  } from "../../../state/bufferedContext";
 import { useConnectionContext } from "../../../state/connectionContext";
-
+import GamesIcon from '@material-ui/icons/Games';
+import ChatIcon from '@material-ui/icons/Chat';
+import ExtensionIcon from '@material-ui/icons/Extension';
+import GraphicEqIcon from '@material-ui/icons/GraphicEq';
+import SettingsIcon from '@material-ui/icons/Settings';
 const {
   els,
   isDef,
@@ -60,6 +65,8 @@ function Home(props) {
       })
       windowManager.init();
       createChatWindow(windowManager, true);
+      createSocketWindow(windowManager, true);
+      createDebugger(windowManager);
       //-------------------
       setMounted(true);
     }
@@ -175,10 +182,10 @@ function Home(props) {
           key={window.id}
           onClick={() => windowManager.toggleWindow(window.id)}
         >
-          <div {...classes("truncate-inner")} key={window.id}>
+          <div {...classes("truncate-inner", "full-width")} key={window.id}>
             {window.title} 
           </div>
-          <a onClick={() => {
+          <a style={{padding: "15px"}} onClick={() => {
               windowManager.removeWindow(window.id)
             }}>x</a>
         </div>
@@ -200,13 +207,19 @@ function Home(props) {
         <div {...classes("button")} onClick={() => openDebuggerV2()}>
           <BugReportIcon />
         </div>
+        
+        <div {...classes("button")} onClick={() => createSocketWindow(windowManager, true)}>
+          <SettingsIcon />
+        </div>
 
         <div {...classes("button")} onClick={() => createThreeJsWindow(windowManager, true)}>
-          <BugReportIcon />
+          <GraphicEqIcon />
         </div>
         <div {...classes("button")} onClick={() => openChatWindow()}>
-          <BugReportIcon />
+          <ChatIcon />
         </div>
+
+        
         
       </AppSidebar>
       <FillContainer>
