@@ -42,21 +42,8 @@ module.exports = class extends SocketHandler {
     }
     req.set('roomId', roomId);
     req.set('room', room);
-
-
-    // addPerson
-    let personId = connection.getPersonId();
-    let personManager = app.getManager('person');
-    let person = personManager.get(personId);
-    if (person) {
-      room.addPerson(person);
-      socketHandlers.execute('notify_room_people_all_keyed', connection, room.getId());
-    }
-    socketHandlers.execute('notify_room_updated', connection, room.getId());
-
-    socket.emit('connection', connection.serialize());
-    socket.emit('connection_type', connection.getType());
-
+    
+    connection.emit('room', room.serialize());
 
 
     //---------------------------------

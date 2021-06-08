@@ -69,6 +69,7 @@ module.exports = class Connection
   // Connection --------------------------
   connect(connection)
   {
+    connection.setPersonId(this.getId());
     this.mConnection = connection;
   }
 

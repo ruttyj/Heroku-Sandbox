@@ -32,6 +32,7 @@ function WindowManager(state) {
     let { key, title } = props;
     let {
       isOpen = false,
+      isFullSize = false,
       isFocused = false,
       isDragDisabled = false,
       isResizeDisabled = false,
@@ -61,6 +62,7 @@ function WindowManager(state) {
       key,
       title: els(title, `Window #${topWindowId}`),
       isOpen,
+      isFullSize,
       zIndex,
       position,
       size,

@@ -13,15 +13,13 @@ import { useBufferedStateContext  } from '../../../state/bufferedContext';
 
 const { classes } = Utils;
 
-function ChatWindow(props) {
-  const { size, position, containerSize } = props;
+function Window(props) {
   const { get, set, is } = useBufferedStateContext();
   const { 
     isConnected,
     getSocket,
   } = useConnectionContext();
   const socket = getSocket();
-
 
   let content = '';
   let displayMode = 'register';
@@ -30,14 +28,12 @@ function ChatWindow(props) {
   let isRegistered = get(['me'], false);
   let inRoom = get(['room'], false);
 
-  if (!isRegistered){
+  if (!inRoom) {
+    displayMode = 'pickRoom';
+  } else if (!isRegistered) {
     displayMode = 'register';
   } else {
-    if (!inRoom) {
-      displayMode = 'pickRoom';
-    } else {
-      displayMode = 'chat';
-    }
+    displayMode = 'chat';
   }
 
   switch(displayMode) {
@@ -45,15 +41,13 @@ function ChatWindow(props) {
       content = <JoinRoomForm/>
     break;
     case 'chat':
-      content = <ChatForm/>
+      content = <ChatForm {...props}/>
     break;
     case 'register':
     default:
       content = <RegisterForm/>
     break;
   }
-
-
 
 
   return (content);
@@ -75,7 +69,7 @@ function createChatWindow(windowManager, isFocused = true) {
     },
     children: (props) => {
       return (
-        <ChatWindow {...props}/>
+        <Window {...props}/>
       )
     },
   });

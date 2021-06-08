@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useRef, useEffect } from 'react';
 import utils from '../Utils/';
 import { debounce } from "lodash";
-
+import WindowManager from '../Utils/WindowManager';
 const {
   isDef,
   isFunc,
@@ -180,8 +180,7 @@ const useBufferedState = () => {
   }
   
 
-  // Expose public ----------------
-  return {
+  const publicScope = {
     get, 
     set, 
     inc,
@@ -194,6 +193,14 @@ const useBufferedState = () => {
     map,
     state,
   }
+
+  const windowManagerRef = useRef(WindowManager(publicScope));
+  const windowManager = windowManagerRef.current;
+  publicScope.windowManager = windowManager;
+
+
+  // Expose public ----------------
+  return publicScope;
 }
 
 const BufferedStateContext = React.createContext(null);

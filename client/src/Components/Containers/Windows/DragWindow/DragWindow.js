@@ -35,6 +35,7 @@ let ef = () => {}; // empty function
 const DragWindow = withResizeDetector(function(props) {
   let {
     window = {},
+    windowManager,
     containerSize,
     classNames = [],
     width, // provided by withResizeDetector
@@ -454,6 +455,7 @@ const DragWindow = withResizeDetector(function(props) {
 
   const childArgs = {
     window,
+    windowManager,
     containerSize,
     size: getSize(),
     position: getPosition(),

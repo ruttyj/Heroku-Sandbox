@@ -41,11 +41,7 @@ function Home(props) {
   //console.log("#####################################################");
   const [isMounted, setMounted] = useState(false);
   const bufferedState = useBufferedStateContext();
-  const { set, get, remove } = bufferedState;
-
-  const windowManagerRef = useRef(WindowManager(bufferedState));
-  const windowManager = windowManagerRef.current;
-
+  const { set, get, remove, windowManager } = bufferedState;
 
   // Socket Connection to serverside
   const { 
@@ -114,6 +110,7 @@ function Home(props) {
       })
 
       socket.on('me', (data) => {
+        console.log('me', (data));
         set(['me'], data);
       })
 
@@ -127,11 +124,8 @@ function Home(props) {
         set(['people'], payload);
       })
       
-
-      socket.emit("get_connection_type");
-      
-      socket.emit('register_person', 'Tyler');
       socket.emit('join_room', 'test');
+      socket.emit('register_person', 'Smith');
       
     } else if (socket) {
       socket.off('time');
@@ -235,6 +229,7 @@ function Home(props) {
                   const contents = (
                     <DragWindow
                       window={window}
+                      windowManager={windowManager}
                       onSet={(path, value) =>
                         windowManager.setWindow(
                           window.id,

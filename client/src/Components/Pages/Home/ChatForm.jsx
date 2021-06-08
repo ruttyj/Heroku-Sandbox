@@ -8,6 +8,8 @@ import FillFooter from "../../Containers/FillContainer/FillFooter";
 import SendIcon from '@material-ui/icons/Send';
 import Utils from "../../../Utils";
 import { map } from 'lodash';
+import createRenameWindow from "./RenameWindow";
+
 const { classes } = Utils;
 
 
@@ -21,12 +23,14 @@ function RenderCounter()
 }
 
 
-export default () => {
+export default (props) => {
+
   const initialFormState = {
     message: "😜",
   };
   const [formState, setFormState] = useState(initialFormState);
-  const { set, get, remove } = useBufferedStateContext();
+  const { set, get, remove, windowManager } = useBufferedStateContext();
+
 
   const { 
     isConnected,
@@ -53,8 +57,9 @@ export default () => {
   }
   
 
-  let peopleItems = get(["people", "items"], {});
-  let peopleOrder = get(["people", "order"], []);
+  const peopleItems = get(["people", "items"], {});
+  const peopleOrder = get(["people", "order"], []);
+  const myId = get(['me', 'id']);
 
 
   return (
@@ -75,6 +80,7 @@ export default () => {
             let person = peopleItems[personKey];
             return (<div {...classes("full-width")}>
               {person.name}
+              <button onClick={() => {createRenameWindow(windowManager, true)}}>Edit</button>
             </div>);
           })}
         </div>
@@ -82,7 +88,6 @@ export default () => {
           padding: "10px",
         }}>
             {get(['chat_messages'], []).map((message) => {
-              let myId = get(['me', 'id']);
               let isMyMessage = message.authorId == myId;
               let personName = String(get(['people', 'items', message.authorId, 'name'], 'Someone'))
               return (<div {...classes(['row', 'chat-item', isMyMessage ? 'chat-item-mine' : 'chat-item-other'])}>

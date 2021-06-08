@@ -530,3 +530,14 @@ $transition: all 150ms linear;
     line-height: 3em;
     padding: 0px 15px;
 }
+
+.chat-message {
+    background-color: #ffffff29;
+    padding: 7px;
+    border-radius: 7px;
+    margin: 5px;
+}
+
+.row.chat-item.chat-item-mine {
+    flex-direction: row-reverse;
+}

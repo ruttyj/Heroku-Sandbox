@@ -18,7 +18,6 @@ module.exports = class extends SocketHandler {
 
     socket.emit('me', null);
     socket.emit('connection', connection.serialize());
-    socket.emit('connection_type', connection.getType());
 
     //---------------------------------
     this.next(eventKey, req, res);
