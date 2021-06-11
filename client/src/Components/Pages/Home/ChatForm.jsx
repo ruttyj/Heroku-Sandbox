@@ -1,15 +1,16 @@
 
 import React, { useState, useRef } from 'react';
 import { useConnectionContext } from '../../../state/connectionContext';
-import { useBufferedStateContext  } from '../../../state/bufferedContext';
+import { useGlobalContext  } from '../../../state/globalContext';
 import FillContainer from "../../Containers/FillContainer/FillContainer";
 import FillContent from "../../Containers/FillContainer/FillContent";
 import FillFooter from "../../Containers/FillContainer/FillFooter";
 import SendIcon from '@material-ui/icons/Send';
+import EditIcon from '@material-ui/icons/Edit';
 import Utils from "../../../Utils";
 import { map } from 'lodash';
 import createRenameWindow from "./RenameWindow";
-
+import randomEmoji from "../../../Utils/randomEmoji";
 const { classes } = Utils;
 
 
@@ -26,11 +27,13 @@ function RenderCounter()
 export default (props) => {
 
   const initialFormState = {
-    message: "😜",
+    message: randomEmoji(),
   };
   const [formState, setFormState] = useState(initialFormState);
-  const { set, get, remove, windowManager } = useBufferedStateContext();
+  const { set, get, remove, windowManager } = useGlobalContext();
 
+
+  const position = props.position;
 
   const { 
     isConnected,
@@ -62,28 +65,43 @@ export default (props) => {
   const myId = get(['me', 'id']);
 
 
+  const onOpenEditName = () => {
+    console.log(position);
+    createRenameWindow(windowManager, {
+      isFocused: true
+    })
+  }
+
+  const userPanel = <div {...classes("column", "tint-bkgd")} style={{
+    marginRight: "5px",
+    padding: "10px",
+    minWidth: "120px"
+  }}>  
+    {peopleOrder.map(personKey => {
+      let person = peopleItems[personKey];
+      let isMe = person.id == myId;
+      return (<div {...classes("full-width", "row", "chat-participant")} key={person.id}>
+        <div {...classes("grow")}>
+          {person.name}
+        </div>
+        {isMe ? <EditIcon onClick={() => onOpenEditName()} fontSize="small"  {...classes("edit-name")}/> : ''}
+      </div>);
+    })}
+  </div>
+
+
+
+
   return (
     <FillContainer>
       <FillContent
         classNames={[
           "window-content",
-          
           "column",
         ]}
       >
        <div {...classes("row", 'full-height')}>
-        <div {...classes("column", "tint-bkgd")} style={{
-          marginRight: "5px",
-          padding: "10px",
-        }}>  
-          {peopleOrder.map(personKey => {
-            let person = peopleItems[personKey];
-            return (<div {...classes("full-width")}>
-              {person.name}
-              <button onClick={() => {createRenameWindow(windowManager, true)}}>Edit</button>
-            </div>);
-          })}
-        </div>
+        {userPanel}
         <div {...classes("column", "tint-bkgd", 'full-width')} style={{
           padding: "10px",
         }}>

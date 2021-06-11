@@ -10,11 +10,10 @@ module.exports = class extends SocketHandler {
     const socket = connection.getSocket();
     const socketHandlers = app.getRegistry('socket');
     const roomManager = app.getManager('room');
-    const value = req.getPayload();
+    const roomCode = req.getPayload();
 
     //---------------------------------
 
-    let roomCode = value;
     let roomTitle = roomCode;
 
     // Create room data
@@ -38,13 +37,10 @@ module.exports = class extends SocketHandler {
         room = roomManager.make(roomData);
       }
       connection.setRoomId(room.getId());
-      connection.setType('room');
+      connection.setType('register');
     }
-    req.set('roomId', roomId);
     req.set('room', room);
-    
     connection.emit('room', room.serialize());
-
 
     //---------------------------------
     this.next(eventKey, req, res);

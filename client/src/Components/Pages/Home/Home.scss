@@ -541,3 +541,25 @@ $transition: all 150ms linear;
 .row.chat-item.chat-item-mine {
     flex-direction: row-reverse;
 }
+
+.chat-participant {
+    margin-bottom: 10px;
+    cursor: default;
+    .edit-name {
+        color: #999;
+        cursor: pointer;
+    }
+}
+
+input.MuiInputBase-input.MuiFilledInput-input {
+    background-color: #0000005d;
+    color: white;
+}
+
+label.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-filled.MuiFormLabel-filled {
+    color: #989898;
+}
+
+label.MuiFormLabel-root.MuiInputLabel-root.MuiInputLabel-formControl.MuiInputLabel-animated.MuiInputLabel-filled {
+    color: #989898;
+}

@@ -1,25 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import Utils from "./Utils";
-import wallpapers from "../../../Data/Wallpapers";
-import FillContainer from "../../Containers/FillContainer/FillContainer";
-import FillContent from "../../Containers/FillContainer/FillContent";
-import FillFooter from "../../Containers/FillContainer/FillFooter";
-import FillHeader from "../../Containers/FillContainer/FillHeader";
 import RegisterForm from "./RegisterForm";
 import JoinRoomForm from "./JoinRoomForm";
 import ChatForm from "./ChatForm";
-import { useConnectionContext } from "../../../state/connectionContext";
-import { useBufferedStateContext  } from '../../../state/bufferedContext';
+import ChatIcon from '@material-ui/icons/Chat';
+import { useGlobalContext  } from '../../../state/globalContext';
 
 const { classes } = Utils;
 
 function Window(props) {
-  const { get, set, is } = useBufferedStateContext();
-  const { 
-    isConnected,
-    getSocket,
-  } = useConnectionContext();
-  const socket = getSocket();
+  const { get, set, is } = useGlobalContext();
 
   let content = '';
   let displayMode = 'register';
@@ -49,11 +39,10 @@ function Window(props) {
     break;
   }
 
-
   return (content);
 }
 
-function createChatWindow(windowManager, isFocused = true) {
+export default function (windowManager, isFocused = true) {
   // Dragable Lists window
   windowManager.createWindow({
     title: "Chat",
@@ -67,6 +56,7 @@ function createChatWindow(windowManager, isFocused = true) {
       width: 400,
       height: 500
     },
+    icon: <ChatIcon />,
     children: (props) => {
       return (
         <Window {...props}/>
@@ -74,5 +64,3 @@ function createChatWindow(windowManager, isFocused = true) {
     },
   });
 }
-
-export default createChatWindow;

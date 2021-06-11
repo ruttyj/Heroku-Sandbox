@@ -1,17 +1,18 @@
 
 import React, { useState, useRef } from 'react';
 import { useConnectionContext } from '../../../state/connectionContext';
-import { useBufferedStateContext  } from '../../../state/bufferedContext';
+import { useGlobalContext  } from '../../../state/globalContext';
 import FillContainer from "../../Containers/FillContainer/FillContainer";
 import FillContent from "../../Containers/FillContainer/FillContent";
 import FillFooter from "../../Containers/FillContainer/FillFooter";
 import Utils from "../../../Utils";
-import { map } from 'lodash';
+import TextField from '@material-ui/core/TextField';
+
 const { classes } = Utils;
 
 
 export default () => {
-  const { set, get, remove } = useBufferedStateContext();
+  const { set, get, remove } = useGlobalContext();
   const initialFormState = {
     name: get(['me', 'name'], ""),
   };
@@ -42,28 +43,26 @@ export default () => {
   }
 
   return (
-    <FillContainer>
-      <FillContent
-        classNames={[
-          "window-content",
-          
-          "column",
-        ]}
-      >
-        <form {...classes("flex", "row", "full-width")}>
+    <form {...classes("flex", "full", "column", "full-width")}>
+      <FillContainer>
+        <FillContent
+          classNames={[
+            "window-content",
+            "column",
+          ]}
+        >
           <div className="form-input chat-form full-width">
-            <input type="text" name="name" {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
+            <TextField name="name" label="Nname" variant="filled"  {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
           </div>
+        </FillContent>
+        <FillFooter
+          height={40}
+          classNames={["footer", "actions", "center-center"]}
+        >
+          <div {...classes("spacer")} />
           <div {...classes("button")} onClick={onSubmit}>Save</div>
-        </form>
-      </FillContent>
-      <FillFooter
-        height={40}
-        classNames={["footer", "actions", "center-center"]}
-      >
-        <div {...classes("spacer")} />
-        
-      </FillFooter>
-    </FillContainer>
+        </FillFooter>
+      </FillContainer>
+    </form>
   )
 }

@@ -203,16 +203,16 @@ const useBufferedState = () => {
   return publicScope;
 }
 
-const BufferedStateContext = React.createContext(null);
+const GlobalContext = React.createContext(null);
 
 // Expose the way to access the state
-export const useBufferedStateContext = () => React.useContext(BufferedStateContext);
+export const useGlobalContext = () => React.useContext(GlobalContext);
 
 // Wrap components with the provider to allow access to state
-export function BufferedStateProvider({children}) {
+export function GlobalContextProvider({children}) {
   return (
-    <BufferedStateContext.Provider value={useBufferedState()}>
+    <GlobalContext.Provider value={useBufferedState()}>
       {children}
-    </BufferedStateContext.Provider>
+    </GlobalContext.Provider>
   );
 }

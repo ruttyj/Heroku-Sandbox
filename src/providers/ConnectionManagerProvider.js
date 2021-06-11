@@ -22,8 +22,8 @@ module.exports = class extends BaseProvider
       console.log('Socket connected:', socket.id);
 
       // Associate socket to cookie
-      let cookies = cookie.parse(socket.request.headers.cookie);
-      console.log('socket cookie', cookies);
+      //let cookies = cookie.parse(socket.request.headers.cookie);
+      //console.log('socket cookie', cookies);
 
 
       // Create object to store connection data
