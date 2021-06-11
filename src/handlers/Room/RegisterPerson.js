@@ -27,8 +27,11 @@ module.exports = class extends SocketHandler {
       room.addPerson(person);
       connection.setType('room');
       connection.setRoomId(room.getId());
+      socketHandlers.execute('notify_room_people_all_keyed', connection, room.getId());
     }
+    socketHandlers.execute('notify_room_updated', connection, room.getId());
 
+    socket.emit('connection', connection.serialize());
     //---------------------------------
     this.next(eventKey, req, res);
   }

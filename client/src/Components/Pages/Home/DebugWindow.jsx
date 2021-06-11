@@ -9,29 +9,18 @@ import RegisterForm from "./RegisterForm";
 import JoinRoomForm from "./JoinRoomForm";
 import ChatForm from "./ChatForm";
 import { useConnectionContext } from "../../../state/connectionContext";
-import { useGlobalContext  } from '../../../state/globalContext';
+import { useBufferedStateContext  } from '../../../state/bufferedContext';
 const { classes } = Utils;
 
 
 function DebugComponent({ size, position, containerSize }) {
-  const { set, get, remove } = useGlobalContext();
-
-
-  const raw = get([]);
-  const result = [];
-
-  Object.keys(raw).forEach((key) => {
-    let value = raw[key];
-    result.push(<xmp>
-      {key}:
-      {JSON.stringify(value, null, 2)}
-    </xmp>);
-  })
-
-
+  const { set, get, remove } = useBufferedStateContext();
   return (
     <pre {...classes("column", "align-left", "full-width")}>
-      {result}
+      <xmp>
+        state:
+        {JSON.stringify(get([]), null, 2)}
+      </xmp>
     </pre>
   )
 }

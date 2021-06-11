@@ -27,7 +27,7 @@ export default () => {
     e.preventDefault();
     if (isConnected) {
       if (formState.name.length > 0) {
-        socket.emit("register_in_room", formState.name);
+        socket.emit("register_person", formState.name);
       } 
     }
   }

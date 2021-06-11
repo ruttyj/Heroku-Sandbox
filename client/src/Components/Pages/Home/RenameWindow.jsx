@@ -1,9 +1,6 @@
 import React from "react";
 import RenameForm from "./RenameForm";
-export default function (windowManager, {
-  isFocused = true,
-  
-}) {
+export default function (windowManager, isFocused = true) {
   // Dragable Lists window
   windowManager.createWindow({
     title: "Change my name",
@@ -15,7 +12,7 @@ export default function (windowManager, {
     },
     size: {
       width: 400,
-      height: 150
+      height: 500
     },
     children: (props) => {
       return (

@@ -2,14 +2,14 @@ import React from "react";
 import Home from "../Components/Pages/Home/";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ConnectionStateProvider } from "../state/connectionContext";
-import { GlobalContextProvider } from '../state/globalContext';
+import { BufferedStateProvider } from '../state/bufferedContext';
 import "./App.scss";
 
 
 function App() {
   return (
     <ConnectionStateProvider>
-      <GlobalContextProvider>
+      <BufferedStateProvider>
         <Router>
           <Route
             render={({ location }) => (
@@ -20,7 +20,7 @@ function App() {
             )}
           />
         </Router>
-      </GlobalContextProvider>
+      </BufferedStateProvider>
     </ConnectionStateProvider>
   );
 }

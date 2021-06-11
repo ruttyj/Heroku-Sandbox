@@ -1,0 +1,65 @@
+body {
+    --bkgd-image: url(https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260);
+
+    --color: white;
+
+    color: var(--color);
+}
+
+html,
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+body,
+.main_bkgd,
+.blurred_bkgd:before,
+.blurred_bkgd:after {
+    background-image: var(--bkgd-image);
+    background-size: cover;
+    background-position: center, center;
+    background-attachment: fixed;
+}
+
+.flex {
+    display: flex;
+}
+
+.body {
+    padding: 140px;
+}
+
+pre {
+    background-color: #00000069;
+}
+
+/* CHAT */
+
+.chat-message-author {
+    line-height: 40px;
+}
+
+.chat-message {
+    margin-left: 20px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 7px;
+}
+
+.chat-form {
+    padding: 20px;
+    border-top: 1px solid white;
+    margin-top: 10px;
+}
+
+.chat-item-mine {
+    margin-left: 50px;
+    text-align: right;
+}
+
+.chat-item-other {
+    margin-right: 50px;
+    text-align: left;
+}

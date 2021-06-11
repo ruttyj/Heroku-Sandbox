@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Utils from "./Utils";
 import { useConnectionContext } from "../../../state/connectionContext";
-import { useGlobalContext  } from '../../../state/globalContext';
+import { useBufferedStateContext  } from '../../../state/bufferedContext';
 
 const { classes } = Utils;
 
 function ChatWindow(props) {
   const { size, position, containerSize } = props;
-  const { get, set, is } = useGlobalContext();
+  const { get, set, is } = useBufferedStateContext();
   const { 
     isConnected,
     getSocket,
@@ -16,13 +16,15 @@ function ChatWindow(props) {
 
 
   return <div {...classes("full", "column")}>
-    <button onClick={() => {socket.emit("get_connection")}}>get_connection</button>
-    <button onClick={() => {socket.emit("join_room", "test")}}>join_room</button>
-    <button onClick={() => {socket.emit("register_in_room", "jordan")}}>register_in_room jordan</button>
-    <button onClick={() => {socket.emit("register_in_room", "bob")}}>register_in_room bob</button>
+    <button onClick={() => {socket.emit("set_connection_type", "lobby")}}>set set_connection_type "lobby"</button>
+    <button onClick={() => {socket.emit("set_connection_type", "room")}}>set_connection_type "room"</button>
+    <button onClick={() => {socket.emit("get_room_list")}}>get_room_list</button>
+    <button onClick={() => {socket.emit("notify_room_people_all_keyed")}}>room_people_all_keyed</button>
+    <button onClick={() => {socket.emit("notify_room_updated")}}>notify_room_updated</button>
+    <button onClick={() => {socket.emit("get_current_room")}}>get_current_room</button>
     <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
+    <button onClick={() => {socket.emit("unregister_person")}}>unregister_person</button>
 
-    
     
   </div>;
 }

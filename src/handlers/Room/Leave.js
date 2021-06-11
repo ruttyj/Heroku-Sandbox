@@ -7,7 +7,9 @@ const SocketHandler = require('../../lib/ActionHandler');
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const connection = req.getConnection();
+    const app = connection.getApp();
     const socket = connection.getSocket();
+    const eventRegistry = app.getRegistry('socket');
     const room = req.get('room');
     //---------------------------------
 
@@ -18,15 +20,13 @@ module.exports = class extends SocketHandler {
     connection.setType('lobby');
 
     // Remove person
-    const person = req.get('person');
-    const personId = person.getId();
-    person.disconnect();
+    const personId = req.get('personId');
     room.removePerson(personId);
 
     // Notify of leave room
     socket.emit('room', null);
-    socket.emit('me', null);
     socket.emit('leave_room', true);
+    eventRegistry.execute('get_connection', connection);
 
     //---------------------------------
     // Exxecute next handler

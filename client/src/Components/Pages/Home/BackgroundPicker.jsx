@@ -9,7 +9,7 @@ import RegisterForm from "./RegisterForm";
 import JoinRoomForm from "./JoinRoomForm";
 import ChatForm from "./ChatForm";
 import { useConnectionContext } from "../../../state/connectionContext";
-import { useGlobalContext  } from '../../../state/globalContext';
+import { useBufferedStateContext  } from '../../../state/bufferedContext';
 
 
 const { classes } = Utils;

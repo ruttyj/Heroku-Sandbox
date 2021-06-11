@@ -80,8 +80,6 @@ module.exports = class Connection
 
   disconnect()
   {
-    const connection = this.getConnection();
-    connection.setPersonId(null);
     this.mConnection = null;
   }
 

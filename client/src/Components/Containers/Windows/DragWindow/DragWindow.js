@@ -140,6 +140,10 @@ const DragWindow = withResizeDetector(function(props) {
   if (isFullSize) {
     if (newPosLeft.get() !== 0) newPosLeft.set(0);
     if (newPosTop.get() !== 0) newPosTop.set(0);
+    onSetPosition({
+      top: newPosTop.get(),
+      left: newPosLeft.get(),
+    });
   }
 
   // Dont allow to resize outside of bounds

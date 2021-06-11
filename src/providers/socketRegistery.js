@@ -3,30 +3,42 @@ const socketRegistry = new SocketRegistry();
 
 const ExecuteMultiple = require('../handlers/ExecuteMultiple');
 
+
+
+
 // Debug  =======================================================
-const Log                         = require('../handlers/Debug/Log');
-const GetConnection               = require('../handlers/Connection/Get');
-const JoinRoom                    = require('../handlers/Room/Join');
-const RequireNotConnectedToRoom   = require('../handlers/Room/RequiredNotConnectedToRoom');
-const RequireUnregistered         = require('../handlers/Room/Person/RequireUnregistered');
-const RegisterInRoom              = require('../handlers/Room/Person/Register');
-const RequireRegistered           = require('../handlers/Room/Person/RequireRegistered');
-const GetMe                       = require('../handlers/Room/Person/GetMe');
-const RequireConnectedToRoom      = require('../handlers/Room/RequireConnectedToRoom');
-const NotifyRoomOfAllPeople       = require('../handlers/Room/NotifyRoomOfAllPeople');
-const LeaveRoom                   = require('../handlers/Room/Leave');
-const requireRegisteredInRoom     = (next=null) => (new RequireConnectedToRoom(new RequireRegistered(next)));
+const Log = require('../handlers/Debug/Log');
 
-socketRegistry.public('get_connection',                 (new GetConnection()));
-socketRegistry.public('join_room',                      (new RequireNotConnectedToRoom(new JoinRoom(new GetConnection()))));
-socketRegistry.public('register_in_room',               (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom(new GetConnection(new GetMe(new NotifyRoomOfAllPeople())))))));
-socketRegistry.public('leave_room',                     (requireRegisteredInRoom(new LeaveRoom(new NotifyRoomOfAllPeople()))));
-socketRegistry.public('disconnect',                     (new ExecuteMultiple(['leave_room'])));
+// Connection type  =============================================
+const GetConnection                                       = require('../handlers/Connection/Get');
+const GetConnectionType                                   = require('../handlers/Connection/GetType');
+const SetConnectionType                                   = require('../handlers/Connection/SetType');
+
+// Person =======================================================
+const RequireRegistered                                   = require('../handlers/Person/RequireRegistered');
+const Unregister                                          = require('../handlers/Person/Unregister');
+const ChangeMyName                                        = require('../handlers/Room/ChangeMyName');
+
+// Rooms ========================================================
+const ContextFromRoomId                                   = require('../handlers/Room/ContextFromId');
+const RequireRoomConnection                               = require('../handlers/Room/RequireConnectedToRoom');
+const requireRegisteredInRoom                             = (next=null) => new RequireRoomConnection(new RequireRegistered(next));
+const NotifyUpdatedRoom                                   = require('../handlers/Room/NotifyUpdated'); // let everyone in the room know the object changed
+const NotifyEveryoneInRoomOfAllPeople                     = require('../handlers/Room/NotifyRoomOfAllPeople');
+const GetPeopleInRoom                                     = require('../handlers/Room/GetPeopleInRoom');
+const JoinRoom                                            = require('../handlers/Room/Join');
+const GetCurrentRoom                                      = require('../handlers/Room/Current');
+const ListRooms                                           = require('../handlers/Room/List');
+const LeaveRoom                                           = require('../handlers/Room/Leave');
+const RegisterPersonInRoom                                = require('../handlers/Room/RegisterPerson');
+const RemovePersonFromRoom                                = require('../handlers/Room/Person/Remove');
+
+// Chat =========================================================
+const SendMessage                                         = require('../handlers/Room/Chat/Message');
+const NotifyIsTyping                                      = require('../handlers/Room/Chat/Typing');
+const GetChatTranscript                                   = require('../handlers/Room/Chat/Transcript');
 
 
-
-module.exports = socketRegistry;
-/*
 
 
 
@@ -55,7 +67,13 @@ socketRegistry.public('typing',                             requireRegisteredInR
 socketRegistry.public('get_chat_transcript',                requireRegisteredInRoom(new GetChatTranscript()));
 
 
-*/
+
+
+
+module.exports = socketRegistry;
+
+
+
 
 /**
  * Join room 

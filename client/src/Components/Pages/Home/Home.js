@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Utils from "./Utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useOnMount, useOnUnmount } from 'react-hookedup';
 import {
   FillContainer,
   FillContent,
@@ -24,14 +23,13 @@ import createDebugger from './DebugWindow';
 import createChatWindow from './ChatWindow';
 import createWallpaperWindow from './BackgroundPicker';
 import createSocketWindow from './SocketWindow';
-import { useGlobalContext  } from "../../../state/globalContext";
+import { useBufferedStateContext  } from "../../../state/bufferedContext";
 import { useConnectionContext } from "../../../state/connectionContext";
 import GamesIcon from '@material-ui/icons/Games';
 import ChatIcon from '@material-ui/icons/Chat';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import SettingsIcon from '@material-ui/icons/Settings';
-import DnD from './DnD';
 const {
   els,
   isDef,
@@ -41,7 +39,8 @@ const {
 
 function Home(props) {
   //console.log("#####################################################");
-  const bufferedState = useGlobalContext();
+  const [isMounted, setMounted] = useState(false);
+  const bufferedState = useBufferedStateContext();
   const { set, get, remove, windowManager } = bufferedState;
 
   // Socket Connection to serverside
@@ -50,25 +49,24 @@ function Home(props) {
     getSocket,
   } = useConnectionContext();
   const socket = getSocket();
-
-
-  useOnMount(() => {
-    set([], {
-      theme: {
-        wallpaper: els(wallpapers[4], wallpapers[0]), // set default url
-      }
-    })
-    windowManager.init();
-    //createChatWindow(windowManager, true);
-    //createSocketWindow(windowManager, true);
-    //createDebugger(windowManager);
-  })
   
-  useOnUnmount(() => {
-    // clear socket listners in case of hot reload / page navigation
-    socket.off();
-  })
-
+  useEffect(() => {
+    if (!isMounted) {
+      //-------------------
+      
+      set([], {
+        theme: {
+          wallpaper: els(wallpapers[4], wallpapers[0]), // set default url
+        }
+      })
+      windowManager.init();
+      createChatWindow(windowManager, true);
+      createSocketWindow(windowManager, true);
+      createDebugger(windowManager);
+      //-------------------
+      setMounted(true);
+    }
+  }, [isMounted]);
 
 
   // Set listeners
@@ -96,9 +94,6 @@ function Home(props) {
         set(['connection'], data);
       })
 
-      socket.on('debug', (data) => {
-        console.log('debug', data);
-      })
 
       socket.on('leave_room', (data) => {
         console.log('left room');
@@ -130,7 +125,7 @@ function Home(props) {
       })
       
       socket.emit('join_room', 'test');
-      socket.emit('register_in_room', 'Smith');
+      socket.emit('register_person', 'Smith');
       
     } else if (socket) {
       socket.off('time');
@@ -196,15 +191,6 @@ function Home(props) {
   const style = {
     "--bkgd-image": `url("${wallpaper}")`,
   };
-
-
-
-
-
-
-
-
-  
   return (
     <motion.div {...classes("full", "row", "main-bkgd")} style={style}>
       <AppSidebar>
@@ -237,8 +223,7 @@ function Home(props) {
         <FillContent>
           <WindowContainer
             windowManager={windowManager}
-          >
-          {({ containerSize }) => (
+            children={({ containerSize }) => (
               <>
                 {windowManager.getAllWindows().map((window) => {
                   const contents = (
@@ -291,9 +276,8 @@ function Home(props) {
                   );
                 })}
               </>
-            )}  
-          </WindowContainer>
-          
+            )}
+          />
         </FillContent>
         <FillFooter height={60}>
           <div {...classes("full")}>

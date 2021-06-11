@@ -9,8 +9,7 @@ module.exports = class extends SocketHandler {
     // get from context
     const room = req.get('room');
     const myConnection = req.getConnection();
-    const person = req.get('person');
-    const personId = person.getId();
+    let personId = req.get('personId');
     //---------------------------------
 
     // Get people in the room

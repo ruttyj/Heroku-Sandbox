@@ -1,4 +1,4 @@
-const SocketHandler = require('../../../lib/ActionHandler');
+const SocketHandler = require('../../lib/ActionHandler');
 
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {

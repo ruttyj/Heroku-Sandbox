@@ -18,6 +18,7 @@ module.exports = class extends SocketHandler {
     let room = connection.getRoom();
     if (room) {
       // Set context
+      req.set('roomId', room.getId());
       req.set('room', room);
       req.set('roomManager', roomManager);
 

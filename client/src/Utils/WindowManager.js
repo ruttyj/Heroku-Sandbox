@@ -40,8 +40,7 @@ function WindowManager(state) {
       position = null,
       zIndex = 1,
       size = null,
-      actions = null,
-      icon = null,
+      actions = null
     } = props;
 
     if (isFocused) {
@@ -75,8 +74,7 @@ function WindowManager(state) {
       disablePointerEventsOnBlur,
       isTempDisablePointerEvents: false,
       children,
-      actions,
-      icon,
+      actions
     };
   }
 
