@@ -5,7 +5,7 @@ import FillContent from "../../Containers/FillContainer/FillContent";
 import FillFooter from "../../Containers/FillContainer/FillFooter";
 import FillHeader from "../../Containers/FillContainer/FillHeader";
 import { useConnectionContext } from "../../../state/connectionContext";
-import { useBufferedStateContext  } from '../../../state/bufferedContext';
+import { useGlobalContext  } from '../../../state/globalContext';
 import * as THREE from 'three';
 import { Canvas, extend, useFrame, useLoader, useThree } from 'react-three-fiber';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
@@ -125,7 +125,7 @@ function AnimationCanvas() {
 
 function WindowComponent(props) {
   const { size, position, containerSize } = props;
-  const { set, get, remove } = useBufferedStateContext();
+  const { set, get, remove } = useGlobalContext();
 
   const { 
     isConnected,
