@@ -37,6 +37,8 @@ const {
   isDef,
   classes,
   setImmutableValue,
+  setNestedValue,
+  getNestedValue,
 } = Utils;
 
 function Home(props) {
@@ -59,7 +61,7 @@ function Home(props) {
       }
     })
     windowManager.init();
-    //createChatWindow(windowManager, true);
+    createChatWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);
   })
@@ -271,12 +273,34 @@ function Home(props) {
                           true
                         );
                       }}
+                      onDrag={(window) => {
+                        window = windowManager.getWindow(window.id);
+
+                        const setOnWindow = (window, path, value) => {
+                          if (getNestedValue(window, path) !== value) {
+                            setNestedValue(window, path, value);
+                            windowManager.setWindow(window.id, window);
+                            console.log('set');
+                          }
+                        }
+
+                        if (window.position.left < 100) {
+                          setOnWindow(window, 'backgroundColor', 'cyan');
+                        } else {
+                          setOnWindow(window, 'backgroundColor', null);
+                        }
+                       
+                      }}
                       onUp={(window) => {
                         // renable pointer events for other windows
                         windowManager.toggleOtherWindowsPointerEvents(
                           window.id,
                           false
                         );
+
+                        console.log('window.position', window.position);
+
+                        
                       }}
                       title={window.title}
                       containerSize={containerSize}

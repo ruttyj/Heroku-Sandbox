@@ -52,7 +52,7 @@ export default () => {
           ]}
         >
           <div className="form-input chat-form full-width">
-            <TextField name="name" label="Nname" variant="filled"  {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
+            <TextField name="name" label="Name" variant="filled"  {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
           </div>
         </FillContent>
         <FillFooter

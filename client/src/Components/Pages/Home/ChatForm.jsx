@@ -25,7 +25,7 @@ function RenderCounter()
 
 
 export default (props) => {
-
+  // Initial Form State
   const initialFormState = {
     message: randomEmoji(),
   };
@@ -34,6 +34,11 @@ export default (props) => {
 
 
   const position = props.position;
+  const size = props.size;
+
+
+  
+
 
   const { 
     isConnected,
@@ -68,7 +73,11 @@ export default (props) => {
   const onOpenEditName = () => {
     console.log(position);
     createRenameWindow(windowManager, {
-      isFocused: true
+      isFocused: true,
+      position: {
+        top: position.top + size.height/2 - 100,
+        left: position.left + 0,
+      }
     })
   }
 

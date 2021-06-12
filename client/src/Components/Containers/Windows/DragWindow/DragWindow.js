@@ -40,6 +40,7 @@ const DragWindow = withResizeDetector(function(props) {
     classNames = [],
     width, // provided by withResizeDetector
     height, // provided by withResizeDetector
+    backgroundColor='transparent',
     minSize = {},
     title = "Untitled",
     snapIndicator = {},
@@ -53,6 +54,7 @@ const DragWindow = withResizeDetector(function(props) {
     onSetPosition = ef,
     onClose = ef,
     onDown: handleOnDown = ef,
+    onDrag: handleOnDrag = ef,
     onUp: handleOnUp = ef,
     onToggleWindow: handleOnToggleWindow,
     setSnapIndicator = ef,
@@ -268,6 +270,7 @@ const DragWindow = withResizeDetector(function(props) {
         updatePosAndSize(newPos, newSize, getMinSize(), containerSize);
         onSetFocus(true);
       }
+      handleOnDrag(window);
     }
   };
 
@@ -636,6 +639,7 @@ const DragWindow = withResizeDetector(function(props) {
       exit="hidden"
       animate={animateState}
       style={{
+        backgroundColor: window.backgroundColor || 'transparent',
         position: "absolute",
         zIndex: zIndex,
         ...(isFullSize ? { top: "0px", left: "0px" } : getPosition()),
@@ -649,6 +653,7 @@ const DragWindow = withResizeDetector(function(props) {
       }}
       transition={{ type: "spring", stiffness: 200 }}
     >
+      
       <div {...classes("full_wrapper", "main-bkgd", "relative")}>
         <div {...classes("window-shell", "grow")}>
           {dragHandleContents}
@@ -671,6 +676,8 @@ const DragWindow = withResizeDetector(function(props) {
                     ]}
                   >
                     {childContents}
+                    { false && <pre>{JSON.stringify(window, null, 2)}</pre>}
+
                   </FillContent>
                 </FillContainer>
               </FillContent>
