@@ -3,6 +3,34 @@ import Utils from "../../../Utils/";
 import BlurredWrapper from "../../../Components/Containers/BlurredWrapper/";
 const { classes } = Utils;
 
+const screenfull = require('screenfull');
+
+class MyComponent extends React.Component {
+  componentDidMount() {
+    if (screenfull.isEnabled) {
+      screenfull.on('change', () => {
+        console.log('Am I fullscreen?', screenfull.isFullscreen ? 'Yes' : 'No');
+      });
+    }
+  }
+
+  // enabling fullscreen has to be done after some user input
+  toggleFullScreen = () => {
+    if (screenfull.isEnabled) {
+      screenfull.toggle();
+    }
+  }
+
+  render() {
+    return (
+      <button onClick={this.toggleFullScreen}>{
+        screenfull.isFullscreen ? ('v') : ('^')
+      }</button>
+    )
+  }
+}
+
+
 function AppHeader(props) {
   return (
     <div {...classes("app-header")}>
@@ -17,7 +45,7 @@ function AppHeader(props) {
         >
           <ToolbarButton>L</ToolbarButton>
           <ToolbarButton>C</ToolbarButton>
-          <ToolbarButton>R</ToolbarButton>
+          <ToolbarButton><MyComponent/></ToolbarButton>
         </div>
       </BlurredWrapper>
     </div>

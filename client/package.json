@@ -28,6 +28,7 @@
     "react-scripts": "3.4.1",
     "react-star-ratings": "^2.3.0",
     "react-three-fiber": "^6.0.13",
+    "screenfull": "^5.1.0",
     "socket.io-client": "^4.1.2",
     "tailwindcss": "^2.1.4",
     "three": "^0.129.0",
