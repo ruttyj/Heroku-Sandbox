@@ -81,13 +81,6 @@ function Home(props) {
         set(['time'], timeString);
       });
 
-      socket.on('message', (messageModel) => {
-        console.log('message', messageModel);
-        let chatMessages = get(['chat_messages'], []);
-        chatMessages = [...chatMessages, messageModel];
-        set(['chat_messages'], chatMessages);
-      });
-
 
       socket.on('chat_transcript', (transcript) => {
         let chatMessages = transcript.messages;

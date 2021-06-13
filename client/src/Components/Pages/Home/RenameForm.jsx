@@ -11,8 +11,8 @@ import TextField from '@material-ui/core/TextField';
 const { classes } = Utils;
 
 
-export default () => {
-  const { set, get, remove } = useGlobalContext();
+export default ({window}) => {
+  const { set, get, remove, windowManager } = useGlobalContext();
   const initialFormState = {
     name: get(['me', 'name'], ""),
   };
@@ -38,6 +38,7 @@ export default () => {
     if (isConnected) {
       if (formState.name.length > 0) {
         socket.emit("change_my_name", formState.name);
+        windowManager.removeWindow(window.id)
       } 
     }
   }

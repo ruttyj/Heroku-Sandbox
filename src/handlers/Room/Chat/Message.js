@@ -6,7 +6,7 @@ const Message = require('../../../models/Chat/Message');
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
     const room = req.get('room');
-    const me = req.get('me');
+    const me = req.get('person');
     const value = req.getPayload();
     //---------------------------------
 

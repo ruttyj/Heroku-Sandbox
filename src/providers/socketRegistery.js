@@ -16,12 +16,17 @@ const RequireConnectedToRoom      = require('../handlers/Room/RequireConnectedTo
 const NotifyRoomOfAllPeople       = require('../handlers/Room/NotifyRoomOfAllPeople');
 const LeaveRoom                   = require('../handlers/Room/Leave');
 const requireRegisteredInRoom     = (next=null) => (new RequireConnectedToRoom(new RequireRegistered(next)));
+const Message                     = require('../handlers/Room/Chat/Message');
+const GetChatTranscript           = require('../handlers/Room/Chat/Transcript');
+const ChangeMyName                = require('../handlers/Room/Person/ChangeMyName');
 
 socketRegistry.public('get_connection',                 (new GetConnection()));
 socketRegistry.public('join_room',                      (new RequireNotConnectedToRoom(new JoinRoom(new GetConnection()))));
-socketRegistry.public('register_in_room',               (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom(new GetConnection(new GetMe(new NotifyRoomOfAllPeople())))))));
+socketRegistry.public('register_in_room',               (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom(new GetConnection(new GetMe(new NotifyRoomOfAllPeople(new GetChatTranscript()))))))));
 socketRegistry.public('leave_room',                     (requireRegisteredInRoom(new LeaveRoom(new NotifyRoomOfAllPeople()))));
 socketRegistry.public('disconnect',                     (new ExecuteMultiple(['leave_room'])));
+socketRegistry.public('message',                        new Log(requireRegisteredInRoom(new Message())));
+socketRegistry.public('change_my_name',                 new Log(requireRegisteredInRoom(new ChangeMyName(new NotifyRoomOfAllPeople()))));
 
 
 

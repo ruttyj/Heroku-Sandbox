@@ -6,13 +6,14 @@ module.exports = class extends SocketHandler {
     const app = connection.getApp();
     const socket = connection.getSocket();
     const personManager = app.getManager('person');
-    const socketHandlers = app.getRegistry('socket');
     const name = req.getPayload();
-    let person = req.get('me', false);
+    let person = req.get('person', false);
     //---------------------------------
    
     person.setName(name);
     personManager.store(person);
+    
+    //execute GetMe
     socket.emit('me', person.serialize());
 
     //---------------------------------
