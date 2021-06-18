@@ -1,12 +1,16 @@
 module.exports = class Connection 
 {
+  static STATUS_CONNECTED = 'connected';
+  static STATUS_DISCONNECTED = 'disconnected';
+
   constructor(data)
   {
     this.mId = data.id || null;
     this.mType = data.type || null;
+    this.mStatus = data.status || null;
     this.mRoomCode = data.roomCode || null;
     this.mName = data.name || "";
-    this.mConnection = 'connected';
+    this.mConnection = null;
   }
 
   // Id ---------------------------------

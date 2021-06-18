@@ -106,6 +106,11 @@ module.exports = class
     return result;
   }
 
+  filter(callback)
+  {
+    return this.list().filter(callback);
+  }
+
   serialize()
   {
     let items = {};

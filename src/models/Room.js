@@ -2,6 +2,10 @@ const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
 module.exports = class Connection 
 {
+
+  static MODE_SETUP = 'setup';
+  static MODE_SESSION = 'session';
+
   constructor(data={})
   {
     this.mId = data.id || 0;
@@ -45,7 +49,7 @@ module.exports = class Connection
   }
 
   getPeople(){
-    return this.getPersonContainer();
+    return this.mPeople;
   }
 
   getPersonContainer()

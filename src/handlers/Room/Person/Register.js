@@ -1,4 +1,6 @@
 const SocketHandler = require('../../../lib/ActionHandler');
+const Person = require('../../../models/Person');
+
 
 module.exports = class extends SocketHandler {
   execute(eventKey, req, res) {
@@ -11,7 +13,7 @@ module.exports = class extends SocketHandler {
 
     // Create person
     const person = personManager.create({
-      name: personName
+      name: personName,
     })
     personManager.store(person);
     person.connect(connection)
@@ -20,10 +22,6 @@ module.exports = class extends SocketHandler {
 
     // Set person context for following handlers
     req.set('person', person);
-
-    //const people = room.getPeople()
-    //const everyoneElse = people.getEveryoneElse(person);
-
 
     //---------------------------------
     // Exxecute next handler

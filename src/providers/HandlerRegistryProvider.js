@@ -1,5 +1,5 @@
 const BaseProvider = require('./BaseProvider');
-const socketHandlerRegistry = require('./socketRegistery');
+const socketHandlerRegistry = require('../handlers/socketHandlers');
 
 module.exports = class extends BaseProvider 
 {

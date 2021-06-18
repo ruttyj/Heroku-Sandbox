@@ -24,6 +24,8 @@ import createDebugger from './DebugWindow';
 import createChatWindow from './ChatWindow';
 import createWallpaperWindow from './BackgroundPicker';
 import createSocketWindow from './SocketWindow';
+import createGameWindow from './GameWindow';
+import createDnDWindow from './DnDWindow';
 import { useGlobalContext  } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
 import GamesIcon from '@material-ui/icons/Games';
@@ -31,6 +33,7 @@ import ChatIcon from '@material-ui/icons/Chat';
 import ExtensionIcon from '@material-ui/icons/Extension';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import SettingsIcon from '@material-ui/icons/Settings';
+import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import DnD from './DnD';
 const {
   els,
@@ -57,13 +60,15 @@ function Home(props) {
   useOnMount(() => {
     set([], {
       theme: {
-        wallpaper: els(wallpapers[4], wallpapers[0]), // set default url
+        wallpaper: els(wallpapers[10], wallpapers[0]), // set default url
       }
     })
     windowManager.init();
     createChatWindow(windowManager, true);
-    //createSocketWindow(windowManager, true);
-    //createDebugger(windowManager);
+    createGameWindow(windowManager, true);
+    createSocketWindow(windowManager, true);
+    createDebugger(windowManager);
+    createDnDWindow(windowManager, true);
   })
   
   useOnUnmount(() => {
@@ -206,29 +211,32 @@ function Home(props) {
         <div {...classes("button")} onClick={() => openBackgroundPicker()}>
           <PhotoSizeSelectActualIcon />
         </div>
-       
+
+
         <div {...classes("button")} onClick={() => openDebuggerV2()}>
           <BugReportIcon />
         </div>
-        
-        <div {...classes("button")} onClick={() => createSocketWindow(windowManager, true)}>
-          <SettingsIcon />
-        </div>
+
 
         <div {...classes("button")} onClick={() => createThreeJsWindow(windowManager, true)}>
           <GraphicEqIcon />
         </div>
+
+
         <div {...classes("button")} onClick={() => openChatWindow()}>
           <ChatIcon />
         </div>
 
-        
-        
+        <div {...classes("button")} onClick={() => createSocketWindow(windowManager, true)}>
+          <SettingsIcon />
+        </div>
+
+
+        <div {...classes("button")} onClick={() => createGameWindow(windowManager, true)}>
+          <VideogameAssetIcon />
+        </div>
       </AppSidebar>
       <FillContainer>
-        <FillHeader>
-          <AppHeader />
-        </FillHeader>
         <FillContent>
           <WindowContainer
             windowManager={windowManager}

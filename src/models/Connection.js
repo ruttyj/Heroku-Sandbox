@@ -1,5 +1,9 @@
 module.exports = class Connection 
 {
+  static TYPE_LOBBY = 'lobby';
+  static TYPE_REGISTER = 'register';
+  static TYPE_PICK_ROOM = 'pickRoom';
+
   constructor()
   {
     this.mId = '0';

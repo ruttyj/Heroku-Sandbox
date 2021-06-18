@@ -58,4 +58,12 @@ module.exports = class App
   getRegistry(name) {
     return this.mHanderRegistry.get(name);
   }
+
+  addHandlers(name, value) {
+    this.addRegistry(name, value);
+  }
+
+  getHandlers(name) {
+    return this.getRegistry(name);
+  }
 }

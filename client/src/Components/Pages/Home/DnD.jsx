@@ -2,11 +2,29 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 // fake data generator
-const getItems = (count, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
+const getItems = (count, offset = 0) => {
+  
+  let numberMap = new Map();
+  numberMap.set(0, 1);
+  numberMap.set(1, 2);
+  numberMap.set(2, 3);
+  numberMap.set(3, 4);
+  numberMap.set(4, 5);
+  numberMap.set(5, 10);
+  
+  return Array.from({ length: count }, (v, k) => k).map(k => ({
     id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `item ${k + offset}`
+    content: <>
+      <img 
+        src={`/assets/cards/cash_${numberMap.get(k % 6)}.png`} 
+        style={{
+          width: "50px",
+          height: "75px",
+        }}
+      />
+    </>
   }));
+}
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -49,7 +67,6 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
-  width: 250
 });
 
 export default function () {
@@ -132,20 +149,9 @@ export default function () {
                               display: "flex",
                               justifyContent: "space-around"
                             }}
+                            className="column"
                           >
                             {item.content}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newState = [...state];
-                                newState[ind].splice(index, 1);
-                                setState(
-                                  newState.filter(group => group.length)
-                                );
-                              }}
-                            >
-                              delete
-                            </button>
                           </div>
                         </div>
                       )}

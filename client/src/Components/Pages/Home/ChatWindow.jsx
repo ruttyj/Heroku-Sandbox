@@ -49,12 +49,12 @@ export default function (windowManager, isFocused = true) {
     key: 'chat',
     isFocused,
     position: {
-      left: 300,
-      top: 50
+      left: 0,
+      top: 0
     },
     size: {
       width: 400,
-      height: 500
+      height: 1000
     },
     icon: <ChatIcon />,
     children: (props) => {

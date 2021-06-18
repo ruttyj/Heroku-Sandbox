@@ -24,12 +24,7 @@ module.exports = class
 
   create(data={})
   {
-    const personData = {
-      name: data.name || "",
-      type: data.type || "",
-      roomCode: data.roomCode || null,
-    };
-    return new Person(personData);
+    return new Person(data);
   }
 
   store(model)
