@@ -16,36 +16,36 @@ module.exports = class ActionHandler
     this.mNext = next;
   }
 
-  isFailure(eventKey, req, res) 
+  isFailure(req, res) 
   {
       return res.isFailure();
   }
 
   // Executes on the way down the chain & can be interupted
-  execute(eventKey, req, res) 
+  execute(req, res) 
   {
-      if (!this.isFailure(eventKey, req, res)) {
+      if (!this.isFailure(req, res)) {
           // Override implementation here
           
-          this.next(eventKey, req, res);
+          this.next(req, res);
       } 
   }
 
   // Executes on the way up the chain
-  finish(eventKey, req, res) 
+  finish(req, res) 
   {
       // Override implementation here
   }
 
-  next(eventKey, req, res) 
+  next(req, res) 
   {
-      if (!this.isFailure(eventKey, req, res)) {
+      if (!this.isFailure(req, res)) {
           if (this.mNext){
-              this.mNext.execute(eventKey, req, res);
+              this.mNext.execute(req, res);
           }
 
           if (this.finish) {
-              this.finish(eventKey, req, res);
+              this.finish(req, res);
           } 
       }
   }

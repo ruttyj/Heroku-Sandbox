@@ -5,7 +5,7 @@ const SocketHandler = require('../../../lib/ActionHandler');
 // List People in Room
 // ==============================================================
 module.exports = class extends SocketHandler {
-  execute(eventKey, req, res) {
+  execute(req, res) {
     // get from context
     const room = req.get('room');
     const myConnection = req.getConnection();
@@ -28,6 +28,6 @@ module.exports = class extends SocketHandler {
     room.emitToEveryone('room_people_all_keyed', people.serialize());
     //---------------------------------
     // Exxecute next handler
-    this.next(eventKey, req, res);
+    this.next(req, res);
   }
 }

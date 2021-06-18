@@ -1,7 +1,7 @@
 const SocketHandler = require('../../../lib/ActionHandler');
 
 module.exports = class extends SocketHandler {
-  execute(eventKey, req, res) {
+  execute(req, res) {
     const connection = req.getConnection();
     const app = connection.getApp();
     const personManager = app.getManager('person');
@@ -10,7 +10,7 @@ module.exports = class extends SocketHandler {
       console.log('registered');
       const person = personManager.get(personId);
       req.set('person', person);
-      this.next(eventKey, req, res);
+      this.next(req, res);
     }
   }
 }

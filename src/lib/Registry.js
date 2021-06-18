@@ -52,7 +52,7 @@ module.exports = class Registry {
     }
 
     if (listener) {
-      return listener.execute(eventKey, req, res);
+      return listener.execute(req, res);
     }
 
     return null;

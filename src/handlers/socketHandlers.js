@@ -31,7 +31,7 @@ const requirePersonInRoom         = (next=null) =>  new RequireConnectedToRoom(n
 
 // Connection  ==================================================
 handlers.public('get_connection',                         (new GetConnection()));
-handlers.public('disconnect',                             (new Log((ek, req, res) => {
+handlers.public('disconnect',                             (new Log((req, res) => {
                                                             const con = req.getConnection();
                                                             const app = con.getApp();
                                                             const handlers = app.getHandlers('socket');
@@ -51,7 +51,7 @@ handlers.private('get_room',                              (new RequireConnectedT
                                                           })));
 
 
-handlers.public('leave_room',                             (requirePersonInRoom((ek, req, res) => {
+handlers.public('leave_room',                             (requirePersonInRoom((req, res) => {
                                                             // Handle Game 
                                                             // @TODO
 
@@ -66,33 +66,33 @@ handlers.public('leave_room',                             (requirePersonInRoom((
                                                             if (person && room) {
                                                               room.getPeople().remove(person.getId());
                                                               console.log('remove', person.getId(), room.getPeople().serialize());
-                                                              (new NotifyRoomOfAllPeople()).execute(ek, req, res);
+                                                              (new NotifyRoomOfAllPeople()).execute(req, res);
                                                             }
 
                                                             // Leave room
-                                                            (new LeaveRoom((ek, req, res) => {
+                                                            (new LeaveRoom((req, res) => {
                                                       
                                                               con.setType(Connection.TYPE_PICK_ROOM);
                                                               con.emit('connection', con.serialize());
 
-                                                              (new GetConnection()).execute(ek, req, res);
+                                                              (new GetConnection()).execute(req, res);
                                                               con.emit('me', null);
                                                               con.emit('room', null);
-                                                            })).execute(ek, req, res);
+                                                            })).execute(req, res);
                                                           })));
                                                           
 // Person  ======================================================
-handlers.public('register_in_room',                       (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((ek, req, res) => {
+handlers.public('register_in_room',                       (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {
                                                             const con = req.getConnection();
                                                             const app = con.getApp();
                                                             //------------------------------------------
-                                                            (new NotifyRoomOfAllPeople()).execute(ek, req, res);
+                                                            (new NotifyRoomOfAllPeople()).execute(req, res);
 
                                                             const room = req.get('room');
                                                             console.log('join room', room.getPeople().serialize());
-                                                            (new GetConnection()).execute(ek, req, res);
-                                                            (new GetMe()).execute(ek, req, res);
-                                                            (new GetRoom()).execute(ek, req, res);
+                                                            (new GetConnection()).execute(req, res);
+                                                            (new GetMe()).execute(req, res);
+                                                            (new GetRoom()).execute(req, res);
                                                           })))));
 module.exports = handlers;
 /*

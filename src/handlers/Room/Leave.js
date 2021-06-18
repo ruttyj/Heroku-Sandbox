@@ -2,7 +2,7 @@ const SocketHandler = require('../../lib/ActionHandler');
 const Connection = require('../../models/Connection');
 module.exports = class extends SocketHandler
 {
-  execute(eventKey, req, res)
+  execute(req, res)
   {
     const con = req.getConnection();
     const socket = con.getSocket();
@@ -15,10 +15,10 @@ module.exports = class extends SocketHandler
 
     //---------------------------------
     // Exxecute next handler
-    this.next(eventKey, req, res);
+    this.next(req, res);
   }
 
-  finish(eventKey, req, res)
+  finish(req, res)
   {
     const con = req.getConnection();
     const socket = con.getSocket();

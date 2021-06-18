@@ -8,10 +8,10 @@ module.exports = class extends SocketHandler
     this.mEventList = eventList;
   }
 unregister_person
-  execute(eventKey, req, res) 
+  execute(req, res) 
   {
     console.log('ExecuteMultiple');
-    if (!this.isFailure(eventKey, req, res)) {
+    if (!this.isFailure(req, res)) {
       const events = this.mEventList;
       const connection = req.getConnection();
       const app = connection.getApp();
@@ -19,7 +19,7 @@ unregister_person
       events.forEach(key => {
         socketHandlers.execute(key, connection, req.getPayload());
       })
-      this.next(eventKey, req, res);
+      this.next(req, res);
     }
   }
 }

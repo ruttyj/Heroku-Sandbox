@@ -3,7 +3,7 @@ const Person = require('../../../models/Person');
 
 
 module.exports = class extends SocketHandler {
-  execute(eventKey, req, res) {
+  execute(req, res) {
     const room = req.get('room');
     const connection = req.getConnection();
     const app = connection.getApp();
@@ -25,6 +25,6 @@ module.exports = class extends SocketHandler {
 
     //---------------------------------
     // Exxecute next handler
-    this.next(eventKey, req, res);
+    this.next(req, res);
   }
 }
