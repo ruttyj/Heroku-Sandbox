@@ -31,7 +31,14 @@ const requirePersonInRoom         = (next=null) =>  new RequireConnectedToRoom(n
 
 // Connection  ==================================================
 handlers.public('get_connection',                         (new GetConnection()));
-handlers.public('disconnect',                             (new Log()));
+handlers.public('disconnect',                             (new Log((ek, req, res) => {
+                                                            const con = req.getConnection();
+                                                            const app = con.getApp();
+                                                            const handlers = app.getHandlers('socket');
+                                                            //------------------------------------------
+
+                                                            handlers.execute('leave_room', con);
+                                                          })));
 
 // Room  ========================================================
 handlers.public('join_room',                              (new RequireNotConnectedToRoom(new JoinRoom((...props) => {
