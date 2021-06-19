@@ -8,23 +8,11 @@ import FillFooter from "../../Containers/FillContainer/FillFooter";
 import SendIcon from '@material-ui/icons/Send';
 import EditIcon from '@material-ui/icons/Edit';
 import Utils from "../../../Utils";
-import { map } from 'lodash';
 import createRenameWindow from "./RenameWindow";
 import randomEmoji from "../../../Utils/randomEmoji";
-import { useOnMount, useOnUnmount } from 'react-hookedup';
-const { classes } = Utils;
-
-
-function RenderCounter()
-{
-  const renderCounter = useRef(0);
-  renderCounter.current = renderCounter.current + 1;
-  return <>
-    {renderCounter.current}
-  </>;
-}
-
-
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+const { classes, getNestedValue } = Utils;
 
 export default (props) => {
   // Initial Form State
@@ -100,12 +88,13 @@ export default (props) => {
     }
   }
   
-
+  const PERSON_TYPE_HOST = 'host';
   const peopleItems = get(["people", "items"], {});
   const peopleOrder = get(["people", "order"], []);
-  const myId = get(['me', 'id']);
+  const myId = get(['connection',  'personId']);
 
-
+  const myType = getNestedValue(peopleItems, [myId, 'type'], null);
+  const amIHost = myType == PERSON_TYPE_HOST;
   const onOpenEditName = () => {
     console.log(position);
     createRenameWindow(windowManager, {
@@ -117,6 +106,11 @@ export default (props) => {
     })
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+
+  // User Panel
+  
+
   const userPanel = <div {...classes("column", "tint-bkgd")} style={{
     marginRight: "5px",
     padding: "10px",
@@ -126,7 +120,28 @@ export default (props) => {
     {peopleOrder.map(personKey => {
       let person = peopleItems[personKey];
       let isMe = person.id == myId;
+
+      
+      const onClickMakeHost = (personId) => {
+        if(amIHost) {
+          socket.emit('set_host', personId);
+        }
+      }
+
+
+      let starContents = '';
+      if(person.type == PERSON_TYPE_HOST) {
+        starContents = <StarIcon/>;
+      } else {
+        if (amIHost) {
+          starContents = <StarBorderIcon style={{cursot: "pointer"}} onClick={() => onClickMakeHost(person.id)}/>
+        }
+      }
+
       return (<div {...classes("full-width", "row", "chat-participant")} key={person.id}>
+        <div>
+          {starContents}
+        </div>
         <div {...classes("grow")}>
           {person.name}
         </div>
@@ -137,7 +152,9 @@ export default (props) => {
 
 
 
-  
+   /////////////////////////////////////////////////////////////////////////////
+
+  // Main Contents
 
   return (
     <FillContainer>

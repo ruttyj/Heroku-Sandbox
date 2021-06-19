@@ -65,10 +65,10 @@ function Home(props) {
     })
     windowManager.init();
     createChatWindow(windowManager, true);
-    createGameWindow(windowManager, true);
-    createSocketWindow(windowManager, true);
+    //createGameWindow(windowManager, true);
+    //createSocketWindow(windowManager, true);
     createDebugger(windowManager);
-    createDnDWindow(windowManager, true);
+    //createDnDWindow(windowManager, true);
   })
   
   useOnUnmount(() => {

@@ -1,7 +1,10 @@
-module.exports = class Connection 
+module.exports = class Person
 {
   static STATUS_CONNECTED = 'connected';
   static STATUS_DISCONNECTED = 'disconnected';
+
+  static TYPE_HOST = 'host';
+  static TYPE_MEMBER = 'memeber';
 
   constructor(data)
   {
@@ -74,6 +77,8 @@ module.exports = class Connection
   connect(connection)
   {
     connection.setPersonId(this.getId());
+    this.setStatus(Person.STATUS_CONNECTED);
+    console.log('person connect', this.getStatus(), Person.STATUS_CONNECTED);
     this.mConnection = connection;
   }
 
@@ -86,6 +91,7 @@ module.exports = class Connection
   {
     const connection = this.getConnection();
     connection.setPersonId(null);
+    this.setStatus(Person.STATUS_DISCONNECTED);
     this.mConnection = null;
   }
 

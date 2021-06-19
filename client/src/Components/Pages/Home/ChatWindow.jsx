@@ -14,8 +14,8 @@ function Window(props) {
   let content = '';
   let displayMode = 'register';
 
-
-  let isRegistered = get(['me'], false);
+  
+  let isRegistered = get(['connection',  'personId'], false);
   let inRoom = get(['room'], false);
 
   if (!inRoom) {

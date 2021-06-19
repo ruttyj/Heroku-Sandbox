@@ -11,6 +11,7 @@ module.exports = class extends SocketHandler
     
     // Remove connnection association to room   
     con.setRoomId(null);
+    con.setPersonId(null);
     con.setType(Connection.TYPE_PICK_ROOM);
 
     //---------------------------------

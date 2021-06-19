@@ -1,6 +1,6 @@
 const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
-module.exports = class Connection 
+module.exports = class Room 
 {
 
   static MODE_SETUP = 'setup';
