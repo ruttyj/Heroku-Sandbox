@@ -81,9 +81,10 @@ handlers.public('leave_room',                             (requirePersonInRoom((
                                                               } else {
                                                                 // @TODO destroy room
                                                               }
+                                                              
+                                                              (new GetConnection()).execute(req, res);
+                                                              (new NotifyRoomOfAllPeople()).execute(req, res);
                                                             })).execute(req, res);
-
-                                                            (new NotifyRoomOfAllPeople()).execute(req, res);
                                                           })));
                                                           
 // Person  ======================================================

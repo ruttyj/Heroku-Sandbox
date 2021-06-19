@@ -19,11 +19,4 @@ module.exports = class extends SocketHandler
     this.next(req, res);
   }
 
-  finish(req, res)
-  {
-    const con = req.getConnection();
-    const socket = con.getSocket();
-    //---------------------------------
-    socket.emit('leave_room', true);
-  }
 }

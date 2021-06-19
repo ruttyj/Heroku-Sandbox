@@ -12,6 +12,7 @@ import createRenameWindow from "./RenameWindow";
 import randomEmoji from "../../../Utils/randomEmoji";
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
+import PersonIcon from '@material-ui/icons/Person';
 const { classes, getNestedValue } = Utils;
 
 export default (props) => {
@@ -20,7 +21,7 @@ export default (props) => {
     message: randomEmoji(),
   };
   const [formState, setFormState] = useState(initialFormState);
-  const { set, get, remove, windowManager } = useGlobalContext();
+  const { set, get, windowManager } = useGlobalContext();
 
 
   // Socket Connection to serverside
@@ -129,7 +130,7 @@ export default (props) => {
       }
 
 
-      let starContents = '';
+      let starContents = <PersonIcon/>;
       if(person.type == PERSON_TYPE_HOST) {
         starContents = <StarIcon/>;
       } else {
