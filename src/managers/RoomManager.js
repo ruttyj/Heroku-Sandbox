@@ -46,6 +46,6 @@ module.exports = class extends RamStorageManager
       let code = model.getCode();
       this.mCodeToId.remove(code);
     }
-    this.mList.remove(id);
+    this.mList.delete(id);
   }
 }

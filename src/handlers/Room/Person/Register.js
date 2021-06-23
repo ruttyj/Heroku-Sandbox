@@ -1,39 +1,26 @@
 const SocketHandler = require('../../../lib/ActionHandler');
 const Person = require('../../../models/Person');
 
-
 module.exports = class extends SocketHandler {
   execute(req, res) {
     const room = req.get('room');
-    const connection = req.getConnection();
-    const app = connection.getApp();
-    const personManager = app.getManager('person');
+    const con = req.getConnection();
     const personName = req.getPayload();
     //---------------------------------
 
     // Create person
-    const person = personManager.create({
+    const person = new Person({
       name: personName,
-    })
-    personManager.store(person);
-    person.connect(connection);
-
-    // Add person to room
+    });
+    person.setType(Person.TYPE_MEMBER);
     room.addPerson(person);
 
+    person.connect(con);
 
-    // Detect if room has a host
-    const hosts = room.getPeople().filter((p) => p.getStatus() == Person.STATUS_CONNECTED && p.getType() == Person.TYPE_HOST);
-    let hasHost = hosts.length != 0;
+    // Assign host if none exists
+    room.hasOrAutoAssignHost();
 
-    // Set as host if nessary
-    let personType = Person.TYPE_MEMBER;
-    if (!hasHost) {
-      personType = Person.TYPE_HOST;
-    }
-    person.setType(personType);
-
-
+    con.emit('me', person.getId());
 
     // Set person context for following handlers
     req.set('person', person);

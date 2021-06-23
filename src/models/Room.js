@@ -1,5 +1,6 @@
 const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
+const Person = require('./Person');
 module.exports = class Room 
 {
 
@@ -106,6 +107,33 @@ module.exports = class Room
   getChat()
   {
     return this.mChat;
+  }
+
+
+  // ----------------------------------------
+  hasOrAutoAssignHost() 
+  {
+    // Update host
+    let hasHost = false;
+    const connectedPeople = this.getPeople().filter((p) => p.getStatus() == Person.STATUS_CONNECTED);
+    const host = connectedPeople.find(p => p.getType() == Person.TYPE_HOST); 
+    
+    if (host) {
+      hasHost = true;
+    } else {
+      if (connectedPeople.length > 0) {
+        connectedPeople.forEach((p) => {
+          if (!hasHost) {
+            p.setType(Person.TYPE_HOST);
+            hasHost = true;
+          } else {
+            p.setType(Person.TYPE_MEMBER);
+          }
+        })
+      }
+    }                                            
+    
+    return hasHost;
   }
 
   /*******************************************************

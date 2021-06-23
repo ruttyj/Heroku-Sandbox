@@ -11,7 +11,6 @@ module.exports = class Person
     this.mId = data.id || null;
     this.mType = data.type || null;
     this.mStatus = data.status || null;
-    this.mRoomCode = data.roomCode || null;
     this.mName = data.name || "";
     this.mConnection = null;
   }
@@ -39,6 +38,7 @@ module.exports = class Person
     this.mStatus = value;
   }
 
+
   // Type ------------------------------
   getType()
   {
@@ -50,6 +50,7 @@ module.exports = class Person
     this.mType = value;
   }
 
+
   // Name ------------------------------
   getName()
   {
@@ -59,17 +60,6 @@ module.exports = class Person
   setName(value)
   {
     this.mName = value;
-  }
-
-  // RoomCode ------------------------------
-  getRoomCode()
-  {
-    return this.mRoomCode;
-  }
-
-  setRoomCode(value)
-  {
-    this.mRoomCode = value;
   }
 
 
@@ -132,12 +122,14 @@ module.exports = class Person
     }
     return false;
   }
-
+  
+  
+  
+  // Serialize ------------------------------
   serialize()
   {
     return {
       id:         this.mId,
-      roomCode:   this.mRoomCode,
       status:     this.mStatus,
       type:       this.mType,
       name:       this.mName,

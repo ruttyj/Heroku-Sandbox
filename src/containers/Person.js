@@ -11,6 +11,10 @@ module.exports = class
   add(model)
   {
     let id = model.getId();
+    if (!id) {
+      id = ++this.mTopId;
+      model.setId(id);
+    }
     this.mList.set(id, model);
     return model;
   }

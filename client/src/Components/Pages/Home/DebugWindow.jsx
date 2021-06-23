@@ -10,28 +10,42 @@ import JoinRoomForm from "./JoinRoomForm";
 import ChatForm from "./ChatForm";
 import { useConnectionContext } from "../../../state/connectionContext";
 import { useGlobalContext  } from '../../../state/globalContext';
-const { classes } = Utils;
-
+import './PeopleWindow.scss';
+//=================================================================
+//
+const { classes, getNestedValue: getFrom } = Utils;
 
 function DebugComponent({ size, position, containerSize }) {
   const { set, get, remove } = useGlobalContext();
 
+  const pathOrder = ['people', 'order'];
+  const pathItems = ['people', 'items'];
 
-  const raw = get([]);
-  const result = [];
+  const statusColors = new Map();
+  statusColors.set('connected', '#00FF33');
 
-  Object.keys(raw).forEach((key) => {
-    let value = raw[key];
-    result.push(<xmp>
-      {key}:
-      {JSON.stringify(value, null, 2)}
-    </xmp>);
-  })
-
-
+  let personOrder = get(pathOrder, []);
+  
   return (
     <pre {...classes("column", "align-left", "full-width")}>
-      {result}
+        {personOrder.map(personId => {
+
+          let person = get([...pathItems, personId], {});
+
+          return <>
+          <div className={"person-item"}>
+            {person.name}<br/>
+            <div style={{color: statusColors.get(person.status)}}>
+              {person.status}
+
+            </div>
+          </div>
+          </>
+        })
+      }
+      <xmp>
+      {JSON.stringify(get([]), null, 2)}
+      </xmp>
     </pre>
   )
 }

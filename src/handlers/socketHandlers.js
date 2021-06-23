@@ -25,13 +25,17 @@ const RequireRegistered           = require('../handlers/Room/Person/RequireRegi
 const RegisterInRoom              = require('../handlers/Room/Person/Register');
 const NotifyRoomOfAllPeople       = require('../handlers/Room/Person/NotifyRoomOfAllPeople');
 const IsHost                      = require('../handlers/Room/Person/IsHost');
-
-
 const requirePersonInRoom         = (next=null) =>  new RequireConnectedToRoom(new RequireRegistered(next));
+
+// Chat =========================================================
+const Message                     = require('../handlers/Room/Chat/Message');
+
+
+
 
 // Connection  ==================================================
 handlers.public('get_connection',                         (new GetConnection()));
-handlers.public('disconnect',                             (new Log((req, res) => {
+handlers.public('disconnect',                             new Callback(((req, res) => {
                                                             const con = req.getConnection();
                                                             const app = con.getApp();
                                                             const handlers = app.getHandlers('socket');
@@ -41,7 +45,7 @@ handlers.public('disconnect',                             (new Log((req, res) =>
                                                           })));
 
 // Room  ========================================================
-handlers.public('join_room',                              new Log(new RequireNotConnectedToRoom(new JoinRoom((...props) => {
+handlers.public('join_room',                              (new RequireNotConnectedToRoom(new JoinRoom((...props) => {
                                                             (new GetConnection()).execute(...props);
                                                             (new GetRoom()).execute(...props);
                                                           }))));
@@ -50,46 +54,42 @@ handlers.private('get_room',                              (new RequireConnectedT
 
                                                           })));
 
+
 handlers.public('leave_room',                             (requirePersonInRoom((req, res) => {
                                                             const con = req.getConnection();
-                                                            //------------------------------------------
-                                                            
-                                                            // Remove person from room
                                                             const person = req.get('person');
                                                             const room = req.get('room');
+                                                            const app = con.getApp();
+                                                            const roomManager = app.getManager('room');
+                                                            //------------------------------------------
+                                                            // Remove person from room
                                                             room.getPeople().remove(person.getId());
 
                                                             // Leave room
                                                             (new LeaveRoom((req, res) => {
-                                                      
+                                                              // now that I have left the rooom
+
+                                                              // update connection
                                                               con.setType(Connection.TYPE_PICK_ROOM);
                                                               (new GetConnection()).execute(req, res);
-                                                              con.emit('room', null);
-                                                      
-                                                              // Update host
-                                                              const peopleLeft = room.getPeople().filter((p) => p.getStatus() == Person.STATUS_CONNECTED);                                                              
-                                                              if (peopleLeft.length > 0) {
-                                                                let hasHost = false;
-                                                                peopleLeft.forEach((p) => {
-                                                                  if (!hasHost) {
-                                                                    p.setType(Person.TYPE_HOST);
-                                                                    hasHost = true;
-                                                                  } else {
-                                                                    p.setType(Person.TYPE_MEMBER);
-                                                                  }
-                                                                })
+
+                                                              // Assign another host if nessary
+                                                              const hasHost = room.hasOrAutoAssignHost();
+                                                              if (hasHost) {
                                                               } else {
                                                                 // @TODO destroy room
+                                                                roomManager.remove();
+                                                            
                                                               }
-                                                              
-                                                              (new GetConnection()).execute(req, res);
+
+                                                              con.emit('room', null);
+                                                      
                                                               (new NotifyRoomOfAllPeople()).execute(req, res);
                                                             })).execute(req, res);
                                                           })));
                                                           
 // Person  ======================================================
-handlers.public('register_in_room',                       new Log(new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {
-                                                            const con = req.getConnection();
+handlers.public('register_in_room',                       (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {
                                                             //------------------------------------------
                                                             (new NotifyRoomOfAllPeople()).execute(req, res);
 
@@ -99,7 +99,7 @@ handlers.public('register_in_room',                       new Log(new RequireCon
                                                             (new GetRoom()).execute(req, res);
                                                           })))));
 
-handlers.public('change_my_name',                         (new Log(requirePersonInRoom((req, res) => {
+handlers.public('change_my_name',                         ((requirePersonInRoom((req, res) => {
                                                             const me = req.get('person');
                                                             const newName = req.getPayload();
                                                             //------------------------------------------
@@ -108,7 +108,7 @@ handlers.public('change_my_name',                         (new Log(requirePerson
                                                             (new NotifyRoomOfAllPeople()).execute(req, res);
                                                           }))))
 
-handlers.public('set_host',                               (new Log(requirePersonInRoom(new IsHost((req, res) => {
+handlers.public('set_host',                               ((requirePersonInRoom(new IsHost((req, res) => {
                                                             const me = req.get('person');
                                                             const room = req.get('room');
                                                             const newHostId = req.getPayload();
@@ -123,6 +123,14 @@ handlers.public('set_host',                               (new Log(requirePerson
                                                               (new NotifyRoomOfAllPeople()).execute(req, res);
                                                             }
                                                           })))));
+
+// Chat =========================================================
+handlers.public('message',                                requirePersonInRoom(new Message()));
+
+
+
+
+
 
 module.exports = handlers;
 /*
@@ -140,13 +148,13 @@ handlers.private('notify_room_people_all_keyed',      new ContextFromRoomId(new 
 handlers.private('notify_room_updated',               new ContextFromRoomId(new NotifyUpdatedRoom()));
 handlers.public('get_current_room',                   new RequireRoomConnection(new GetCurrentRoom(new GetPeopleInRoom())));
 handlers.public('get_room_list',                      new ListRooms());
-handlers.public('join_room',                          new Log(new JoinRoom(requireRegisteredInRoom(new NotifyEveryoneInRoomOfAllPeople(new GetChatTranscript())))));
+handlers.public('join_room',                          (new JoinRoom(requireRegisteredInRoom(new NotifyEveryoneInRoomOfAllPeople(new GetChatTranscript())))));
 handlers.public('leave_room',                         requireRegisteredInRoom(new LeaveRoom(new RemovePersonFromRoom(new Unregister(new NotifyEveryoneInRoomOfAllPeople())))));
 handlers.public('room_disconnect',                    requireRegisteredInRoom(new LeaveRoom(new RemovePersonFromRoom(new NotifyEveryoneInRoomOfAllPeople()))));
 
 // Person =======================================================
-handlers.public('register_person',                    new Log(new RequireRoomConnection(new RegisterPersonInRoom())));
-handlers.public('change_my_name',                     new Log(requireRegisteredInRoom(new ChangeMyName(new NotifyEveryoneInRoomOfAllPeople()))))
+handlers.public('register_person',                    (new RequireRoomConnection(new RegisterPersonInRoom())));
+handlers.public('change_my_name',                     (requireRegisteredInRoom(new ChangeMyName(new NotifyEveryoneInRoomOfAllPeople()))))
 
 // Chat =========================================================
 handlers.public('message',                            requireRegisteredInRoom(new SendMessage()));
