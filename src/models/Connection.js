@@ -2,7 +2,8 @@ module.exports = class Connection
 {
   static TYPE_LOBBY = 'lobby';
   static TYPE_REGISTER = 'register';
-  static TYPE_PICK_ROOM = 'pickRoom';
+  static TYPE_PICK_ROOM = 'pick_rom';
+  static TYPE_IN_ROOM = 'in_room';
 
   constructor()
   {

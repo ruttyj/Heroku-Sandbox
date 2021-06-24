@@ -18,7 +18,6 @@ module.exports = class extends SocketHandler {
     const roomData = {
       code:         roomCode,
       title:        roomTitle,
-      playerCount:  0,
       joinable:     true,
       mode:         Room.MODE_SETUP,
     }

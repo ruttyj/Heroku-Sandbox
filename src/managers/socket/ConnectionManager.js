@@ -32,6 +32,9 @@ module.exports = class ConnectionManager
     }
   }
 
+  count() {
+    return this.mConnections.size;
+  }
 
   serialize() {
     const connectionKeys = [...this.mConnections.keys()];

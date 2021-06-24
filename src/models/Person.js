@@ -68,7 +68,6 @@ module.exports = class Person
   {
     connection.setPersonId(this.getId());
     this.setStatus(Person.STATUS_CONNECTED);
-    console.log('person connect', this.getStatus(), Person.STATUS_CONNECTED);
     this.mConnection = connection;
   }
 

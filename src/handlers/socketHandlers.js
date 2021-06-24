@@ -92,9 +92,6 @@ handlers.public('leave_room',                             (requirePersonInRoom((
 handlers.public('register_in_room',                       (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {
                                                             //------------------------------------------
                                                             (new NotifyRoomOfAllPeople()).execute(req, res);
-
-                                                            const room = req.get('room');
-                                                            console.log('join room', room.getPeople().serialize());
                                                             (new GetConnection()).execute(req, res);
                                                             (new GetRoom()).execute(req, res);
                                                           })))));

@@ -43,7 +43,6 @@ module.exports = class extends BaseProvider
       // Execute socket handlers
       socketHandlers.getPublicKeys().forEach((eventKey) => {
         socket.on(eventKey, (payload) => {
-          console.log('eventKey', eventKey);
           socketHandlers.execute(eventKey, connection, payload);
         });
       })

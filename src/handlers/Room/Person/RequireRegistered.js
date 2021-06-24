@@ -3,7 +3,6 @@ const SocketHandler = require('../../../lib/ActionHandler');
 module.exports = class extends SocketHandler {
   execute(req, res) {
     const connection = req.getConnection();
-    const app = connection.getApp();
     const room = req.get('room');
     const people = room.getPeople();
     const personId = connection.getPersonId();
