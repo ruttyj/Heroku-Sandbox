@@ -4,7 +4,7 @@ module.exports = class Person
   static STATUS_DISCONNECTED = 'disconnected';
 
   static TYPE_HOST = 'host';
-  static TYPE_MEMBER = 'memeber';
+  static TYPE_MEMBER = 'member';
 
   constructor(data)
   {

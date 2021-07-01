@@ -1,4 +1,3 @@
-import { isDef, trueFunc, emptyFunc } from "../../utils/";
 import React from "react";
 import { useDrop } from "react-dnd";
 
@@ -8,9 +7,9 @@ export default ({
   greedy = false,
   accept = "DRAG",
   dropProps = {},
-  onDrop = trueFunc,
-  onHover = trueFunc,
-  canDrop = trueFunc
+  onDrop = () => {},
+  onHover = () => {},
+  canDrop = () => {}
 }) => {
   const [{ isOver, isOverCurrent }, drop] = useDrop({
     accept: accept,

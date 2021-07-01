@@ -64,6 +64,7 @@ handlers.public('leave_room',                             (requirePersonInRoom((
                                                             //------------------------------------------
                                                             // Remove person from room
                                                             room.getPeople().remove(person.getId());
+                                                            con.emit('me', null);
 
                                                             // Leave room
                                                             (new LeaveRoom((req, res) => {
@@ -75,11 +76,10 @@ handlers.public('leave_room',                             (requirePersonInRoom((
 
                                                               // Assign another host if nessary
                                                               const hasHost = room.hasOrAutoAssignHost();
-                                                              if (hasHost) {
-                                                              } else {
-                                                                // @TODO destroy room
-                                                                roomManager.remove();
-                                                            
+                                                              if (!hasHost) {
+                                                                // destroy room
+                                                                room.destroy();
+                                                                roomManager.remove(room.getId());
                                                               }
 
                                                               con.emit('room', null);

@@ -22,7 +22,6 @@ const {
  * This is ment to batch state changes together and prevent excessive rendering.
  */
 const useBufferedState = () => {
-
   // used to trigger state change
   const [state, setState] = useState({});
   
@@ -60,14 +59,18 @@ const useBufferedState = () => {
 
   function inc(path=[], value=1)
   {
-    set(path, parseFloat(get(path, 0)) + value);
+    const newValue = parseFloat(get(path, 0)) + value;
+    set(path, newValue);
     _flush();
+    return newValue;
   }
 
   function dec(path=[], value=1)
   {
-    set(path, parseFloat(get(path, 0)) - value);
+    const newValue = parseFloat(get(path, 0)) - value;
+    set(path, newValue);
     _flush();
+    return newValue;
   }
 
   function is(A, B = undefined, C = undefined)
@@ -178,6 +181,10 @@ const useBufferedState = () => {
     });
     return result;
   }
+
+  function list(path = []) {
+    return map(path, v => v);
+  }
   
 
   const publicScope = {
@@ -191,6 +198,7 @@ const useBufferedState = () => {
     push,
     forEach,
     map,
+    list,
     state,
   }
 

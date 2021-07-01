@@ -26,6 +26,9 @@ import createWallpaperWindow from './BackgroundPicker';
 import createSocketWindow from './SocketWindow';
 import createGameWindow from './GameWindow';
 import createDnDWindow from './DnDWindow';
+import createGreedyWindow from './Greedy/Window';
+import createTreeUIWindow from './TreeUI/Window';
+import createFramerMotionDrop from './FramerMotionDrop/Window';
 import { useGlobalContext  } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
 import GamesIcon from '@material-ui/icons/Games';
@@ -64,10 +67,13 @@ function Home(props) {
       }
     })
     windowManager.init();
-    createChatWindow(windowManager, true);
+    //createGreedyWindow(windowManager, true);
+    createTreeUIWindow(windowManager, true);
+    //createFramerMotionDrop(windowManager, true);
+    //createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
-    createDebugger(windowManager);
+    //createDebugger(windowManager);
     //createDnDWindow(windowManager, true);
   })
   
@@ -290,7 +296,7 @@ function Home(props) {
                         } else {
                           setOnWindow(window, 'backgroundColor', null);
                         }
-                       
+                      
                       }}
                       onUp={(window) => {
                         // renable pointer events for other windows

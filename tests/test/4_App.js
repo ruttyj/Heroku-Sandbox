@@ -57,12 +57,17 @@ const {
   server: server2,
 } = io.make();
 
+const {
+  client: client3,
+  server: server3,
+} = io.make();
+
 const roomManager = app.getManager('room');
 const conManager = app.getManager('connection');
 
 describe('Connect to Application', () => {
   it("client's should connect", () => {
-    expect(conManager.count()).to.equal(2);
+    expect(conManager.count()).to.equal(3);
   });
 });
 
@@ -126,7 +131,6 @@ describe("Client 1 can join room", () => {
 
 })
 
-
 describe("Client 2 can join room", () => {
   
   // Client 1 Join Room AAA
@@ -158,9 +162,9 @@ describe("Client 2 can join room", () => {
 
   it("Register Client 2 as Joe in room", () => {
     const log = new Map();
-    const client1Log = new Map();
+    const c1Log = new Map();
     // Define what to log
-    logEventListener(client1Log, client1, 'room_people_all_keyed');
+    logEventListener(c1Log, client1, 'room_people_all_keyed');
     logEventListener(log, client2, 'room_people_all_keyed');
     logEventListener(log, client2, 'connection');
     logEventListener(log, client2, 'me');
@@ -188,38 +192,106 @@ describe("Client 2 can join room", () => {
     expect(connectionPayload.type).to.equal(Connection.TYPE_IN_ROOM);
 
     // other people in room should know about new person
-    const client1PeopleKeyed = client1Log.get('room_people_all_keyed');
+    const client1PeopleKeyed = c1Log.get('room_people_all_keyed');
     expect(client1PeopleKeyed.order.length).to.equal(2);
   })
 })
 
 describe("Client 2 can change their name", () => {
   it('should change names', () => {
-    const client1Log = new Map();
-    const client2Log = new Map();
-    logEventListener(client1Log, client1, 'room_people_all_keyed');
-    logEventListener(client2Log, client2, 'room_people_all_keyed');
+    const c1Log = new Map();
+    const c2Log = new Map();
+    logEventListener(c1Log, client1, 'room_people_all_keyed');
+    logEventListener(c2Log, client2, 'room_people_all_keyed');
   
     const newName = 'Bob';
     client2.emit('change_my_name', newName);
   
-    console.log(client1Log);
     const myId = 2;
   
-    const client1People = client1Log.get('room_people_all_keyed');
+    const client1People = c1Log.get('room_people_all_keyed');
     expect(client1People).to.not.equal(undefined);
     const client1PersonMe = client1People.items[myId];
     expect(client1PersonMe.name).to.equal(newName);
   
-    const client2People = client2Log.get('room_people_all_keyed');
+    const client2People = c2Log.get('room_people_all_keyed');
     expect(client2People).to.not.equal(undefined);
     const client2PersonMe = client2People.items[myId];
     expect(client2PersonMe.name).to.equal(newName);
   })
 })
 
-describe("Leaving room and reassigning host", () => {
-  it('when leaving room, next person should become host', () => {
+describe("Client 3 joins", () => {
+  it('client 3 joins', () => {
+    const c1Log = new Map();
+    const c2Log = new Map();
+    const c3Log = new Map();
     
+    logEventListener(c1Log, client1, 'room_people_all_keyed');
+    logEventListener(c2Log, client2, 'room_people_all_keyed');
+    logEventListener(c3Log, client3, 'room_people_all_keyed');
+
+    client3.emit('join_room', 'AAA');
+    client3.emit('register_in_room', 'Janna');
+
+    const c1People = c1Log.get('room_people_all_keyed');
+    expect(c1People.order.length).to.equal(3);
+
+    const c2People = c2Log.get('room_people_all_keyed');
+    expect(c2People.order.length).to.equal(3);
+
+    const c3People = c3Log.get('room_people_all_keyed');
+    expect(c2People.order.length).to.equal(3);
   })
 })
+
+describe("Leaving room and reassigning host", () => {
+  it('when leaving room, next person should become host', () => {
+    const c1Log = new Map();
+    const c2Log = new Map();
+    const c3Log = new Map();
+    logEventListener(c1Log, client1, 'room');
+    logEventListener(c1Log, client1, 'me');
+    logEventListener(c1Log, client1, 'room_people_all_keyed');
+    logEventListener(c2Log, client2, 'room_people_all_keyed');
+    logEventListener(c3Log, client3, 'room_people_all_keyed');
+
+    client1.emit('leave_room');
+
+    // my id should be emitted as null
+    expect(c1Log.get('me')).to.equal(null);
+    // room should be emitted as null
+    expect(c1Log.get('room')).to.equal(null);
+
+    const c1People = c1Log.get('room_people_all_keyed');
+    const c2People = c2Log.get('room_people_all_keyed');
+    const c3People = c3Log.get('room_people_all_keyed');
+    
+    // Person who left should have no people in their list
+    expect(c1People.order.length).to.equal(0);
+    
+    // C2 and C3 should agree on new host
+    expect(c2People.order.length).to.equal(2);
+    expect(c2People.items['2'].type).to.equal('host');
+
+    expect(c3People.order.length).to.equal(2);
+    expect(c3People.items['2'].type).to.equal('host');
+ 
+
+    // C3 should still be a memeber
+    expect(c3People.items['3'].type).to.equal('member');
+  })
+
+  /*
+  it('Client 2 disconnects', () => {
+    const c3Log = new Map();
+    
+    const c3People = c3Log.get('room_people_all_keyed');
+
+    client2.emit('disconnect');
+    expect(c3People.items['3'].type).to.equal('host');
+    expect(c3People.order.length).to.equal(1);
+  })
+  //*/
+})
+

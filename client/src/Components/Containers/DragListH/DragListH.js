@@ -28,6 +28,20 @@ const DragListHItem = ({ style = {}, setPosition, moveItem, i, children }) => {
     };
     setPosition(i, tempData);
   });
+
+
+  const onDragStart = () => {
+    console.log('drag start');
+    setDragging(true)
+  }
+  const onDragEnd = () => {
+    setDragging(false)
+  }
+  const onDrag = (e, { point }) => {
+    if (isDragging) {
+      moveItem(i, point.x)
+    }
+  }
   //pointer-events: none;
   return (
     <motion.li
@@ -42,9 +56,9 @@ const DragListHItem = ({ style = {}, setPosition, moveItem, i, children }) => {
       dragOriginX={dragOriginX}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={1}
-      onDragStart={() => setDragging(true)}
-      onDragEnd={() => setDragging(false)}
-      onDrag={(e, { point }) => moveItem(i, point.x)}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDrag={onDrag}
       positionTransition={({ delta }) => {
         if (isDragging) {
           // If we're dragging, we want to "undo" the items movement within the list

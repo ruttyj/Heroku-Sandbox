@@ -3,21 +3,17 @@ const { els, elsFn, isDef, isArr, getNestedValue, setImmutableValue } = Utils;
 
 function WindowManager(state) {
   let topWindowId = 0;
-  const taskbarOrderPath = ["windows", "taskbarOrder"];
-  const renderOrderPath = ["windows", "renderOrder"];
-  const keyDictionaryPath = ["windows", "keyDictionary"];
-  const containerSizePath = ["windows", "containerSize"];
+
+  const basePath = ["windows"];
+  const taskbarOrderPath = [...basePath, "taskbarOrder"];
+  const renderOrderPath = [...basePath, "renderOrder"];
+  const keyDictionaryPath = [...basePath, "keyDictionary"];
+  const containerSizePath = [...basePath, "containerSize"];
 
 
   function init() {
-    state.set("windows", {
+    state.set(basePath, {
       containerSize: { width: -1, height: -1 },
-      snapIndicator: {
-        n: false,
-        s: false,
-        e: false,
-        w: false
-      },
       taskbarOrder: [],
       renderOrder: [],
       keyDictionary: {},
@@ -83,7 +79,7 @@ function WindowManager(state) {
   // create a window and add to manager
   function createWindow(props = {}) {
     let window = _makeWindow(props);
-    state.set(["windows", "items", window.id], window);
+    state.set([...basePath, "items", window.id], window);
     state.set([...keyDictionaryPath, window.key], window.id);
     state.push(taskbarOrderPath, window.id);
     state.push(renderOrderPath, window.id);
@@ -109,14 +105,14 @@ function WindowManager(state) {
       state.remove([...keyDictionaryPath, window.key]);
 
       // Remove window
-      state.remove(["windows", "items", id]);
+      state.remove([...basePath, "items", id]);
     }
   }
 
   // Get window or nested value
   function getWindow(id, path = [], fallback = null) {
     let _path = isArr(path) ? path : [path];
-    return state.get(["windows", "items", id, ..._path], fallback);
+    return state.get([...basePath, "items", id, ..._path], fallback);
   }
 
   function getWindowByKey(key) {
@@ -133,7 +129,7 @@ function WindowManager(state) {
   }
 
   function setWindow(id, window) {
-    state.set(["windows", "items", id], window);
+    state.set([...basePath, "items", id], window);
   }
 
   function getOrderedWindows() {
@@ -148,11 +144,11 @@ function WindowManager(state) {
   }
 
   function getTaskbarOrder() {
-    return state.get(["windows", "taskbarOrder"], []);
+    return state.get([...basePath, "taskbarOrder"], []);
   }
 
   function setTaskbarOrder(value) {
-    state.set(["windows", "taskbarOrder"], value);
+    state.set([...basePath, "taskbarOrder"], value);
   }
 
   function getRenderOrder() {
@@ -160,12 +156,12 @@ function WindowManager(state) {
   }
 
   function getWindowsKeyed() {
-    return state.get(["windows", "items"], {});
+    return state.get([...basePath, "items"], {});
   }
 
   // Get windows so frames are not rerendered when reordering taskbar
   function getAllWindows() {
-    let items = state.get(["windows", "items"], {});
+    let items = state.get([...basePath, "items"], {});
     return Object.keys(items).map(key => items[key]);
   }
 
