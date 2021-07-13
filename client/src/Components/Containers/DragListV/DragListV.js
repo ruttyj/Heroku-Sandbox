@@ -3,11 +3,15 @@ import { useEffect, useState, useRef } from "react";
 import { motion, useMotionValue } from "framer-motion";
 import { findIndex, Position } from "./find-index";
 import move from "array-move";
+import useLongPress from "../../../Utils/useLongPress"
 import "./DragListV.scss";
+import DragHandle from "../../Functional/DragHandle/DragHandle";
 
-const DragListVItem = ({ style = {}, setPosition, moveItem, i }) => {
+const DragListVItem = ({ style = {}, setPosition, onMoveItem, i }) => {
   const [isDragging, setDragging] = useState(false);
+  const [isDraggable, setIsDraggable] = useState(false);
 
+  
   // We'll use a `ref` to access the DOM element that the `motion.li` produces.
   // This will allow us to measure its height and position, which will be useful to
   // decide when a dragging element should switch places with its siblings.
@@ -26,22 +30,56 @@ const DragListVItem = ({ style = {}, setPosition, moveItem, i }) => {
     });
   });
 
+
+  const onLongPress = () => {
+    console.log('longpress is triggered');
+    setIsDraggable(true)
+    setTimeout(() => {
+      setIsDraggable(false)
+    }, 1000)
+  };
+
+  const onClick = () => {
+      console.log('click is triggered')
+  }
+
+  const defaultOptions = {
+      shouldPreventDefault: true,
+      delay: 500,
+  };
+  const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+
+
   return (
     <motion.li
       ref={ref}
       initial={false}
       // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
-      animate={isDragging ? onTop : flat}
-      style={style}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 1.12 }}
-      drag="y"
+      animate={isDragging || isDragging ? onTop : flat}
+      style={{
+        ...style,
+        ...(isDraggable || isDragging ? {
+          border: "1px solid white"
+        } : {}) 
+      }}
+      {...longPressEvent}
+      drag={isDraggable ? "y" : null}
       dragOriginY={dragOriginY}
       dragConstraints={{ top: 0, bottom: 0 }}
       dragElastic={1}
-      onDragStart={() => setDragging(true)}
+      onMouseDown={() => {
+        setIsDraggable(true)
+      }}
+      onDragStart={() => {
+          setDragging(true)
+      }}
       onDragEnd={() => setDragging(false)}
-      onDrag={(e, { point }) => moveItem(i, point.y)}
+      onDrag={(e, { point }) => {
+        console.log('drag');
+        if(isDraggable || isDragging) {
+          onMoveItem(i, point.y)
+        }
+      }}
       positionTransition={({ delta }) => {
         if (isDragging) {
           // If we're dragging, we want to "undo" the items movement within the list
@@ -66,15 +104,19 @@ const flat = {
   transition: { delay: 0.3 },
 };
 
-const initialColors = {
-  "rgb(203, 212, 229)": 60,
-  "rgb(8, 157, 228)": 80,
-  "rgb(181, 227, 255)": 40,
-  "rgb(132, 187, 228)": 100,
-};
 
-const DragListV = () => {
-  const [colors, setColors] = useState(Object.keys(initialColors));
+const makeRandomColor = () => Math.floor(Math.random()*16777215).toString(16);
+const makeRandomNumber = (min, max) => Math.random() * (max - min) + min;
+
+
+
+
+
+const DragListV = ({items, order, onSetItemOrder=()=>{}}) => {
+  const [itemOrder, setItemOrder] = useState(order);
+  const [prevIndex, setPrevIndex] = useState(null); // remember previous hover index to reduce unnessary state setting
+ 
+
 
   // We need to collect an array of height and position data for all of this component's
   // `DragListVItem` children, so we can later us that in calculations to decide when a dragging
@@ -87,20 +129,32 @@ const DragListV = () => {
   // sibling.
   const moveItem = (i, dragOffset) => {
     const targetIndex = findIndex(i, dragOffset, positions);
-    if (targetIndex !== i) setColors(move(colors, i, targetIndex));
+    if (targetIndex !== i ) {
+      
+      const newOrder = move(itemOrder, i, targetIndex);
+      console.log(i);
+      onSetItemOrder(newOrder)
+      setItemOrder(newOrder);
+    }
   };
 
   return (
     <ul className={"drag-list-v"}>
-      {colors.map((color, i) => (
-        <DragListVItem
-          key={color}
+      {itemOrder.map((itemKey, i) => {
+        const item = items[itemKey];
+        const color = item.color;
+        const height = item.height;
+        
+        return <DragListVItem
+          key={itemKey}
           i={i}
-          style={{ background: color, height: initialColors[color] }}
+          style={{ background: color, height: height }}
           setPosition={setPosition}
-          moveItem={moveItem}
-        />
-      ))}
+          onMoveItem={moveItem}
+        >
+          {color} <DragHandle>Drag</DragHandle>
+        </DragListVItem>
+      })}
     </ul>
   );
 };

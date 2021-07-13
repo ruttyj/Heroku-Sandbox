@@ -22,12 +22,14 @@ import {
 import createThreeJsWindow from './ThreeJsWindow';
 import createDebugger from './DebugWindow';
 import createChatWindow from './ChatWindow';
+import createRoomLobby from './RoomLobby/Window';
 import createWallpaperWindow from './BackgroundPicker';
 import createSocketWindow from './SocketWindow';
 import createGameWindow from './GameWindow';
 import createDnDWindow from './DnDWindow';
 import createGreedyWindow from './Greedy/Window';
 import createTreeUIWindow from './TreeUI/Window';
+import createMinecraftUI from './MinecraftUI/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
 import { useGlobalContext  } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
@@ -67,10 +69,12 @@ function Home(props) {
       }
     })
     windowManager.init();
-    //createGreedyWindow(windowManager, true);
     createTreeUIWindow(windowManager, true);
+    createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    //createChatWindow(windowManager, true);
+    createChatWindow(windowManager, true);
+    createRoomLobby(windowManager, true);
+    createMinecraftUI(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);
@@ -79,7 +83,9 @@ function Home(props) {
   
   useOnUnmount(() => {
     // clear socket listners in case of hot reload / page navigation
-    socket.off();
+    if(socket) {
+      socket.off();
+    }
   })
 
 

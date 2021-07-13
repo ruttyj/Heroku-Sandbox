@@ -18,7 +18,7 @@ function getStyle(backgroundColor) {
         fontSize: '1rem',
     };
 }
-export const Dustbin = ({ greedy, children }) => {
+export const Dustbin = ({ dropZone, greedy, children, onDrop=()=>{} }) => {
     const [hasDropped, setHasDropped] = useState(false);
     const [hasDroppedOnChild, setHasDroppedOnChild] = useState(false);
     const [{ isOver, isOverCurrent }, drop] = useDrop(({
@@ -30,6 +30,10 @@ export const Dustbin = ({ greedy, children }) => {
             }
             setHasDropped(true);
             setHasDroppedOnChild(didDrop);
+            onDrop({
+              dropZone: dropZone,
+              dragItem: item,
+            });
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),

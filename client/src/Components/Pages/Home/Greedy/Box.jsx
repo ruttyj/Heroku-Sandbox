@@ -6,9 +6,10 @@ const style = {
     display: 'inline-block',
     cursor: 'move',
 };
-export const Box = ({children}) => {
+export const Box = ({children, dragItem={}}) => {
     const [, drag] = useDrag(({
        item: {
+        ...dragItem,
         type: ItemTypes.BOX,
        }, 
       }));

@@ -1,25 +1,29 @@
 import React from "react";
 import Utils from "../Utils";
 import ChatIcon from '@material-ui/icons/Chat';
-import Window from './Greedy';
+import Window from './Component';
 const { classes } = Utils;
 
 export default function (windowManager, isFocused = true) {
-  // Dragable Lists window
-  windowManager.createWindow({
+  const custom = {
     title: "DnD",
     key: 'DnD',
+    icon: <ChatIcon />,
+    isFullSize: false,
+  }
+
+  // Dragable Lists window
+  windowManager.createWindow({
+    ...custom,
     isFocused,
-    isFullSize: true,
     position: {
-      left: 0,
+      left: 400,
       top: 0
     },
     size: {
-      width: 400,
+      width: 1000,
       height: 1000
     },
-    icon: <ChatIcon />,
     children: (props) => {
       return (
         <Window {...props}/>

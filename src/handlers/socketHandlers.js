@@ -32,6 +32,8 @@ const Message                     = require('../handlers/Room/Chat/Message');
 
 
 
+const roomController = require('../controllers/Room/Room')
+
 
 // Connection  ==================================================
 handlers.public('get_connection',                         (new GetConnection()));
@@ -45,10 +47,7 @@ handlers.public('disconnect',                             new Callback(((req, re
                                                           })));
 
 // Room  ========================================================
-handlers.public('join_room',                              (new RequireNotConnectedToRoom(new JoinRoom((...props) => {
-                                                            (new GetConnection()).execute(...props);
-                                                            (new GetRoom()).execute(...props);
-                                                          }))));
+handlers.public('join_room',                              new roomController.join());
 handlers.private('get_room',                              (new RequireConnectedToRoom((...props) => {
                                                             (new GetRoom()).execute(...props);
 
@@ -124,6 +123,22 @@ handlers.public('set_host',                               ((requirePersonInRoom(
 // Chat =========================================================
 handlers.public('message',                                requirePersonInRoom(new Message()));
 
+
+handlers.public('start_game',                             requirePersonInRoom((req, res) => {
+                                                            const room = rew.get('room');
+                                                            //----------------------------
+                                                            room.createGame();
+
+                                                            const game = room.getGame();
+
+                                                            const players = game.getPlayers(game);
+                                                            players.forEach((player) => {
+                                                              let person = room.getPerson(player.getPersonId());
+                                                              if (person) {
+                                                                person.emit('game', game.serialize());
+                                                              }
+                                                            })
+                                                          }));
 
 
 

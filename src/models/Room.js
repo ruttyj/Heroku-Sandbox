@@ -1,6 +1,8 @@
 const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
+const PlayDealGame = require('./Game/PlayDeal/Game');
 const Person = require('./Person');
+const Player = require('./Game/PlayDeal/Players/Player');
 module.exports = class Room 
 {
 
@@ -13,6 +15,7 @@ module.exports = class Room
     this.mCode = data.code || 'default';
     this.mPeople = new PersonContainer();
     this.mChat = new ChatTranscript();
+    this.mGame = null;
   }
 
   /*******************************************************
@@ -47,6 +50,11 @@ module.exports = class Room
   addPerson(person)
   {
     this.mPeople.add(person);
+  }
+
+  getPerson(personId)
+  {
+    return this.mPeople.get(personId);
   }
 
   getPeople(){
@@ -139,6 +147,31 @@ module.exports = class Room
     
     return hasHost;
   }
+
+  /*******************************************************
+   *                        Game
+   *******************************************************/
+  createGame()
+  {
+    let game = new PlayDealGame();
+    this.mGame = game;
+    let people = this.mPeople.filter((person) => person.getStatus() === Person.getIsReady());
+
+    people.forEach(person => {
+      let player = new Player();
+      player.setName(person.getName());
+      player.setPersonId(person.getId());
+      game.addPlayer(player);
+    })
+
+    game.startGame();
+  }
+
+  getGame()
+  {
+    return this.mGame;
+  }
+
 
   /*******************************************************
    *                      Serialize

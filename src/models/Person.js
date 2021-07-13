@@ -13,6 +13,7 @@ module.exports = class Person
     this.mStatus = data.status || null;
     this.mName = data.name || "";
     this.mConnection = null;
+    this.mIsReady = false;
   }
 
   // Id ---------------------------------
@@ -27,17 +28,7 @@ module.exports = class Person
   }
 
 
-  // Status ------------------------------
-  getStatus()
-  {
-    return this.mStatus;
-  }
-
-  setStatus(value)
-  {
-    this.mStatus = value;
-  }
-
+  
 
   // Type ------------------------------
   getType()
@@ -62,8 +53,28 @@ module.exports = class Person
     this.mName = value;
   }
 
+  // Is Ready ------------------------------
+  getIsReady()
+  {
+    return this.mIsReady;
+  }
+
+  setIsReady(value)
+  {
+    this.mIsReady = true;
+  }
 
   // Connection --------------------------
+  getStatus()
+  {
+    return this.mStatus;
+  }
+
+  setStatus(value)
+  {
+    this.mStatus = value;
+  }
+
   connect(connection)
   {
     connection.setPersonId(this.getId());
@@ -129,8 +140,9 @@ module.exports = class Person
   {
     return {
       id:         this.mId,
-      status:     this.mStatus,
-      type:       this.mType,
+      status:     this.mStatus, // connected
+      type:       this.mType,   // host | memeber | spectator?maybe
+      isReady:    this.mIsReady,
       name:       this.mName,
       socketId:   this.getSocketId(),
     }
