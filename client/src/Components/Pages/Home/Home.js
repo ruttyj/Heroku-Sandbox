@@ -69,11 +69,11 @@ function Home(props) {
       }
     })
     windowManager.init();
-    createTreeUIWindow(windowManager, true);
-    createGreedyWindow(windowManager, true);
+    //createTreeUIWindow(windowManager, true);
+    //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    createChatWindow(windowManager, true);
-    createRoomLobby(windowManager, true);
+    //createChatWindow(windowManager, true);
+    //createRoomLobby(windowManager, true);
     createMinecraftUI(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);

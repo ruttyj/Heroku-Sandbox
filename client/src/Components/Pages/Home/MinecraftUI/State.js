@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from 'react';
-import utils from '../Utils/';
+import utils from '../../../../Utils';
 import { debounce } from "lodash";
-import WindowManager from '../Utils/WindowManager';
 const {
   isDef,
   isFunc,
@@ -22,12 +21,27 @@ const {
  * This is ment to batch state changes together and prevent excessive rendering.
  */
 const useBufferedState = () => {
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  //                                  VARIABLES
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  
   // used to trigger state change
   const [state, setState] = useState({});
   
   // values will be primarily read from this buffer
   const bufferedState = useRef({});
   
+
+
+
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  //                                FUNCTIONS
+
+  /////////////////////////////////////////////////////////////////////////////////////
   /**
    * Flush consolidates all the updates within a time frame into a single setState
    */
@@ -186,8 +200,39 @@ const useBufferedState = () => {
     return map(path, v => v);
   }
   
+  /////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+
+
+
+  const [isGrabbing, setIsGrabbing] = useState(false);
+  const [grabbingId, setGrabbingId] = useState(null);
+  const [isHoveringOverItem, setIsHoveringOverItem] = useState(false);
+  const [hoveringId, setHoveringId] = useState(null);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dump, setDump] = useState(null);
+  const boundingBox = useRef(null);
+
+
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  //                                PUBLIC SCOPE
+
+  /////////////////////////////////////////////////////////////////////////////////////
   const publicScope = {
+    boundingBox,
+    isGrabbing, setIsGrabbing,
+    grabbingId, setGrabbingId,
+    isHoveringOverItem, setIsHoveringOverItem,
+    hoveringId, setHoveringId,
+
+    isDragging, setIsDragging,
+    dump, setDump,
+    //--------------------------------
     get, 
     set, 
     inc,
@@ -202,28 +247,22 @@ const useBufferedState = () => {
     state,
   }
 
-  //////////////////////////////////////////////////////////
-  // WINDOW MANAGER
-  const windowManagerRef = useRef(WindowManager(publicScope));
-  const windowManager = windowManagerRef.current;
-  publicScope.windowManager = windowManager;
-  //========================================================
-
+ 
 
   // Expose public ----------------
   return publicScope;
 }
 
-const GlobalContext = React.createContext(null);
+const DroppableContext = React.createContext(null);
 
 // Expose the way to access the state
-export const useGlobalContext = () => React.useContext(GlobalContext);
+export const useDroppableContext = () => React.useContext(DroppableContext);
 
 // Wrap components with the provider to allow access to state
-export function GlobalContextProvider({children}) {
+export function DroppableContextProvider({children}) {
   return (
-    <GlobalContext.Provider value={useBufferedState()}>
+    <DroppableContext.Provider value={useBufferedState()}>
       {children}
-    </GlobalContext.Provider>
+    </DroppableContext.Provider>
   );
 }
