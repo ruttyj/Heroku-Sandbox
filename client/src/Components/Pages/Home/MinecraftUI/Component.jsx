@@ -20,54 +20,60 @@ const Wrapper = function({children}) {
   </>
 }
 
-
-const DroppableArena = function() {
+const Square = function ({children}) {
   return <>
+    <motion.div 
+      className="noselect" 
+      style={{display: 'inline-block', width: '40px', height: '40px', backgroundColor: '#ffffff55', margin: '5px'}}
+    >
+      {children}
+    </motion.div>
+  </>
+}
 
+const DroppableArena = function({children}) {
+  return <>
+    <Wrapper>
+      <DroppableContextProvider>
+        {children}
+      </DroppableContextProvider>
+    </Wrapper>
   </>;
 }
 
 
-const Droppable = function({itemId, children}) {
+const Droppable = function({itemId, children, onTouchMove, onMouseUp, onMouseDown}) {
   const { 
-    boundingBox,
-    isGrabbing, setIsGrabbing,
-    grabbingId, setGrabbingId,
-    isHoveringOverItem, setIsHoveringOverItem,
-    hoveringId, setHoveringId,
-
-    isDragging, setIsDragging,
-    dump, setDump,
+    hoveringId
   } = useDroppableContext();
   
   return <>
-
+    <div className="droppable" data-id={itemId} style={{display: 'inline-block', ...(hoveringId == itemId ? {backgroundColor: "green"} : {})}}>
+        <motion.div 
+          key={itemId} 
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onTouchMove={onTouchMove}
+          className="noselect" 
+          style={{display: 'inline-block', width: '50px', height: '50px', backgroundColor: '#00000063', margin: '5px'}}
+        >
+          {children}
+      </motion.div>
+    </div>
   </>;
 }
 
 
-const Grid = function({items, setItems=()=>{}, order, setOrder=()=>{}}) {
+const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
   const { 
     boundingBox,
     isGrabbing, setIsGrabbing,
     grabbingId, setGrabbingId,
-    isHoveringOverItem, setIsHoveringOverItem,
     hoveringId, setHoveringId,
 
     isDragging, setIsDragging,
     dump, setDump,
   } = useDroppableContext();
-
-
-  const onItemRelease = (firstId, lastId) => {
-    let firstIndex = order.indexOf(firstId);
-    let lastIndex = order.indexOf(lastId);
-
-    let newOrder = [...order]; 
-    newOrder[firstIndex] = lastId;
-    newOrder[lastIndex] = firstId;
-    setOrder(newOrder);
-  }
 
   const grabItem = (id) => {
     console.log('grabItem');
@@ -81,17 +87,6 @@ const Grid = function({items, setItems=()=>{}, order, setOrder=()=>{}}) {
     setIsGrabbing(false);
     onItemRelease(grabbingId, id);
     setGrabbingId(null);
-  }
-
-
-  const onClick = (...props) => {
-    console.log('onClick', isGrabbing);
-
-    if(!isGrabbing) {
-      grabItem(...props)
-    } else {
-      releaseItem(...props)
-    }
   }
 
   const onMouseMove = (e) => {
@@ -123,42 +118,38 @@ const Grid = function({items, setItems=()=>{}, order, setOrder=()=>{}}) {
   contents = order.map(itemId => {
     let item = items[itemId];
     return <>
-      <div className="droppable" data-id={itemId} style={{display: 'inline-block', ...(hoveringId == itemId ? {backgroundColor: "green"} : {})}}>
-        <motion.div 
-          key={itemId} 
-          onMouseDown={() => {
-            if(!isDragging && !isGrabbing) {
-              setIsDragging(true);
-              grabItem(itemId);
-            }
-          }}
-          onMouseUp={() => {
-            setIsDragging(false);
-            console.log('mouse up', itemId);
-            if (isGrabbing && itemId !== grabbingId) {
-              releaseItem(itemId);
-            } else if(isDragging && itemId !== grabbingId) {
-              releaseItem(itemId);
-            } else if (!isDragging) {
-              releaseItem(itemId);
-            }
-          }}
-      
-          onTouchMove={(e) => {
-            const touch = e.touches[0];
-            onMouseMove(touch);
-          }}
-          className="noselect" 
-          style={{display: 'inline-block', width: '50px', height: '50px', backgroundColor: '#00000063', margin: '5px'}}
-        >
-          {item.children}
-        </motion.div>
-      </div>
+      <Droppable 
+        key={itemId} 
+        itemId={itemId}
+        onMouseDown={() => {
+          if(!isDragging && !isGrabbing) {
+            setIsDragging(true);
+            grabItem(itemId);
+          }
+        }}
+        onMouseUp={() => {
+          setIsDragging(false);
+          console.log('mouse up', itemId);
+          if (isGrabbing && itemId !== grabbingId) {
+            releaseItem(itemId);
+          } else if(isDragging && itemId !== grabbingId) {
+            releaseItem(itemId);
+          } else if (!isDragging) {
+            releaseItem(itemId);
+          }
+        }}
+    
+        onTouchMove={(e) => {
+          const touch = e.touches[0];
+          onMouseMove(touch);
+        }}
+        
+      >
+        {item.children}
+      </Droppable>
     </>
   });
 
-
-  
 
 
   let hoverPosLeft = 0;
@@ -184,21 +175,25 @@ const Grid = function({items, setItems=()=>{}, order, setOrder=()=>{}}) {
 
 
 
-const Square = function ({children}) {
-  return <>
-    <motion.div 
-      className="noselect" 
-      style={{display: 'inline-block', width: '40px', height: '40px', backgroundColor: '#ffffff55', margin: '5px'}}
-    >
-      {children}
-    </motion.div>
-  </>
-}
 
 ///////////////////////////////////////////////////////////////////
 //                          COMPONENT
 ///////////////////////////////////////////////////////////////////
 export default function({children}) {
+
+
+  const [dropZones, setDropZones] = useState({
+    0: {
+      dropItemId: 0,
+    },
+    1: {
+      dropItemId: 1,
+    },
+    2: {
+      dropItemId: 2,
+    },
+  })
+
   const [items, setItems] = useState({
     0: {
       children: <Square>0</Square>
@@ -208,21 +203,32 @@ export default function({children}) {
     },
     2: {
       children: <Square>2</Square>
-    }
+    },
   });
   const [order, setOrder] = useState([0, 1, 2]);
+
+  const onItemRelease = (firstId, lastId) => {
+    let firstIndex = order.indexOf(firstId);
+    let lastIndex = order.indexOf(lastId);
+
+    let newOrder = [...order]; 
+    newOrder[firstIndex] = lastId;
+    newOrder[lastIndex] = firstId;
+    setOrder(newOrder);
+  }
+
+
+  //const order = Object.keys(items);
+
   return <>
-    <Wrapper>
-      <DroppableContextProvider>
-        Minecraft UI
-        <div className="full">
-          <Grid
-            items={items}
-            order={order}
-            setOrder={setOrder}
-          />
-        </div>
-      </DroppableContextProvider>
-    </Wrapper>
+    <DroppableArena>
+      <Grid
+        items={items}
+        order={order}
+        dropZones={dropZones}
+        setDropZones={setDropZones}
+        onItemRelease={onItemRelease}
+      />
+    </DroppableArena>
   </>
 }
