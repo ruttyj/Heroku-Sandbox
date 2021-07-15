@@ -42,15 +42,15 @@ const DroppableArena = function({children}) {
 }
 
 
-const Droppable = function({itemId, children, onTouchMove, onMouseUp, onMouseDown}) {
+const Droppable = function({dropZoneId, children, onTouchMove, onMouseUp, onMouseDown}) {
   const { 
     hoveringId
   } = useDroppableContext();
   
   return <>
-    <div className="droppable" data-id={itemId} style={{display: 'inline-block', ...(hoveringId == itemId ? {backgroundColor: "green"} : {})}}>
+    <div className="droppable" data-id={dropZoneId} style={{display: 'inline-block', ...(hoveringId !== null && hoveringId == dropZoneId ? {backgroundColor: "green"} : {})}}>
         <motion.div 
-          key={itemId} 
+          key={dropZoneId} 
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
           onTouchMove={onTouchMove}
@@ -63,8 +63,22 @@ const Droppable = function({itemId, children, onTouchMove, onMouseUp, onMouseDow
   </>;
 }
 
+const Draggable = function({item, onMouseDown}) {
+  const itemId = item.id;
+  return <>
+    <div 
+      className="draggable" 
+      style={{
+        backgroundColor: '#ffffff55',
+      }}
+      onMouseDown={onMouseDown}
+    >
+      {item.children}
+    </div>
+  </>
+}
 
-const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
+const Grid = function() {
   const { 
     boundingBox,
     isGrabbing, setIsGrabbing,
@@ -75,6 +89,50 @@ const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
     dump, setDump,
   } = useDroppableContext();
 
+  const [dropZones, setDropZones] = useState({
+    0: {
+      id: 0,
+      dragItemId: null,
+    },
+    1: {
+      id: 1,
+      dragItemId: null,
+    },
+    2: {
+      id: 2,
+      dragItemId: null,
+    },
+    3: {
+      id: 3,
+      dragItemId: null,
+    },
+  })
+  const [dropZoneOrder, setDropDoneOrder] = useState([0, 1, 2, 3]);
+
+  const [items, setItems] = useState({
+    0: {
+      id: 0,
+      children: <Square>0</Square>
+    },
+    1: {
+      id: 1,
+      children: <Square>1</Square>
+    },
+    2: {
+      id: 2,
+      children: <Square>2</Square>
+    },
+  });
+  const [order, setOrder] = useState([0, 1, 2]);
+
+  const onItemRelease = (firstId, lastId) => {
+    let newDropZones = {...dropZones};
+
+    //newDropZones[firstIndex].dragItemId = lastId;
+    //newDropZones[lastIndex].dragItemId = firstId;
+    setDropZones(newDropZones);
+  }
+
   const grabItem = (id) => {
     console.log('grabItem');
 
@@ -82,11 +140,16 @@ const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
     setGrabbingId(id);
   }
 
-  const releaseItem = (id) => {
+  const releaseItem = ({dropZone, dragItem}) => {
     console.log('releaseItem');
     setIsGrabbing(false);
-    onItemRelease(grabbingId, id);
-    setGrabbingId(null);
+    //onItemRelease(grabbingId, id);
+    console.log({dropZone, dragItem})
+    if(dropZone) {
+      dropZones[dropZone.id].dragItemId = dragItem.id;
+    }
+
+    setGrabbingId(undefined);
   }
 
   const onMouseMove = (e) => {
@@ -114,43 +177,94 @@ const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
     }
   }
 
-  let contents = [];
-  contents = order.map(itemId => {
-    let item = items[itemId];
-    return <>
-      <Droppable 
-        key={itemId} 
-        itemId={itemId}
-        onMouseDown={() => {
-          if(!isDragging && !isGrabbing) {
-            setIsDragging(true);
-            grabItem(itemId);
-          }
-        }}
-        onMouseUp={() => {
-          setIsDragging(false);
-          console.log('mouse up', itemId);
-          if (isGrabbing && itemId !== grabbingId) {
-            releaseItem(itemId);
-          } else if(isDragging && itemId !== grabbingId) {
-            releaseItem(itemId);
-          } else if (!isDragging) {
-            releaseItem(itemId);
-          }
-        }}
+  let droppableContents = [];
+  droppableContents = dropZoneOrder.map(dropZoneId => {
+    const dropZone = dropZones[dropZoneId];
     
-        onTouchMove={(e) => {
-          const touch = e.touches[0];
-          onMouseMove(touch);
-        }}
+    const itemId = dropZone.dragItemId;
+    
+
+    let onMouseDown = () => {
+      if(!isDragging && !isGrabbing) {
+        setIsDragging(true);
+        grabItem(itemId);
+      }
+    }
+
+    let contents = null;
+    let item = items[itemId];
+    if (item) {
+      contents = <>
+        <Draggable item={item} onMouseDown={onMouseDown}>
+          {item.children}
+        </Draggable>
+      </>
+    }
+    return <Droppable 
+      key={dropZoneId} 
+      dropZoneId={dropZoneId}
+      onMouseUp={() => {
+        setIsDragging(false);
         
-      >
-        {item.children}
-      </Droppable>
-    </>
+        if(isGrabbing) {
+          const newDropZones = {...dropZones};
+          if(itemId) {
+            console.log('has item', itemId);
+
+            let dzList = Object.keys(dropZones).map(dzId => dropZones[dzId])
+
+            console.log({dzList, grabbingId})
+            newDropZones[dropZoneId].dragItemId = grabbingId;
+
+          } else {
+            console.log('no item', grabbingId);
+  
+            newDropZones[dropZoneId].dragItemId = grabbingId;
+          }
+
+          setDropZones(newDropZones);
+          setIsGrabbing(false);
+          setGrabbingId(null);
+        }
+       
+        /*
+        console.log('mouse up', itemId);
+        if (isGrabbing && itemId !== grabbingId) {
+          releaseItem({dropZone, dragItem: items[grabbingId]});
+        } else if(isDragging && itemId !== grabbingId) {
+          releaseItem({dropZone, dragItem: item});
+        } else if (!isDragging) {
+          releaseItem({dropZone, dragItem: item});
+        }
+        */
+      }}
+      onTouchMove={(e) => {
+        const touch = e.touches[0];
+        onMouseMove(touch);
+      }}
+    >
+      {contents}
+    </Droppable>
   });
 
 
+  let draggableContents = [];
+  draggableContents = order.map(itemId => {
+    let item = items[itemId];
+    
+    let onMouseDown = () => {
+      if(!isDragging && !isGrabbing) {
+        setIsDragging(true);
+        grabItem(itemId);
+      }
+    }
+
+    return <>
+      <Draggable item={item} onMouseDown={onMouseDown}>
+        {item.children}
+      </Draggable>
+    </>;
+  })
 
   let hoverPosLeft = 0;
   let hoverPosTop = 0;
@@ -159,16 +273,33 @@ const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
     hoverPosTop  = dump.pos.y;
   }
 
-  return <div className="full column" >
+  return <div className="full column">
     <div>
       {isGrabbing ? 'grabbing' : 'not grabbing'} {grabbingId}<br/>
       {isDragging ? 'Dragging' : 'not Dragging'}<br/>
     </div>
-    <div ref={boundingBox} className="full " style={{display: 'block', position: 'relative'}} onMouseMove={onMouseMove}>
+    <div 
+      ref={boundingBox} 
+      className="full" 
+      style={{
+        display: 'block', 
+        position: 'relative'
+      }} 
+      onMouseMove={onMouseMove}>
       {isGrabbing && <>
-        <div style={{position: "absolute", top: hoverPosTop || 0, left: hoverPosLeft || 0, pointerEvents: "none"}} className="noselect" >{items[grabbingId].children}</div>
+        <div 
+          style={{
+            position: "absolute", 
+            top: hoverPosTop, 
+            left: hoverPosLeft, 
+            pointerEvents: "none"
+          }} className="noselect"
+        >
+          {items[grabbingId].children}
+        </div>
       </>}
-      {contents}
+      {droppableContents}
+      {draggableContents}
     </div>
   </div>;
 }
@@ -180,55 +311,9 @@ const Grid = function({items, setItems=()=>{}, order, onItemRelease=()=>{}}) {
 //                          COMPONENT
 ///////////////////////////////////////////////////////////////////
 export default function({children}) {
-
-
-  const [dropZones, setDropZones] = useState({
-    0: {
-      dropItemId: 0,
-    },
-    1: {
-      dropItemId: 1,
-    },
-    2: {
-      dropItemId: 2,
-    },
-  })
-
-  const [items, setItems] = useState({
-    0: {
-      children: <Square>0</Square>
-    },
-    1: {
-      children: <Square>1</Square>
-    },
-    2: {
-      children: <Square>2</Square>
-    },
-  });
-  const [order, setOrder] = useState([0, 1, 2]);
-
-  const onItemRelease = (firstId, lastId) => {
-    let firstIndex = order.indexOf(firstId);
-    let lastIndex = order.indexOf(lastId);
-
-    let newOrder = [...order]; 
-    newOrder[firstIndex] = lastId;
-    newOrder[lastIndex] = firstId;
-    setOrder(newOrder);
-  }
-
-
-  //const order = Object.keys(items);
-
   return <>
     <DroppableArena>
-      <Grid
-        items={items}
-        order={order}
-        dropZones={dropZones}
-        setDropZones={setDropZones}
-        onItemRelease={onItemRelease}
-      />
+      <Grid/>
     </DroppableArena>
   </>
 }
