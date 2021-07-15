@@ -6,6 +6,7 @@ import { setNestedValue } from '../../../../Utils/index';
 import move from "array-move";
 
 import { useDroppableContext, DroppableContextProvider } from './State';
+import { ConnectableObservable } from 'rxjs';
 
 ///////////////////////////////////////////////////////////////////
 //                           Wrapper
@@ -43,10 +44,11 @@ const DroppableArena = function({children}) {
 
 
 const Droppable = function({dropZoneId, children, onTouchMove, onMouseUp, onMouseDown}) {
-  const { 
-    hoveringId
+  const {
+    getHoveringId,
   } = useDroppableContext();
   
+  let hoveringId = getHoveringId();
   return <>
     <div className="droppable" data-id={dropZoneId} style={{display: 'inline-block', ...(hoveringId !== null && hoveringId == dropZoneId ? {backgroundColor: "green"} : {})}}>
         <motion.div 
@@ -63,7 +65,7 @@ const Droppable = function({dropZoneId, children, onTouchMove, onMouseUp, onMous
   </>;
 }
 
-const Draggable = function({item, onMouseDown}) {
+const Draggable = function({item, zone, onMouseDown}) {
   const itemId = item.id;
   return <>
     <div 
@@ -73,65 +75,93 @@ const Draggable = function({item, onMouseDown}) {
       }}
       onMouseDown={onMouseDown}
     >
-      {item.children}
+      <div style={{pointerEvents: "none"}} className="noselect">
+        {item.children}
+      </div>
     </div>
   </>
 }
 
-const Grid = function() {
-  const { 
-    boundingBox,
-    isGrabbing, setIsGrabbing,
-    grabbingId, setGrabbingId,
-    hoveringId, setHoveringId,
 
-    isDragging, setIsDragging,
-    dump, setDump,
+const initialDropZones = {
+  0: {
+    id: 0,
+    dragItemId: null,
+  },
+  1: {
+    id: 1,
+    dragItemId: null,
+  },
+  2: {
+    id: 2,
+    dragItemId: null,
+  },
+  3: {
+    id: 3,
+    dragItemId: null,
+  },
+  4: {
+    id: 4,
+    dragItemId: null,
+  },
+}
+const initialDropZoneOrder = Object.keys(initialDropZones);
+
+
+const initialDragItems = {
+  1: {
+    id: 1,
+    children: <img src="/assets/cards/cash_1.png" style={{width: '33px', height: '50px'}}/>
+  },
+  2: {
+    id: 2,
+    children: <img src="/assets/cards/cash_2.png" style={{width: '33px', height: '50px'}}/>
+  },
+  3: {
+    id: 3,
+    children: <img src="/assets/cards/cash_3.png" style={{width: '33px', height: '50px'}}/>
+  },
+  4: {
+    id: 4,
+    children: <img src="/assets/cards/cash_4.png" style={{width: '33px', height: '50px'}}/>
+  },
+  5: {
+    id: 5,
+    children: <img src="/assets/cards/cash_5.png" style={{width: '33px', height: '50px'}}/>
+  },
+  10: {
+    id: 10,
+    children: <img src="/assets/cards/cash_10.png" style={{width: '33px', height: '50px'}}/>
+  },
+}
+const initialDragItemOrder = Object.keys(initialDragItems);
+
+
+
+
+
+const Grid = function() {
+  const {
+    boundingBox,
+    setIsGrabbing, getIsGrabbing,
+    setGrabbingId, getGrabbingId,
+    setGrabbingFromZone, getGrabbingFromZone,
+    setHoveringId, getHoveringId,
+    setIsDragging, getIsDragging,
+    setCursorState, getCursorState,
   } = useDroppableContext();
 
-  const [dropZones, setDropZones] = useState({
-    0: {
-      id: 0,
-      dragItemId: null,
-    },
-    1: {
-      id: 1,
-      dragItemId: null,
-    },
-    2: {
-      id: 2,
-      dragItemId: null,
-    },
-    3: {
-      id: 3,
-      dragItemId: null,
-    },
-  })
-  const [dropZoneOrder, setDropDoneOrder] = useState([0, 1, 2, 3]);
+  const isGrabbing = getIsGrabbing();
+  const grabbingId = getGrabbingId();
+  const grabbingFromZoneId = getGrabbingFromZone();
+  const hoveringId = getHoveringId();
+  const isDragging = getIsDragging();
+  const cursorState = getCursorState();
+  const [dropZones, setDropZones] = useState(initialDropZones)
+  const [dropZoneOrder, setDropDoneOrder] = useState(initialDropZoneOrder);
 
-  const [items, setItems] = useState({
-    0: {
-      id: 0,
-      children: <Square>0</Square>
-    },
-    1: {
-      id: 1,
-      children: <Square>1</Square>
-    },
-    2: {
-      id: 2,
-      children: <Square>2</Square>
-    },
-  });
-  const [order, setOrder] = useState([0, 1, 2]);
-
-  const onItemRelease = (firstId, lastId) => {
-    let newDropZones = {...dropZones};
-
-    //newDropZones[firstIndex].dragItemId = lastId;
-    //newDropZones[lastIndex].dragItemId = firstId;
-    setDropZones(newDropZones);
-  }
+  const [items, setItems] = useState(initialDragItems);
+  const [order, setOrder] = useState(initialDragItemOrder);
 
   const grabItem = (id) => {
     console.log('grabItem');
@@ -140,38 +170,28 @@ const Grid = function() {
     setGrabbingId(id);
   }
 
-  const releaseItem = ({dropZone, dragItem}) => {
-    console.log('releaseItem');
-    setIsGrabbing(false);
-    //onItemRelease(grabbingId, id);
-    console.log({dropZone, dragItem})
-    if(dropZone) {
-      dropZones[dropZone.id].dragItemId = dragItem.id;
-    }
-
-    setGrabbingId(undefined);
-  }
-
   const onMouseMove = (e) => {
     const offset = boundingBox.current.getBoundingClientRect()
     
+    
+    // Set State for grid
+    // Position of (primary cursor dragging item) 
+    setCursorState({
+      ...cursorState,
+      pos: {
+        x: Math.max(offset.left, Math.min(e.clientX, offset.right))-offset.left,
+        y: Math.max(offset.top, Math.min(e.clientY-20, offset.bottom))-offset.top,
+      }
+    });
+
     if(isGrabbing){
       const hoverElement = document.elementFromPoint(e.clientX, e.clientY);
-
       const closestDroppable = hoverElement.closest('.droppable');
-
       if(closestDroppable) {
         setHoveringId(closestDroppable.dataset.id)
       } else {
         setHoveringId(null);
       }
-
-      setDump({
-        pos: {
-          x: Math.max(offset.left, Math.min(e.clientX, offset.right))-offset.left,
-          y: Math.max(offset.top, Math.min(e.clientY-20, offset.bottom))-offset.top,
-        }
-      });
     } else if(hoveringId) {
       setHoveringId(null);
     }
@@ -184,18 +204,53 @@ const Grid = function() {
     const itemId = dropZone.dragItemId;
     
 
-    let onMouseDown = () => {
+    let onMouseDown = (e) => {
       if(!isDragging && !isGrabbing) {
-        setIsDragging(true);
         grabItem(itemId);
+        setIsDragging(true);
+        setGrabbingFromZone(dropZoneId);
       }
+      onMouseMove(e);
+    }
+
+    let onMouseUp = () => {
+      
+      if(isDragging && grabbingFromZoneId === dropZoneId) {
+
+      } else {
+        if(isGrabbing) {
+          const newDropZones = {...dropZones};
+  
+          if(grabbingFromZoneId !== null) {
+            newDropZones[grabbingFromZoneId].dragItemId = null;
+          }
+  
+          if(itemId) {
+            console.log('has item', itemId);
+            newDropZones[dropZoneId].dragItemId = grabbingId;
+          } else {
+            console.log('no item', grabbingId);
+            newDropZones[dropZoneId].dragItemId = grabbingId;
+          }
+          
+  
+          console.log({grabbingFromZoneId, grabbingId});
+          setDropZones(newDropZones);
+          setIsGrabbing(false);
+          setGrabbingId(null);
+          setGrabbingFromZone(null);
+        }
+      }
+      
+
+      setIsDragging(false);
     }
 
     let contents = null;
     let item = items[itemId];
     if (item) {
       contents = <>
-        <Draggable item={item} onMouseDown={onMouseDown}>
+        <Draggable item={item} zone={dropZone} onMouseDown={onMouseDown}>
           {item.children}
         </Draggable>
       </>
@@ -203,41 +258,7 @@ const Grid = function() {
     return <Droppable 
       key={dropZoneId} 
       dropZoneId={dropZoneId}
-      onMouseUp={() => {
-        setIsDragging(false);
-        
-        if(isGrabbing) {
-          const newDropZones = {...dropZones};
-          if(itemId) {
-            console.log('has item', itemId);
-
-            let dzList = Object.keys(dropZones).map(dzId => dropZones[dzId])
-
-            console.log({dzList, grabbingId})
-            newDropZones[dropZoneId].dragItemId = grabbingId;
-
-          } else {
-            console.log('no item', grabbingId);
-  
-            newDropZones[dropZoneId].dragItemId = grabbingId;
-          }
-
-          setDropZones(newDropZones);
-          setIsGrabbing(false);
-          setGrabbingId(null);
-        }
-       
-        /*
-        console.log('mouse up', itemId);
-        if (isGrabbing && itemId !== grabbingId) {
-          releaseItem({dropZone, dragItem: items[grabbingId]});
-        } else if(isDragging && itemId !== grabbingId) {
-          releaseItem({dropZone, dragItem: item});
-        } else if (!isDragging) {
-          releaseItem({dropZone, dragItem: item});
-        }
-        */
-      }}
+      onMouseUp={onMouseUp}
       onTouchMove={(e) => {
         const touch = e.touches[0];
         onMouseMove(touch);
@@ -268,9 +289,9 @@ const Grid = function() {
 
   let hoverPosLeft = 0;
   let hoverPosTop = 0;
-  if (dump && dump.pos) {
-    hoverPosLeft = dump.pos.x;
-    hoverPosTop  = dump.pos.y;
+  if (cursorState && cursorState.pos) {
+    hoverPosLeft = cursorState.pos.x;
+    hoverPosTop  = cursorState.pos.y;
   }
 
   return <div className="full column">
