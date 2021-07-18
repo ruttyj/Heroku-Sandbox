@@ -5,6 +5,9 @@ export default function({item, children, dropZone, onMouseDown=null}) {
 
   const {
     onMouseMove,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
     setIsDragging, getIsDragging,
     setIsGrabbing, getIsGrabbing,
     setGrabbingFromZone,
@@ -29,6 +32,10 @@ export default function({item, children, dropZone, onMouseDown=null}) {
     }
   }
 
+  const onDrop = () => {
+    console.log('on drop')
+  }
+
   return <>
     <div 
       className="draggable" 
@@ -36,6 +43,9 @@ export default function({item, children, dropZone, onMouseDown=null}) {
         backgroundColor: '#ffffff55',
       }}
       onMouseDown={onMouseDown}
+      onTouchStart={(e) => {onTouchStart(e, {item, dropZone})}}
+      onTouchMove={(e) => {onTouchMove(e, {item, dropZone})}}
+      onTouchEnd={(e) => {onTouchEnd(e, {item, dropZone, onDrop})}}
     >
       <div style={{pointerEvents: "none"}} className="noselect">
         {children}

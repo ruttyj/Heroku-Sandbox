@@ -39,7 +39,7 @@ const addDropZone = () => {
   })
 }
 
-for(let i=0; i< 8*3; ++i){
+for(let i=0; i < 8*3; ++i){
   addDropZone();
 }
 
@@ -154,8 +154,9 @@ export default function({children}) {
         {dropZoneOrder.map(dropZoneId => {
           const dropZone = dropZones[dropZoneId];
           const itemId = dropZone.dragItemId;
+          let onDrop = ({dropZone, grabbingId, grabbingFromZoneId}) => {
 
-          let onDrop = ({dropZoneId, dropZone, grabbingId, grabbingFromZoneId}) => {
+            const dropZoneId = dropZone.id;
             const newDropZones = {...dropZones};
 
             if(grabbingFromZoneId !== null) {
@@ -173,9 +174,6 @@ export default function({children}) {
             console.log({grabbingFromZoneId, grabbingId});
             setDropZones(newDropZones);
           }
-
-
-
           let item = items[itemId];
           return <Droppable 
             key={dropZoneId} 

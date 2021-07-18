@@ -59,9 +59,7 @@ const useBufferedState = () => {
   const setCursorState = (...a) => manager.set(['cursorState'], ...a);
   const getCursorState = (...a) => manager.get(['cursorState'], null);
 
-
-
-  const onMouseMove = (e) => {
+  const moveDragItemToPos = (pos) => {
     let offset;
     
     if (boundingBox) {
@@ -80,14 +78,24 @@ const useBufferedState = () => {
     setCursorState({
       ...getCursorState(),
       pos: {
-        x: Math.max(offset.left, Math.min(e.clientX, offset.right))-offset.left,
-        y: Math.max(offset.top, Math.min(e.clientY-20, offset.bottom))-offset.top,
+        x: Math.max(offset.left, Math.min(pos.clientX, offset.right))-offset.left,
+        y: Math.max(offset.top, Math.min(pos.clientY-20, offset.bottom))-offset.top,
       }
     });
+  }
+
+  const getHoverElementFromPos = (pos) => {
+    const hoverElement = document.elementFromPoint(pos.clientX, pos.clientY);
+    const closestDroppable = hoverElement.closest('.droppable');
+    
+    return closestDroppable;
+  }
+
+  const onMouseMove = (e) => {
+    moveDragItemToPos(e);
 
     if(isGrabbing){
-      const hoverElement = document.elementFromPoint(e.clientX, e.clientY);
-      const closestDroppable = hoverElement.closest('.droppable');
+      const closestDroppable = getHoverElementFromPos(e);
       if(closestDroppable) {
         setHoveringId(closestDroppable.dataset.id)
       } else {
@@ -96,6 +104,43 @@ const useBufferedState = () => {
     } else if(getHoveringId()) {
       setHoveringId(null);
     }
+  }
+
+
+  const onTouchStart = (e, {item, dropZone}) => {
+    console.log('onTouchStart');
+    if(!getIsDragging() && !getIsGrabbing()) {
+      grabItem(item.id);
+      setIsDragging(true);
+      if(dropZone) {
+        setGrabbingFromZone(dropZone.id);
+      }
+
+      let primaryTouch = e.touches[0];
+      moveDragItemToPos(primaryTouch);
+    }
+  }
+
+  const onTouchMove = (e) => {
+    console.log('onTouchMove');
+    let primaryTouch = e.touches[0];
+    moveDragItemToPos(primaryTouch);
+    const hoverElement = getHoverElementFromPos(primaryTouch);
+
+    console.log(hoverElement);
+
+  }
+
+  const onTouchEnd = (e, {item, dropZone, onDrop}) => {
+    console.log('onTouchEnd');
+
+    let primaryTouch = e.touches[0];
+
+    
+    setIsDragging(false);
+    setIsGrabbing(false);
+    setGrabbingId(null);
+    setGrabbingFromZone(null);
   }
 
   const grabItem = (id) => {
@@ -114,12 +159,19 @@ const useBufferedState = () => {
     onMouseMove(e);
   }
 
-  let onMouseUp = (e, {onDrop, dropZoneId, dropZone}) => {
+  let onMouseUpWithinZone = (e, {onDrop, dropZone}) => {
+    const dropZoneId = dropZone.id;
+
     if(getIsDragging() && getGrabbingFromZone() === dropZoneId) {
 
     } else {
       if(getIsGrabbing()) {
-        onDrop({dropZoneId: dropZoneId, dropZone, grabbingId: getGrabbingId(), grabbingFromZoneId: getGrabbingFromZone()});
+        onDrop({
+          dropZoneId: dropZoneId, 
+          dropZone, 
+          grabbingId: getGrabbingId(), 
+          grabbingFromZoneId: getGrabbingFromZone()
+        });
         setIsGrabbing(false);
         setGrabbingId(null);
         setGrabbingFromZone(null);
@@ -138,9 +190,14 @@ const useBufferedState = () => {
   const publicScope = {
     
     boundingBox,
-    onMouseMove,
     onMouseDown,
-    onMouseUp,
+    onMouseMove,
+    onMouseUpWithinZone,
+
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+    
     grabItem,
     setIsGrabbing, getIsGrabbing,
     setGrabbingId, getGrabbingId,
