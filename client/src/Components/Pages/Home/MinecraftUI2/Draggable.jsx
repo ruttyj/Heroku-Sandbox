@@ -10,6 +10,7 @@ export default function({children, dragItem}) {
     onTouchStart,
     onTouchMove,
     onTouchEnd,
+    onMouseDown,
   } = useDroppableContext();
 
   // Store drag item in context
@@ -30,6 +31,7 @@ export default function({children, dragItem}) {
         backgroundColor: '#ffffff55',
         touchAction: 'none',
       }}
+      onMouseDown={(e) => onMouseDown(e, {dragItem})}
       onTouchStart={(e) => onTouchStart(e, {dragItem})}
       onTouchMove={(e) => onTouchMove(e, {dragItem})}
       onTouchEnd={(e) => onTouchEnd(e, {dragItem})}

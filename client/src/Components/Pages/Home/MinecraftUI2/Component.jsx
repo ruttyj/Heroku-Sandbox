@@ -91,6 +91,8 @@ const Grid = function({children}) {
     getCursorState,
     getGrabbingDragItemId,
     getIsGrabbing,
+    onMouseMove,
+    onMouseUp,
   } = useDroppableContext();
 
   const cursorState = getCursorState();
@@ -113,6 +115,8 @@ const Grid = function({children}) {
         display: 'block', 
         position: 'relative'
       }} 
+      onMouseUp={(e) => onMouseUp(e)}
+      onMouseMove={onMouseMove}
     >
       {isGrabbing && <>
         <div 

@@ -200,6 +200,78 @@ const useBufferedState = () => {
     setIsDragging(false);
   }
 
+
+  //=============================
+
+  //     Cursor Handeling
+
+  //=============================
+  const getHoverElementFromPos = (pos) => {
+    const hoverElement = document.elementFromPoint(pos.clientX, pos.clientY);
+    const closestDroppable = hoverElement.closest('.droppable');
+    
+    return closestDroppable;
+  }
+
+  function onMouseMove(e)
+  {
+    console.log('onMouseMove');
+    if(getIsGrabbing()) {
+
+      moveDraggingItemToPos(e.clientX, e.clientY);
+      const closestDroppable = getHoverElementFromPos(e);
+      if(closestDroppable) {
+        setHoveringId(closestDroppable.dataset.id)
+      } else {
+        setHoveringId(null);
+      }
+    } else if(getHoveringId()) {
+      setHoveringId(null);
+    }
+  }
+
+
+  function onMouseDown(e, {dragItem})
+  {
+    if(!getIsGrabbing() && !getIsDragging()) {
+      grabItem(dragItem.id);
+      setIsDragging(true);
+      moveDraggingItemToPos(e.clientX, e.clientY);
+    }
+  }
+
+  function onMouseUp(e) {
+    if(getIsGrabbing()){
+      const dropZoneId = getHoveringId();
+      if(dropZoneId) {
+        const dropZone = getDropZone(dropZoneId);
+        const onDrop = getOnDrop(dropZoneId);
+
+        const dragItem = getDragItem(getGrabbingDragItemId());
+
+        onDrop({
+          dragItem,
+          dropZone
+        })
+
+        setIsGrabbing(false);
+        setGrabbingDragItemId(null);
+      }
+    }
+    setIsDragging(false);
+  }
+
+
+  //=============================
+
+  //      Cursor Click
+
+  //=============================
+  function onClick(e, {dragItem})
+  {
+
+  }
+  
   /////////////////////////////////////////////////////////////////////////////////////
 
   //                                PUBLIC SCOPE
@@ -233,6 +305,12 @@ const useBufferedState = () => {
     onTouchMove,
     onTouchEnd,
 
+
+    // Handle Cursor
+    onMouseMove,
+    onMouseDown,
+    onMouseUp,
+    onClick,
   }
 
  

@@ -29,7 +29,6 @@ import createGameWindow from './GameWindow';
 import createDnDWindow from './DnDWindow';
 import createGreedyWindow from './Greedy/Window';
 import createTreeUIWindow from './TreeUI/Window';
-import createMinecraftUI from './MinecraftUI/Window';
 import createMinecraftUI2 from './MinecraftUI2/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
 import { useGlobalContext  } from "../../../state/globalContext";
