@@ -82,20 +82,21 @@ const initialDragItemOrder = Object.keys(initialDragItems);
 
 
 
-const Grid = function({children, items, order, dropZones, setDropZones}) {
+const Grid = function({children}) {
   const {
     boundingBox,
-    getIsGrabbing,
-    getGrabbingId,
-    getIsDragging,
+    getDragItem,
+    getDragItems,
+    getDropZones,
     getCursorState,
-    onMouseMove,
+    getGrabbingDragItemId,
+    getIsGrabbing,
   } = useDroppableContext();
 
-  const isGrabbing = getIsGrabbing();
-  const grabbingId = getGrabbingId();
-  const isDragging = getIsDragging();
   const cursorState = getCursorState();
+  const isGrabbing = getIsGrabbing();
+  const grabbingId = getGrabbingDragItemId();
+
 
   let hoverPosLeft = 0;
   let hoverPosTop = 0;
@@ -105,10 +106,6 @@ const Grid = function({children, items, order, dropZones, setDropZones}) {
   }
 
   return <div className="full column">
-    <div>
-      {isGrabbing ? 'grabbing' : 'not grabbing'} {grabbingId}<br/>
-      {isDragging ? 'Dragging' : 'not Dragging'}<br/>
-    </div>
     <div 
       ref={boundingBox} 
       className="full" 
@@ -116,7 +113,7 @@ const Grid = function({children, items, order, dropZones, setDropZones}) {
         display: 'block', 
         position: 'relative'
       }} 
-      onMouseMove={onMouseMove}>
+    >
       {isGrabbing && <>
         <div 
           style={{
@@ -126,11 +123,14 @@ const Grid = function({children, items, order, dropZones, setDropZones}) {
             pointerEvents: "none"
           }} className="noselect"
         >
-          {items[grabbingId].children}
+          {getDragItem(grabbingId).children}
         </div>
       </>}
       {children}
     </div>
+    getCursorState<pre><xmp>{JSON.stringify(getCursorState(), null, 2)}</xmp></pre>
+    getDragItems<pre><xmp>{JSON.stringify(getDragItems(), null, 2)}</xmp></pre>
+    getDropZones<pre><xmp>{JSON.stringify(getDropZones(), null, 2)}</xmp></pre>
   </div>;
 }
 
@@ -147,6 +147,15 @@ export default function({children}) {
   const [dropZones, setDropZones] = useState(initialDropZones)
   const [dropZoneOrder, setDropDoneOrder] = useState(initialDropZoneOrder);
   
+
+  let onDrop = ({dragItem, dropZone}) => {
+    console.log('onDrop');
+    const newDropZones = {...dropZones};
+    newDropZones[dropZone.id].dragItemId = dragItem.id;
+    setDropZones(newDropZones);
+  }
+
+
   return <>
     <DroppableArena>
       <Grid items={items} order={order} dropZones={dropZones} dropZoneOrder={dropZoneOrder} setDropDoneOrder={setDropDoneOrder}>
@@ -154,35 +163,16 @@ export default function({children}) {
         {dropZoneOrder.map(dropZoneId => {
           const dropZone = dropZones[dropZoneId];
           const itemId = dropZone.dragItemId;
-          let onDrop = ({dropZone, grabbingId, grabbingFromZoneId}) => {
-
-            const dropZoneId = dropZone.id;
-            const newDropZones = {...dropZones};
-
-            if(grabbingFromZoneId !== null) {
-              newDropZones[grabbingFromZoneId].dragItemId = null;
-            }
-        
-            if(itemId) {
-              console.log('has item', itemId);
-              newDropZones[dropZoneId].dragItemId = grabbingId;
-            } else {
-              console.log('no item', grabbingId);
-              newDropZones[dropZoneId].dragItemId = grabbingId;
-            }
-        
-            console.log({grabbingFromZoneId, grabbingId});
-            setDropZones(newDropZones);
-          }
-          let item = items[itemId];
+          
+          let dragItem = items[itemId];
           return <Droppable 
             key={dropZoneId} 
             dropZone={dropZone}
             onDrop={onDrop}
           >
-            {item && <>
-              <Draggable item={item} dropZone={dropZone} items={items} order={order} dropZones={dropZones} dropZoneOrder={dropZoneOrder}>
-                {item.children}
+            {dragItem && <>
+              <Draggable dragItem={dragItem}>
+                {dragItem.children}
               </Draggable>
             </>}
           </Droppable>
@@ -192,8 +182,8 @@ export default function({children}) {
         {order.map(itemId => {
           let item = items[itemId];
           return <>
-            <div style={{display: "inline-block"}}>
-              <Draggable itemId={itemId} item={item} items={items} order={order} dropZones={dropZones} dropZoneOrder={dropZoneOrder}>
+            <div key={itemId} style={{display: "inline-block"}}>
+              <Draggable dragItem={item}>
                 {item.children}
               </Draggable>
             </div>

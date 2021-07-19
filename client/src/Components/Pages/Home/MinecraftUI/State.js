@@ -3,12 +3,6 @@ import * as React from "react";
 import { useState, useRef } from 'react';
 import useStateManager from '../../../../state/StateManager';
 
-/**
- * Buffered Context
- * 
- * This context stores all its information in a ref and pushes the data to state after 1 ms of inactivity.
- * This is ment to batch state changes together and prevent excessive rendering.
- */
 const useBufferedState = () => {
   
   /////////////////////////////////////////////////////////////////////////////////////
@@ -22,20 +16,6 @@ const useBufferedState = () => {
   const [state, setState] = useState({})
   const bufferedState = useRef({});
   const manager = useStateManager(state, setState, bufferedState);
-
-
-  const useCursorManager = function(manager, rootPath) 
-  {
-    const set = (path, value)    => manager.set([...rootPath, ...path], value);
-    const get = (path, fallback) => manager.get([...rootPath, ...path], fallback);
-
-
-
-    return {
-
-    }
-  }
-
 
 
   const [isGrabbing, setIsGrabbing] = useState(false);
@@ -52,6 +32,14 @@ const useBufferedState = () => {
 
   const setHoveringId = (...a) => manager.set(['hoveringId'], ...a);
   const getHoveringId = (...a) => manager.get(['hoveringId'], null);
+
+
+  const setHoveringZone = (...a) => manager.set(['hoveringZone'], ...a);
+  const getHoveringZone = (...a) => manager.get(['hoveringZone'], null);
+
+  
+
+
 
   const setIsDragging = (...a) => manager.set(['isDragging'], ...a);
   const getIsDragging = (...a) => manager.get(['isDragging'], false);
@@ -126,7 +114,11 @@ const useBufferedState = () => {
     let primaryTouch = e.touches[0];
     moveDragItemToPos(primaryTouch);
     const hoverElement = getHoverElementFromPos(primaryTouch);
-
+    if(hoverElement) {
+      setHoveringId(hoverElement.dataset.id)
+    } else {
+      setHoveringId(null);
+    }
     console.log(hoverElement);
 
   }
@@ -136,6 +128,7 @@ const useBufferedState = () => {
 
     let primaryTouch = e.touches[0];
 
+    console.log(getHoveringId());
     
     setIsDragging(false);
     setIsGrabbing(false);

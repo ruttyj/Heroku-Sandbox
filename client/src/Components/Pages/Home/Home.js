@@ -30,6 +30,7 @@ import createDnDWindow from './DnDWindow';
 import createGreedyWindow from './Greedy/Window';
 import createTreeUIWindow from './TreeUI/Window';
 import createMinecraftUI from './MinecraftUI/Window';
+import createMinecraftUI2 from './MinecraftUI2/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
 import { useGlobalContext  } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
@@ -74,7 +75,7 @@ function Home(props) {
     //createFramerMotionDrop(windowManager, true);
     //createChatWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
-    createMinecraftUI(windowManager, true);
+    createMinecraftUI2(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);

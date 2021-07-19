@@ -1,7 +1,8 @@
 import React from 'react';
+import { NotFoundError } from 'rxjs';
 import { useDroppableContext } from './State';
 
-export default function({item, children, dropZone, onMouseDown=null}) {
+export default function({item, dropZones, children, dropZone, onMouseDown=null}) {
 
   const {
     onMouseMove,
@@ -43,9 +44,9 @@ export default function({item, children, dropZone, onMouseDown=null}) {
         backgroundColor: '#ffffff55',
       }}
       onMouseDown={onMouseDown}
-      onTouchStart={(e) => {onTouchStart(e, {item, dropZone})}}
-      onTouchMove={(e) => {onTouchMove(e, {item, dropZone})}}
-      onTouchEnd={(e) => {onTouchEnd(e, {item, dropZone, onDrop})}}
+      onTouchStart={(e) => {onTouchStart(e, {item, dropZone, dropZones})}}
+      onTouchMove={(e) => {onTouchMove(e, {item, dropZone, dropZones})}}
+      onTouchEnd={(e) => {onTouchEnd(e, {item, dropZone, dropZones, onDrop})}}
     >
       <div style={{pointerEvents: "none"}} className="noselect">
         {children}
