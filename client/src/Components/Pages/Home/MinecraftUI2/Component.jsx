@@ -132,9 +132,6 @@ const Grid = function({children}) {
       </>}
       {children}
     </div>
-    getCursorState<pre><xmp>{JSON.stringify(getCursorState(), null, 2)}</xmp></pre>
-    getDragItems<pre><xmp>{JSON.stringify(getDragItems(), null, 2)}</xmp></pre>
-    getDropZones<pre><xmp>{JSON.stringify(getDropZones(), null, 2)}</xmp></pre>
   </div>;
 }
 
@@ -162,7 +159,7 @@ export default function({children}) {
 
   return <>
     <DroppableArena>
-      <Grid items={items} order={order} dropZones={dropZones} dropZoneOrder={dropZoneOrder} setDropDoneOrder={setDropDoneOrder}>
+      <Grid>
 
         {dropZoneOrder.map(dropZoneId => {
           const dropZone = dropZones[dropZoneId];

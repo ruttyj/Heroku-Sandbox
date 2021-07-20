@@ -149,7 +149,6 @@ const useBufferedState = () => {
   //=============================
   function onTouchStart(e, {dragItem})
   {
-    console.log('onTouchStart');
     if(!getIsDragging() && !getIsGrabbing()) {
       grabItem(dragItem.id);
       setIsDragging(true);
@@ -177,8 +176,6 @@ const useBufferedState = () => {
 
   function onTouchEnd(e, {dragItem}) 
   {
-    console.log('onTouchEnd');
-
     //getDragItem(getGrabbingDragItemId())
     //
 
@@ -215,7 +212,6 @@ const useBufferedState = () => {
 
   function onMouseMove(e)
   {
-    console.log('onMouseMove');
     if(getIsGrabbing()) {
 
       moveDraggingItemToPos(e.clientX, e.clientY);
