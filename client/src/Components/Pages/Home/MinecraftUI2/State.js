@@ -205,6 +205,8 @@ const useBufferedState = () => {
   //=============================
   const getHoverElementFromPos = (pos) => {
     const hoverElement = document.elementFromPoint(pos.clientX, pos.clientY);
+
+    console.log(hoverElement);
     const closestDroppable = hoverElement.closest('.droppable');
     
     return closestDroppable;
@@ -213,7 +215,6 @@ const useBufferedState = () => {
   function onMouseMove(e)
   {
     if(getIsGrabbing()) {
-
       moveDraggingItemToPos(e.clientX, e.clientY);
       const closestDroppable = getHoverElementFromPos(e);
       if(closestDroppable) {

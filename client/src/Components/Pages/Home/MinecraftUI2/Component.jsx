@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useDroppableContext, DroppableContextProvider } from './State';
 import Droppable from './Droppable';
 import Draggable from './Draggable';
+//import "style.css";
 
 ///////////////////////////////////////////////////////////////////
 //                           Wrapper
@@ -48,7 +49,10 @@ const initialDropZones = dropZones.reduce((all, current) => {
   return all;
 }, {});
 const initialDropZoneOrder = Object.keys(initialDropZones);
-
+initialDropZones['emptySet'] = {
+  id: 'emptySet',
+  dragItemId: null,
+}
 
 const initialDragItems = {
   1: {
@@ -142,7 +146,7 @@ const Grid = function({children}) {
 //                          COMPONENT
 ///////////////////////////////////////////////////////////////////
 export default function({children}) {
-
+  
   const [items, setItems] = useState(initialDragItems);
   const [order, setOrder] = useState(initialDragItemOrder);
   const [dropZones, setDropZones] = useState(initialDropZones)
@@ -156,29 +160,36 @@ export default function({children}) {
     setDropZones(newDropZones);
   }
 
-
+  
   return <>
     <DroppableArena>
       <Grid>
-
-        {dropZoneOrder.map(dropZoneId => {
-          const dropZone = dropZones[dropZoneId];
-          const itemId = dropZone.dragItemId;
-          
-          let dragItem = items[itemId];
-          return <Droppable 
-            key={dropZoneId} 
-            dropZone={dropZone}
-            onDrop={onDrop}
-          >
-            {dragItem && <>
-              <Draggable dragItem={dragItem}>
-                {dragItem.children}
-              </Draggable>
-            </>}
-          </Droppable>
-        })}
-
+      <Droppable 
+          dropZone={dropZones['emptySet']}
+          onDrop={onDrop}
+        >
+        <div style={{padding: "10px", }}>
+          {dropZoneOrder.map(dropZoneId => {
+            const dropZone = dropZones[dropZoneId];
+            const itemId = dropZone.dragItemId;
+            
+            let dragItem = items[itemId];
+            return <div key={dropZoneId} style={{display: "inline-block",  backgroundColor: '#00000063', margin: '5px'}}>
+              <Droppable 
+                dropZone={dropZone}
+                onDrop={onDrop}
+                style={{minWidth: '50px', minHeight: '50px',}}
+              >
+                {dragItem && <>
+                  <Draggable dragItem={dragItem}>
+                    {dragItem.children}
+                  </Draggable>
+                </>}
+              </Droppable>
+            </div>
+          })}
+        </div>
+      </Droppable>
 
         {order.map(itemId => {
           let item = items[itemId];
@@ -190,6 +201,7 @@ export default function({children}) {
             </div>
           </>;
         })}
+        <pre><xmp>{JSON.stringify(dropZones, null, 2)}</xmp></pre>
       </Grid>
     </DroppableArena>
   </>
