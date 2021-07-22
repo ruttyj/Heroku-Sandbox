@@ -40,7 +40,7 @@ const addDropZone = () => {
   })
 }
 
-for(let i=0; i < 8*3; ++i){
+for(let i=0; i < 7*6; ++i){
   addDropZone();
 }
 
@@ -51,6 +51,17 @@ const initialDropZones = dropZones.reduce((all, current) => {
 const initialDropZoneOrder = Object.keys(initialDropZones);
 initialDropZones['emptySet'] = {
   id: 'emptySet',
+  dragItemId: null,
+}
+
+initialDropZones['hand'] = {
+  id: 'hand',
+  dragItemId: null,
+}
+
+
+initialDropZones['free'] = {
+  id: 'free',
   dragItemId: null,
 }
 
@@ -165,15 +176,15 @@ export default function({children}) {
     <DroppableArena>
       <Grid>
       <Droppable 
-          dropZone={dropZones['emptySet']}
-          onDrop={onDrop}
-        >
+        dropZone={dropZones['emptySet']}
+        onDrop={onDrop}
+      >
         <div style={{padding: "10px", }}>
           {dropZoneOrder.map(dropZoneId => {
             const dropZone = dropZones[dropZoneId];
             const itemId = dropZone.dragItemId;
-            
-            let dragItem = items[itemId];
+            const dragItem = items[itemId];
+
             return <div key={dropZoneId} style={{display: "inline-block",  backgroundColor: '#00000063', margin: '5px'}}>
               <Droppable 
                 dropZone={dropZone}
@@ -191,6 +202,12 @@ export default function({children}) {
         </div>
       </Droppable>
 
+
+      {/* Hand */}
+      <Droppable 
+        dropZone={dropZones['hand']}
+        onDrop={onDrop}
+      >
         {order.map(itemId => {
           let item = items[itemId];
           return <>
@@ -201,7 +218,18 @@ export default function({children}) {
             </div>
           </>;
         })}
-        <pre><xmp>{JSON.stringify(dropZones, null, 2)}</xmp></pre>
+      </Droppable>
+
+
+
+
+      {/* Free zone */}
+      <Droppable 
+        dropZone={dropZones['free']}
+        onDrop={onDrop}
+      >
+        Free zone
+      </Droppable>
       </Grid>
     </DroppableArena>
   </>
