@@ -20,7 +20,7 @@ module.exports = class RoomConfigs
   {
     this.mFields.add({
       label: "Open room",
-      key: 'Is_ROOM_OPEN',
+      key: 'IS_ROOM_OPEN',
       type: "bool",
       default: true,
     });
@@ -41,6 +41,11 @@ module.exports = class RoomConfigs
   updateField(fieldKey, value)
   {
     this.mValues.set(fieldKey, value);
+  }
+
+  hasField(fieldKey)
+  {
+    return this.mFields.has(fieldKey);
   }
 
   getRoom()

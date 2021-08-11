@@ -29,6 +29,7 @@ import createGameWindow from './GameWindow';
 import createDnDWindow from './DnDWindow';
 import createGreedyWindow from './Greedy/Window';
 import createTreeUIWindow from './TreeUI/Window';
+import createRoomConfigWindow from './RoomConfig/Window';
 import createMinecraftUI2 from './MinecraftUI2/Window';
 import createClickerWindow from './Clicker/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
@@ -73,13 +74,14 @@ function Home(props) {
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    //createChatWindow(windowManager, true);
+    createChatWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
-    createMinecraftUI2(windowManager, true);
-    createClickerWindow(windowManager, true);
+    //createMinecraftUI2(windowManager, true);
+    //createClickerWindow(windowManager, true);
+    createRoomConfigWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
-    //createDebugger(windowManager);
+    createDebugger(windowManager);
     //createDnDWindow(windowManager, true);
   })
   

@@ -181,7 +181,7 @@ module.exports = class Room
 
 
 
-  getConfigs()
+  getConfig()
   {
     return this.mConfigs;
   }
@@ -197,7 +197,7 @@ module.exports = class Room
       id: this.getId(),
       code: this.getCode(),
       personCount: this.mPeople.count(),
-      configs: this.mConfigs.serialize(),
+      configs: this.getConfig().serialize(),
     }
   }
 }

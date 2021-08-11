@@ -6,7 +6,7 @@ module.exports = class extends SocketHandler {
     const con = req.getConnection();
     const me = req.get('person');
     //------------------------------------------
-    if (me.getType() == Person.TYPE_HOST) {
+    if (me.hasTag(Person.TYPE_HOST)) {
       this.next(req, res);
     }
   }

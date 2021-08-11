@@ -90,19 +90,18 @@ describe("Client 1 can join room", () => {
     client3.emit('join_room', 'AAA');
     client3.emit('register_in_room', 'Janna');
 
-    //client1.emit('leave_room');
+    client1.emit('leave_room');
 
 
-    client1.emit('toggle_ready');
-    client1.emit('toggle_ready');
-
+    client2.emit('toggle_ready');
+    client3.emit('toggle_ready');
     room = roomManager.getByCode('AAA');
     people = room.getPeople();
-    //log(room.serialize());
-    log(people.serialize());
+    //log(people.serialize());
     // 2 and 3 should remain; person 2 should be the host
 
-
+    client2.emit('change_room_config', {key: 'IS_ROOM_OPEN', value: false});
+    log(room.serialize());
 
   })
 
