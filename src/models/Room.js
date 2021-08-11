@@ -3,6 +3,7 @@ const ChatTranscript = require('./Chat/Transcript');
 const PlayDealGame = require('./Game/PlayDeal/Game');
 const Person = require('./Person');
 const Player = require('./Game/PlayDeal/Players/Player');
+const RoomConfigs = require('./RoomConfigs');
 module.exports = class Room 
 {
 
@@ -16,6 +17,7 @@ module.exports = class Room
     this.mPeople = new PersonContainer();
     this.mChat = new ChatTranscript();
     this.mGame = null;
+    this.mConfigs = new RoomConfigs(this);
   }
 
   /*******************************************************
@@ -57,7 +59,8 @@ module.exports = class Room
     return this.mPeople.get(personId);
   }
 
-  getPeople(){
+  getPeople()
+  {
     return this.mPeople;
   }
 
@@ -127,8 +130,10 @@ module.exports = class Room
   {
     // Update host
     let hasHost = false;
-    const connectedPeople = this.getPeople().filter((p) => p.getStatus() == Person.STATUS_CONNECTED);
-    const host = connectedPeople.find(p => p.getType() == Person.TYPE_HOST); 
+    const connectedPeople = this.getPeople()
+                                .filter((p) => p.hasTag(Person.STATUS_CONNECTED));
+    const host            = connectedPeople
+                                .find(p => p.hasTag(Person.TYPE_HOST)); 
     
     if (host) {
       hasHost = true;
@@ -136,10 +141,10 @@ module.exports = class Room
       if (connectedPeople.length > 0) {
         connectedPeople.forEach((p) => {
           if (!hasHost) {
-            p.setType(Person.TYPE_HOST);
+            p.addTag(Person.TYPE_HOST);
             hasHost = true;
           } else {
-            p.setType(Person.TYPE_MEMBER);
+            p.removeTag(Person.TYPE_HOST);
           }
         })
       }
@@ -173,6 +178,16 @@ module.exports = class Room
   }
 
 
+
+
+
+  getConfigs()
+  {
+    return this.mConfigs;
+  }
+
+
+
   /*******************************************************
    *                      Serialize
    *******************************************************/
@@ -182,6 +197,7 @@ module.exports = class Room
       id: this.getId(),
       code: this.getCode(),
       personCount: this.mPeople.count(),
+      configs: this.mConfigs.serialize(),
     }
   }
 }

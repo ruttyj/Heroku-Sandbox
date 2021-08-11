@@ -118,37 +118,55 @@ export default (props) => {
     minWidth: "120px",
     overflow: 'auto',
   }}>  
-    {peopleOrder.map(personKey => {
-      let person = peopleItems[personKey];
-      let isMe = person.id == myId;
+    <FillContainer>
+      <FillContent
+        classNames={[
+          "window-content",
+          "column",
+        ]}
+      >
+        {peopleOrder.map(personKey => {
+          let person = peopleItems[personKey];
+          let isMe = person.id == myId;
 
-      
-      const onClickMakeHost = (personId) => {
-        if(amIHost) {
-          socket.emit('set_host', personId);
-        }
-      }
+          
+          const onClickMakeHost = (personId) => {
+            if(amIHost) {
+              socket.emit('set_host', personId);
+            }
+          }
 
 
-      let starContents = <PersonIcon/>;
-      if(person.type == PERSON_TYPE_HOST) {
-        starContents = <StarIcon/>;
-      } else {
-        if (amIHost) {
-          starContents = <StarBorderIcon style={{cursot: "pointer"}} onClick={() => onClickMakeHost(person.id)}/>
-        }
-      }
+          let starContents = <PersonIcon/>;
+          if(person.type == PERSON_TYPE_HOST) {
+            starContents = <StarIcon/>;
+          } else {
+            if (amIHost) {
+              starContents = <StarBorderIcon style={{cursot: "pointer"}} onClick={() => onClickMakeHost(person.id)}/>
+            }
+          }
 
-      return (<div {...classes("full-width", "row", "chat-participant")} key={person.id}>
-        <div>
-          {starContents}
-        </div>
-        <div {...classes("grow")}>
-          {person.name}
-        </div>
-        {isMe ? <EditIcon onClick={() => onOpenEditName()} fontSize="small"  {...classes("edit-name")}/> : ''}
-      </div>);
-    })}
+          return (<div {...classes("full-width", "row", "chat-participant")} key={person.id}>
+            <div>
+              {starContents}
+            </div>
+            <div {...classes("grow")}>
+              {person.name}
+            </div>
+            {isMe ? <EditIcon onClick={() => onOpenEditName()} fontSize="small"  {...classes("edit-name")}/> : ''}
+          </div>);
+        })}
+      </FillContent>
+      <FillFooter
+        height={40}
+        classNames={["footer", "actions", "center-center"]}
+      >
+        <div {...classes("spacer")} />
+          <div className="full-width" onClick={() => {socket.emit("toggle_ready");}}>
+            Toggle Ready
+          </div>
+      </FillFooter>
+    </FillContainer>
   </div>
 
 

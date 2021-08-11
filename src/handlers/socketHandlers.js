@@ -27,6 +27,7 @@ const NotifyRoomOfAllPeople       = require('../handlers/Room/Person/NotifyRoomO
 const IsHost                      = require('../handlers/Room/Person/IsHost');
 const requirePersonInRoom         = (next=null) =>  new RequireConnectedToRoom(new RequireRegistered(next));
 
+const ToggleReadyUp               = require('../handlers/Room/Person/ToggleReadyUp');
 // Chat =========================================================
 const Message                     = require('../handlers/Room/Chat/Message');
 
@@ -113,12 +114,17 @@ handlers.public('set_host',                               ((requirePersonInRoom(
                                                             const people = room.getPeople();
                                                             if (people.has(newHostId)) {
                                                               const newHost = people.get(newHostId);
-                                                              newHost.setType(Person.TYPE_HOST);
-                                                              me.setType(Person.TYPE_MEMBER);
+                                                              newHost.addTag(Person.TYPE_HOST);
+                                                              me.removeTag(Person.TYPE_HOST);
 
                                                               (new NotifyRoomOfAllPeople()).execute(req, res);
                                                             }
                                                           })))));
+
+handlers.public('toggle_ready',                           requirePersonInRoom((req, res) => {
+                                                            (new ToggleReadyUp()).execute(req, res);
+                                                            (new NotifyRoomOfAllPeople()).execute(req, res);
+                                                          }));
 
 // Chat =========================================================
 handlers.public('message',                                requirePersonInRoom(new Message()));

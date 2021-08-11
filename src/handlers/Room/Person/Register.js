@@ -12,7 +12,9 @@ module.exports = class extends SocketHandler {
     const person = new Person({
       name: personName,
     });
-    person.setType(Person.TYPE_MEMBER);
+    person.addTag(Person.TYPE_MEMBER);
+    person.addTag(Person.STATUS_CONNECTED);
+
     room.addPerson(person);
 
     person.connect(con);

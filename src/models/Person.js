@@ -1,3 +1,5 @@
+const OrderedMap = require('../lib/OrderedMap');
+
 module.exports = class Person
 {
   static STATUS_CONNECTED = 'connected';
@@ -6,14 +8,15 @@ module.exports = class Person
   static TYPE_HOST = 'host';
   static TYPE_MEMBER = 'member';
 
+  static IS_READY = 'ready';
+
   constructor(data)
   {
     this.mId = data.id || null;
-    this.mType = data.type || null;
-    this.mStatus = data.status || null;
     this.mName = data.name || "";
     this.mConnection = null;
-    this.mIsReady = false;
+    
+    this.mTags = new OrderedMap();
   }
 
   // Id ---------------------------------
@@ -27,19 +30,6 @@ module.exports = class Person
     this.mId = value;
   }
 
-
-  
-
-  // Type ------------------------------
-  getType()
-  {
-    return this.mType;
-  }
-
-  setType(value)
-  {
-    this.mType = value;
-  }
 
 
   // Name ------------------------------
@@ -65,20 +55,13 @@ module.exports = class Person
   }
 
   // Connection --------------------------
-  getStatus()
-  {
-    return this.mStatus;
-  }
-
-  setStatus(value)
-  {
-    this.mStatus = value;
-  }
-
   connect(connection)
   {
     connection.setPersonId(this.getId());
-    this.setStatus(Person.STATUS_CONNECTED);
+
+    this.removeTag(Person.STATUS_DISCONNECTED);
+    this.addTag(Person.STATUS_CONNECTED);
+
     this.mConnection = connection;
   }
 
@@ -91,7 +74,10 @@ module.exports = class Person
   {
     const connection = this.getConnection();
     connection.setPersonId(null);
-    this.setStatus(Person.STATUS_DISCONNECTED);
+
+    this.removeTag(Person.STATUS_CONNECTED);
+    this.addTag(Person.STATUS_DISCONNECTED);
+
     this.mConnection = null;
   }
 
@@ -133,16 +119,37 @@ module.exports = class Person
     return false;
   }
   
+
+  // Tags -----------------------------------
+  addTag(tag)
+  {
+    this.mTags.add(tag);
+  }
   
+  hasTag(tagKey)
+  {
+    return this.mTags.has(tagKey);
+  }
+
+  removeTag(tagKey)
+  {
+    const tag = this.mTags.get(tagKey);
+    this.mTags.remove(tagKey);
+
+    return tag;
+  }
+
+  getTags()
+  {
+    return this.mTags.toArray();
+  }
   
   // Serialize ------------------------------
   serialize()
   {
     return {
       id:         this.mId,
-      status:     this.mStatus, // connected
-      type:       this.mType,   // host | memeber | spectator?maybe
-      isReady:    this.mIsReady,
+      tags:       this.getTags(),
       name:       this.mName,
       socketId:   this.getSocketId(),
     }
