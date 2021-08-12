@@ -1,6 +1,7 @@
 # What is this?
 
-This is a little project which aims to be my go to starter kit for the MERN stack with SocketIO integration. It is still Just a sandbox though
+This is my little heroku playground. It is still just a sandbox for some experimental features. Thought it would be cool to have a web based version of windows with some small apps.
+![Screenshot](https://raw.githubusercontent.com/ruttyj/heroku-sandbox/main/docs/screenshot_2021-08-11.png)
 
 # Features
 
