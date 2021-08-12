@@ -3,6 +3,7 @@ import { useGlobalContext  } from "../../../../state/globalContext";
 import { useConnectionContext } from '../../../../state/connectionContext';
 import Switch from '@material-ui/core/Switch';
 import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 ///////////////////////////////////////////////////////////////////
 //                           Wrapper
@@ -54,6 +55,29 @@ const SwitchInput = function({label="", value="", readOnly=false, onValueChange=
 }
  
 
+const SelectInput = function({label="", value="", options=[], readOnly=false, onValueChange=()=>{}}) {
+  return <div>
+    {label}
+    <select
+        checked={value ? true : false}
+        value={value}
+        disabled={readOnly}
+        onChange={(e) => {
+          console.log(e.target.value);
+          onValueChange(e.target.value);
+        }}
+        name="checkedA"
+        inputProps={{ 'aria-label': 'secondary checkbox' }}
+      >
+        {options.map((value) => {
+          return <>
+            <option key={value} value={value}>{value}</option>
+          </>
+        })}
+      </select>
+  </div>
+}
+
 ///////////////////////////////////////////////////////////////////
 //                          COMPONENT
 ///////////////////////////////////////////////////////////////////
@@ -90,7 +114,16 @@ export default function({children}) {
       onValueChange={onValueChange}
     /> 
 
-    <pre>{JSON.stringify(get(['room', 'configs', 'values']), null, 2)}</pre>
+    {print(get([...basePath, 'values', 'GAME_TYPE']))}
+    <SelectInput
+      value={get([...basePath, 'values', 'GAME_TYPE'])}
+      label={get([...basePath, 'fields', 'items', 'GAME_TYPE', 'label'])}
+      options={get([...basePath, 'fields', 'items', 'GAME_TYPE', 'options'])}
+      onValueChange={(v) => socket.emit('change_room_config', {key: 'GAME_TYPE', value: v})}
+    />
+    {print(get([...basePath, 'fields', 'items', 'GAME_TYPE', 'options']))}
+
+    <pre>{JSON.stringify(get([...basePath, 'fields', 'items', 'GAME_TYPE', 'options']), null, 2)}</pre>
   </>
 
 
