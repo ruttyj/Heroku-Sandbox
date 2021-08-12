@@ -248,7 +248,7 @@ function Home(props) {
         </div>
 
 
-        <div {...classes("button")} onClick={() => createGameWindow(windowManager, true)}>
+        <div {...classes("button")} onClick={() => createMinecraftUI2(windowManager, true)}>
           <VideogameAssetIcon />
         </div>
       </AppSidebar>
