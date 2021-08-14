@@ -32,6 +32,7 @@ import createTreeUIWindow from './TreeUI/Window';
 import createRoomConfigWindow from './RoomConfig/Window';
 import createP5Window from './P5/Window';
 import createMyDetailsWindow from './MyDetails/Window';
+import openPeopleListWindow from './PeopleList/Window';
 
 
 import createMinecraftUI2 from './MinecraftUI2/Window';
@@ -46,6 +47,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import CakeIcon from '@material-ui/icons/Cake';
 import DnD from './DnD';
+import { getRandomAnimal } from '../../../Data/Animals';
+
 const {
   els,
   isDef,
@@ -78,10 +81,11 @@ function Home(props) {
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    createP5Window(windowManager, true);
-    createChatWindow(windowManager, true);
-    createMinecraftUI2(windowManager, true);
+    //createP5Window(windowManager, true);
+    //createChatWindow(windowManager, true);
+    //createMinecraftUI2(windowManager, true);
     createMyDetailsWindow(windowManager, true);
+    openPeopleListWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     //createRoomConfigWindow(windowManager, true);
@@ -152,7 +156,7 @@ function Home(props) {
       })
 
       socket.emit('join_room', 'test');
-      socket.emit('register_in_room', 'Smith');
+      socket.emit('register_in_room', `Anonymous ${getRandomAnimal()}`);
 
     } else if (socket) {
       socket.off('time');
