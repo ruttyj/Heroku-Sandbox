@@ -9,7 +9,7 @@ let themeColors = [
 export default class Particle {
   constructor(p5, parent) {
     this.mActive = true;
-    this.mDead = false;
+    this.mDead = true;
 
     this.mParent = parent;
     this.mGravity = parent.gravite ? parent.gravite : p5.createVector(0, 0.1);
@@ -23,32 +23,27 @@ export default class Particle {
     this.priseVitesse = 0.05;
   }
 
-  _setDead(val)
-  {
+  _setDead(val) {
     this.mDead = val;
   }
 
-  isDead()
-  {
+  isDead() {
     return this.mDead;
   }
 
-  setActive(val)
-  {
+  setActive(val) {
     this.mActive = val;
     if (val) {
       this._setDead(false);
     }
   }
 
-  isActive()
-  {
+  isActive() {
     return this.mActive;
   }
 
-  reinit(p5)
-  {
-    if(this.isActive()){
+  reinit(p5) {
+    if (this.isActive()) {
       this.mPosition = this.mParent ? this.mParent.getPosition() : p5.createVector(0, 0);
       this.mPosition.y = p5.random(-20, -100);
       this.mPosition.x = p5.random(0, p5.width);
@@ -62,43 +57,43 @@ export default class Particle {
     }
   }
 
-  update(p5)
-  {
-    this.mVelocity.add(this.mGravity);
-    this.mVelocity.x += this.prise;
-    this.mVelocity.mult(this.mFriction);
-    this.mPosition.add(this.mVelocity);
-    if (this.mPosition.y > p5.height) {
-      this.reinit(p5);
-    }
+  update(p5) {
+    if (!this.isDead()) {
+      this.mVelocity.add(this.mGravity);
+      this.mVelocity.x += this.prise;
+      this.mVelocity.mult(this.mFriction);
+      this.mPosition.add(this.mVelocity);
+      if (this.mPosition.y > p5.height) {
+        this.reinit(p5);
+      }
 
-    if (this.mPosition.x < 0) {
-      this.reinit(p5);
-    }
-    if (this.mPosition.x > p5.width + 10) {
-      this.reinit(p5);
-    }
+      if (this.mPosition.x < 0) {
+        this.reinit(p5);
+      }
+      if (this.mPosition.x > p5.width + 10) {
+        this.reinit(p5);
+      }
 
-    this.mVerticalScale = 0.5 + Math.sin(this.mVelocity.y * 20) * 0.5;
-    this.prise = this.priseFacteur + Math.cos(this.priseAngle) * this.multFacteur;
-    this.priseAngle += this.priseVitesse;
+      this.mVerticalScale = 0.5 + Math.sin(this.mVelocity.y * 20) * 0.5;
+      this.prise = this.priseFacteur + Math.cos(this.priseAngle) * this.multFacteur;
+      this.priseAngle += this.priseVitesse;
+    }
   }
 
-  draw(p5)
-  {
-    if(!this.isDead()) {
+  draw(p5) {
+    if (!this.isDead()) {
       p5.translate(this.mPosition.x, this.mPosition.y);
       p5.rotate(this.mVelocity.x * 2);
       p5.scale(1, this.mVerticalScale);
       p5.noStroke();
       p5.fill(this.mColor);
-  
+
       if (this.mForm === 0) {
         p5.rect(-this.mOffset, -this.mOffset, this.mSize, this.mSize);
       } else {
         p5.ellipse(0, 0, this.mSize, this.mSize);
       }
-  
+
       p5.resetMatrix();
     }
   }

@@ -79,11 +79,11 @@ function Home(props) {
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    createMyDetailsWindow(windowManager, true);
     createP5Window(windowManager, true);
     createChatWindow(windowManager, true);
-    //createRoomLobby(windowManager, true);
     createMinecraftUI2(windowManager, true);
+    createMyDetailsWindow(windowManager, true);
+    //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     //createRoomConfigWindow(windowManager, true);
     //createGameWindow(windowManager, true);
@@ -240,9 +240,7 @@ function Home(props) {
           <BugReportIcon />
         </div>
 
-        <div {...classes("button")} onClick={() => createRoomConfigWindow(windowManager, true)}>
-          <BugReportIcon />
-        </div>
+
 
 
 
@@ -260,6 +258,10 @@ function Home(props) {
           <SettingsIcon />
         </div>
 
+
+        <div {...classes("button")} onClick={() => createRoomConfigWindow(windowManager, true)}>
+          <SettingsIcon />
+        </div>
 
         <div {...classes("button")} onClick={() => createMinecraftUI2(windowManager, true)}>
           <VideogameAssetIcon />

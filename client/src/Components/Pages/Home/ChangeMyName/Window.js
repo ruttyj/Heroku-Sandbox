@@ -1,21 +1,18 @@
 import React from "react";
-import Utils from "../Utils";
 import WindowComponent from './Component';
-const { classes } = Utils;
 
 export default function (windowManager, isFocused = true) {
-  // Dragable Lists window
   windowManager.createWindow({
-    title: "My Details",
-    key: 'Me',
+    title: "Change My Name",
+    key: 'ChangeMyName',
     isFocused,
     position: {
       left: 1500,
       top: 0
     },
     size: {
-      width: 500,
-      height: 350
+      width: 400,
+      height: 150
     },
     isFullSize: false,
     children: (props) => {

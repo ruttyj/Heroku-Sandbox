@@ -7,10 +7,14 @@ import useParticleSystem from './useParticleSystem';
 ///////////////////////////////////////////////////////////////////
 export default () => {
   const particleSystem = useParticleSystem();
-  
+
   function setup(p5, parentRef) {
     p5.createCanvas(480, 600).parent(parentRef);
     particleSystem.setup(p5);
+    particleSystem.setIsActive(true);
+    setTimeout(() => {
+      particleSystem.setIsActive(false);
+    }, 1000)
   };
 
   function draw(p5) {

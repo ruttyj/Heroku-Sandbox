@@ -2,7 +2,7 @@ import React from 'react';
 import { useGlobalContext } from "../../../../state/globalContext";
 import { useConnectionContext } from '../../../../state/connectionContext';
 import useDataHelper from '../../../../state/StateHelper/roomHelper';
-import createRenameWindow from "../RenameWindow";
+import createRenameWindow from "../ChangeMyName/Window";
 
 ///////////////////////////////////////////////////////////////////
 //                           Wrapper

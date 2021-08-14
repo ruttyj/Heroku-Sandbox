@@ -1,14 +1,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useConnectionContext } from '../../../state/connectionContext';
-import { useGlobalContext  } from '../../../state/globalContext';
+import { useGlobalContext } from '../../../state/globalContext';
 import FillContainer from "../../Containers/FillContainer/FillContainer";
 import FillContent from "../../Containers/FillContainer/FillContent";
 import FillFooter from "../../Containers/FillContainer/FillFooter";
 import SendIcon from '@material-ui/icons/Send';
 import EditIcon from '@material-ui/icons/Edit';
 import Utils from "../../../Utils";
-import createRenameWindow from "./RenameWindow";
+import createRenameWindow from "./ChangeMyName/Window";
 import randomEmoji from "../../../Utils/randomEmoji";
 import StarIcon from '@material-ui/icons/Star';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
@@ -25,7 +25,7 @@ export default (props) => {
 
 
   // Socket Connection to serverside
-  const { 
+  const {
     isConnected,
     getSocket,
   } = useConnectionContext();
@@ -36,7 +36,7 @@ export default (props) => {
     let chatMessages = get(['chat_messages'], []);
     chatMessages = [...chatMessages, messageModel];
     set(['chat_messages'], chatMessages);
-    setTimeout(function(){ scrollToBottom() }, 500);
+    setTimeout(function () { scrollToBottom() }, 500);
   }
 
   useEffect(() => {
@@ -45,8 +45,8 @@ export default (props) => {
       socket.on('message', receiveMessage);
     }
   }, [isConnected]);
-  
-    
+
+
 
 
 
@@ -65,7 +65,7 @@ export default (props) => {
   const position = props.position;
   const size = props.size;
 
-  
+
 
   const handleOnChange = (e) => {
     let value = e.target.value;
@@ -85,14 +85,14 @@ export default (props) => {
           ...formState,
           message: randomEmoji(),
         })
-      } 
+      }
     }
   }
-  
+
   const PERSON_TYPE_HOST = 'host';
   const peopleItems = get(["people", "items"], {});
   const peopleOrder = get(["people", "order"], []);
-  const myId = get(['connection',  'personId']);
+  const myId = get(['connection', 'personId']);
 
   const myType = getNestedValue(peopleItems, [myId, 'type'], null);
   const amIHost = myType == PERSON_TYPE_HOST;
@@ -101,7 +101,7 @@ export default (props) => {
     createRenameWindow(windowManager, {
       isFocused: true,
       position: {
-        top: position.top + size.height/2 - 100,
+        top: position.top + size.height / 2 - 100,
         left: position.left + 0,
       }
     })
@@ -110,14 +110,14 @@ export default (props) => {
   /////////////////////////////////////////////////////////////////////////////
 
   // User Panel
-  
+
 
   const userPanel = <div {...classes("column", "tint-bkgd")} style={{
     marginRight: "5px",
     padding: "10px",
     minWidth: "120px",
     overflow: 'auto',
-  }}>  
+  }}>
     <FillContainer>
       <FillContent
         classNames={[
@@ -129,20 +129,20 @@ export default (props) => {
           let person = peopleItems[personKey];
           let isMe = person.id == myId;
 
-          
+
           const onClickMakeHost = (personId) => {
-            if(amIHost) {
+            if (amIHost) {
               socket.emit('set_host', personId);
             }
           }
 
 
-          let starContents = <PersonIcon/>;
-          if(person.type == PERSON_TYPE_HOST) {
-            starContents = <StarIcon/>;
+          let starContents = <PersonIcon />;
+          if (person.type == PERSON_TYPE_HOST) {
+            starContents = <StarIcon />;
           } else {
             if (amIHost) {
-              starContents = <StarBorderIcon style={{cursot: "pointer"}} onClick={() => onClickMakeHost(person.id)}/>
+              starContents = <StarBorderIcon style={{ cursot: "pointer" }} onClick={() => onClickMakeHost(person.id)} />
             }
           }
 
@@ -153,7 +153,7 @@ export default (props) => {
             <div {...classes("grow")}>
               {person.name}
             </div>
-            {isMe ? <EditIcon onClick={() => onOpenEditName()} fontSize="small"  {...classes("edit-name")}/> : ''}
+            {isMe ? <EditIcon onClick={() => onOpenEditName()} fontSize="small"  {...classes("edit-name")} /> : ''}
           </div>);
         })}
       </FillContent>
@@ -162,16 +162,16 @@ export default (props) => {
         classNames={["footer", "actions", "center-center"]}
       >
         <div {...classes("spacer")} />
-          <div className="full-width" onClick={() => {socket.emit("toggle_ready");}}>
-            Toggle Ready
-          </div>
+        <div className="full-width" onClick={() => { socket.emit("toggle_ready"); }}>
+          Toggle Ready
+        </div>
       </FillFooter>
     </FillContainer>
   </div>
 
 
 
-   /////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
 
   // Main Contents
 
@@ -183,14 +183,14 @@ export default (props) => {
           "column",
         ]}
       >
-       <div {...classes("row", 'full-height')} style={{
-         overflow: 'hidden',
-       }}>
-        {userPanel}
-        <div {...classes("column", "tint-bkgd", 'full-width')} style={{
-          padding: "10px",
-          overflow: 'auto',
+        <div {...classes("row", 'full-height')} style={{
+          overflow: 'hidden',
         }}>
+          {userPanel}
+          <div {...classes("column", "tint-bkgd", 'full-width')} style={{
+            padding: "10px",
+            overflow: 'auto',
+          }}>
             {get(['chat_messages'], []).map((message) => {
               let isMyMessage = message.authorId == myId;
               let personName = isMyMessage ? 'Me' : message.authorName;
@@ -203,7 +203,7 @@ export default (props) => {
                 </div>
               </div>)
             })}
-            <div style={{float:"left", clear: "both"}} ref={(el) => { messagesEnd.current = el; }}></div>
+            <div style={{ float: "left", clear: "both" }} ref={(el) => { messagesEnd.current = el; }}></div>
           </div>
         </div>
       </FillContent>
@@ -214,9 +214,9 @@ export default (props) => {
         <div {...classes("spacer")} />
         <form {...classes("flex", "row", "full-width")}>
           <div className="form-input chat-form full-width">
-            <input type="text" name="message" {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange}/>
+            <input type="text" name="message" {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange} />
           </div>
-          <div {...classes("button")} onClick={onSubmit}><SendIcon/></div>
+          <div {...classes("button")} onClick={onSubmit}><SendIcon /></div>
         </form>
       </FillFooter>
     </FillContainer>
