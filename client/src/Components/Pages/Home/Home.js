@@ -81,7 +81,7 @@ function Home(props) {
     //createMinecraftUI2(windowManager, true);
     //createClickerWindow(windowManager, true);
     createRoomConfigWindow(windowManager, true);
-    createP5Window(windowManager, true);
+    //createP5Window(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     createDebugger(windowManager);
