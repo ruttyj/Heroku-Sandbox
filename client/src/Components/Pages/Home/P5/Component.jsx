@@ -9,15 +9,109 @@ let themeColors = [
   '#FF5722'
 ];
 
+
+
 class Particle {
   constructor(p5, parent) {
     this.y = 0;
     this.x = 0;
+
+    this.parent = parent;
+    this.gravite = p5.createVector(0, 0.1);//parent.gravite;
+    this.reinit(p5);
+    this.forme = p5.round(p5.random(0, 1));
+    this.etape = 0;
+    this.prise = 0;
+    this.priseFacteur = p5.random(-0.02, 0.02);
+    this.multFacteur = p5.random(0.01, 0.08);
+    this.priseAngle = 0;
+    this.priseVitesse = 0.05;
   }
 
   reinit(p5)
   {
     this.y = 0; 
+    this.position = p5.createVector(0, 0);//this.parent.position.copy();
+    this.position.y = p5.random(-20, -100);
+    this.position.x = p5.random(0, p5.width);
+    this.velocite = p5.createVector(p5.random(-6, 6), p5.random(-10, 2));
+    this.friction = p5.random(0.995, 0.98);
+    this.taille = p5.round(p5.random(5, 15));
+    this.moitie = this.taille / 2;
+    this.couleur = p5.color(p5.random(themeColors));
+  }
+
+  update(p5)
+  {
+    this.velocite.add(this.gravite);
+    this.velocite.x += this.prise;
+    this.velocite.mult(this.friction);
+    this.position.add(this.velocite);
+    if (this.position.y > p5.height) {
+      this.reinit(p5);
+    }
+
+    if (this.position.x < 0) {
+      this.reinit(p5);
+    }
+    if (this.position.x > p5.width + 10) {
+      this.reinit(p5);
+    }
+  }
+
+  draw(p5)
+  {
+    this.etape = 0.5 + Math.sin(this.velocite.y * 20) * 0.5;
+
+    this.prise = this.priseFacteur + Math.cos(this.priseAngle) * this.multFacteur;
+    this.priseAngle += this.priseVitesse;
+    p5.translate(this.position.x, this.position.y);
+    p5.rotate(this.velocite.x * 2);
+    p5.scale(1, this.etape);
+    p5.noStroke();
+    p5.fill(this.couleur);
+
+    if (this.forme === 0) {
+      p5.rect(-this.moitie, -this.moitie, this.taille, this.taille);
+    } else {
+      p5.ellipse(0, 0, this.taille, this.taille);
+    }
+
+    p5.resetMatrix();
+  }
+
+}
+
+class ParticleSystem 
+{
+  constructor(p5, parent) {
+    this.y = 0;
+    this.x = 0;
+
+    this.parent = parent;
+    this.gravite = p5.createVector(0, 0.1);//parent.gravite;
+    this.reinit();
+    this.forme = p5.round(p5.random(0, 1));
+    this.etape = 0;
+    this.prise = 0;
+    this.priseFacteur = p5.random(-0.02, 0.02);
+    this.multFacteur = p5.random(0.01, 0.08);
+    this.priseAngle = 0;
+    this.priseVitesse = 0.05;
+  }
+
+  reinit(p5)
+  {
+    this.y = 0; 
+
+    this.position = this.parent.position.copy();
+    this.position.y = p5.random(-20, -100);
+    this.position.x = p5.random(0, p5.width);
+    this.velocite = p5.createVector(p5.random(-6, 6), p5.random(-10, 2));
+    this.friction = p5.random(0.995, 0.98);
+    this.taille = p5.round(p5.random(5, 15));
+    this.moitie = this.taille / 2;
+    this.couleur = p5.color(p5.random(themeColors));
   }
 
   update(p5)
@@ -27,6 +121,21 @@ class Particle {
     }
     else {
       this.y += 8;
+    }
+
+    this.velocite.add(this.gravite);
+    this.velocite.x += this.prise;
+    this.velocite.mult(this.friction);
+    this.position.add(this.velocite);
+    if (this.position.y > p5.height) {
+      this.reinit();
+    }
+
+    if (this.position.x < 0) {
+      this.reinit();
+    }
+    if (this.position.x > p5.width + 10) {
+      this.reinit();
     }
   }
 
@@ -41,7 +150,28 @@ class Particle {
 
     p5.fill(color);
     p5.rect(...position, size, size);
+
+
+    
+    this.etape = 0.5 + Math.sin(this.velocite.y * 20) * 0.5;
+
+    this.prise = this.priseFacteur + Math.cos(this.priseAngle) * this.multFacteur;
+    this.priseAngle += this.priseVitesse;
+    p5.translate(this.position.x, this.position.y);
+    p5.rotate(this.velocite.x * 2);
+    p5.scale(1, this.etape);
+    p5.noStroke();
+    p5.fill(this.couleur);
+
+    if (this.forme === 0) {
+      p5.rect(-this.moitie, -this.moitie, this.taille, this.taille);
+    } else {
+      p5.ellipse(0, 0, this.taille, this.taille);
+    }
+
+    p5.resetMatrix();
   }
+
 }
 
 function useParticleSystem() {
@@ -52,7 +182,7 @@ function useParticleSystem() {
   function setup(p5)
   {
     mParticles.current = [];
-    for (let i=0; i< 10; ++i) {
+    for (let i=0; i< 100; ++i) {
       mParticles.current.push(makeParticle(p5));
     }
   }
@@ -108,7 +238,7 @@ export default () => {
   const particleSystem = useParticleSystem();
   
   function setup (p5, parentRef) {
-    p5.createCanvas(200, 200).parent(parentRef);
+    p5.createCanvas(400, 500).parent(parentRef);
     particleSystem.setup(p5);
   };
 
