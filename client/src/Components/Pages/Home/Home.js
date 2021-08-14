@@ -39,9 +39,8 @@ import createClickerWindow from './Clicker/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
 import { useGlobalContext } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
-import GamesIcon from '@material-ui/icons/Games';
 import ChatIcon from '@material-ui/icons/Chat';
-import ExtensionIcon from '@material-ui/icons/Extension';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import SettingsIcon from '@material-ui/icons/Settings';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
@@ -231,6 +230,13 @@ function Home(props) {
   return (
     <motion.div {...classes("full", "row", "main-bkgd")} style={style}>
       <AppSidebar>
+
+
+        <div {...classes("button")} onClick={() => window.open('https://github.com/ruttyj/Heroku-Sandbox', '_blank').focus()}>
+          <GitHubIcon />
+        </div>
+
+
         <div {...classes("button")} onClick={() => openBackgroundPicker()}>
           <PhotoSizeSelectActualIcon />
         </div>
@@ -239,10 +245,6 @@ function Home(props) {
         <div {...classes("button")} onClick={() => openDebuggerV2()}>
           <BugReportIcon />
         </div>
-
-
-
-
 
 
         <div {...classes("button")} onClick={() => createThreeJsWindow(windowManager, true)}>
