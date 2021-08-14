@@ -10,3 +10,4 @@ This is my little heroku playground. It is still just a sandbox for some experim
 -   React Windows: Implementation of Mac modal windows w/ toolbar
 -   Chat Room
 -   Minecraft Style drag and drop
+-   Confetti
