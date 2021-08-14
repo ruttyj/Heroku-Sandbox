@@ -31,10 +31,13 @@ import createGreedyWindow from './Greedy/Window';
 import createTreeUIWindow from './TreeUI/Window';
 import createRoomConfigWindow from './RoomConfig/Window';
 import createP5Window from './P5/Window';
+import createMyDetailsWindow from './MyDetails/Window';
+
+
 import createMinecraftUI2 from './MinecraftUI2/Window';
 import createClickerWindow from './Clicker/Window';
 import createFramerMotionDrop from './FramerMotionDrop/Window';
-import { useGlobalContext  } from "../../../state/globalContext";
+import { useGlobalContext } from "../../../state/globalContext";
 import { useConnectionContext } from "../../../state/connectionContext";
 import GamesIcon from '@material-ui/icons/Games';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -59,7 +62,7 @@ function Home(props) {
   const { set, get, remove, windowManager } = bufferedState;
 
   // Socket Connection to serverside
-  const { 
+  const {
     isConnected,
     getSocket,
   } = useConnectionContext();
@@ -76,21 +79,22 @@ function Home(props) {
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
+    createMyDetailsWindow(windowManager, true);
+    createP5Window(windowManager, true);
     createChatWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
-    //createMinecraftUI2(windowManager, true);
+    createMinecraftUI2(windowManager, true);
     //createClickerWindow(windowManager, true);
-    createRoomConfigWindow(windowManager, true);
-    //createP5Window(windowManager, true);
+    //createRoomConfigWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
-    createDebugger(windowManager);
+    //createDebugger(windowManager);
     //createDnDWindow(windowManager, true);
   })
-  
+
   useOnUnmount(() => {
     // clear socket listners in case of hot reload / page navigation
-    if(socket) {
+    if (socket) {
       socket.off();
     }
   })
@@ -100,7 +104,7 @@ function Home(props) {
   // Set listeners
   useEffect(() => {
     if (isConnected) {
-      
+
       socket.on('time', (timeString) => {
         set(['time'], timeString);
       });
@@ -122,7 +126,7 @@ function Home(props) {
       socket.on('leave_room', (data) => {
         console.log('left room');
       })
-      
+
 
       socket.on('room', (data) => {
         console.log('room', data);
@@ -147,10 +151,10 @@ function Home(props) {
         console.log('room_people_all_keyed', payload);
         set(['people'], payload);
       })
-      
+
       socket.emit('join_room', 'test');
       socket.emit('register_in_room', 'Smith');
-      
+
     } else if (socket) {
       socket.off('time');
     }
@@ -201,11 +205,11 @@ function Home(props) {
           onClick={() => windowManager.toggleWindow(window.id)}
         >
           <div {...classes("truncate-inner", "full-width")} key={window.id}>
-            {window.title} 
+            {window.title}
           </div>
-          <a style={{padding: "15px"}} onClick={() => {
-              windowManager.removeWindow(window.id)
-            }}>x</a>
+          <a style={{ padding: "15px" }} onClick={() => {
+            windowManager.removeWindow(window.id)
+          }}>x</a>
         </div>
       </ArrowToolTip>
     );
@@ -223,7 +227,7 @@ function Home(props) {
 
 
 
-  
+
   return (
     <motion.div {...classes("full", "row", "main-bkgd")} style={style}>
       <AppSidebar>
@@ -235,6 +239,12 @@ function Home(props) {
         <div {...classes("button")} onClick={() => openDebuggerV2()}>
           <BugReportIcon />
         </div>
+
+        <div {...classes("button")} onClick={() => createRoomConfigWindow(windowManager, true)}>
+          <BugReportIcon />
+        </div>
+
+
 
 
         <div {...classes("button")} onClick={() => createThreeJsWindow(windowManager, true)}>
@@ -258,7 +268,7 @@ function Home(props) {
         <div {...classes("button")} onClick={() => createP5Window(windowManager, true)}>
           <CakeIcon />
         </div>
-        
+
 
 
       </AppSidebar>
@@ -267,7 +277,7 @@ function Home(props) {
           <WindowContainer
             windowManager={windowManager}
           >
-          {({ containerSize }) => (
+            {({ containerSize }) => (
               <>
                 {windowManager.getAllWindows().map((window) => {
                   const contents = (
@@ -316,7 +326,7 @@ function Home(props) {
                         } else {
                           setOnWindow(window, 'backgroundColor', null);
                         }
-                      
+
                       }}
                       onUp={(window) => {
                         // renable pointer events for other windows
@@ -327,7 +337,7 @@ function Home(props) {
 
                         console.log('window.position', window.position);
 
-                        
+
                       }}
                       title={window.title}
                       containerSize={containerSize}
@@ -342,9 +352,9 @@ function Home(props) {
                   );
                 })}
               </>
-            )}  
+            )}
           </WindowContainer>
-          
+
         </FillContent>
         <FillFooter height={60}>
           <div {...classes("full")}>
@@ -358,14 +368,14 @@ function Home(props) {
                   }}
                 />
                 <div {...classes('system-clock')}>
-                {String(get(['time'])).split(" ")[0]}
+                  {String(get(['time'])).split(" ")[0]}
                 </div>
               </div>
             </BlurredWrapper>
           </div>
         </FillFooter>
       </FillContainer>
-    </motion.div>
+    </motion.div >
   );
 }
 

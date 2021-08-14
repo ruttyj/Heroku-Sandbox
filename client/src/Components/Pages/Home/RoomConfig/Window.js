@@ -6,8 +6,8 @@ const { classes } = Utils;
 export default function (windowManager, isFocused = true) {
   // Dragable Lists window
   windowManager.createWindow({
-    title: "FramerMotionDrop",
-    key: 'FramerMotionDrop',
+    title: "Config",
+    key: 'RoomConfig',
     isFocused,
     position: {
       left: 0,

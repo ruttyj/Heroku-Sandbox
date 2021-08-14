@@ -6,11 +6,12 @@ const { classes } = Utils;
 export default function (windowManager, isFocused = true) {
   // Dragable Lists window
   windowManager.createWindow({
-    title: "Minecraft UI",
+    title: "My Details",
+    key: 'Me',
     isFocused,
     position: {
-      left: 700,
-      top: 50
+      left: 1500,
+      top: 0
     },
     size: {
       width: 500,

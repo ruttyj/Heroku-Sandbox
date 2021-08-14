@@ -9,7 +9,7 @@ import RegisterForm from "./RegisterForm";
 import JoinRoomForm from "./JoinRoomForm";
 import ChatForm from "./ChatForm";
 import { useConnectionContext } from "../../../state/connectionContext";
-import { useGlobalContext  } from '../../../state/globalContext';
+import { useGlobalContext } from '../../../state/globalContext';
 import './PeopleWindow.scss';
 //=================================================================
 //
@@ -25,26 +25,25 @@ function DebugComponent({ size, position, containerSize }) {
   statusColors.set('connected', '#00FF33');
 
   let personOrder = get(pathOrder, []);
-  
+
   return (
     <pre {...classes("column", "align-left", "full-width")}>
-        {personOrder.map(personId => {
+      {personOrder.map(personId => {
 
-          let person = get([...pathItems, personId], {});
+        let person = get([...pathItems, personId], {});
 
-          return <>
+        return <>
           <div className={"person-item"}>
-            {person.name}<br/>
-            <div style={{color: statusColors.get(person.status)}}>
+            {person.name}<br />
+            <div style={{ color: statusColors.get(person.status) }}>
               {person.status}
-
             </div>
           </div>
-          </>
-        })
+        </>
+      })
       }
       <xmp>
-      {JSON.stringify(get([]), null, 2)}
+        {JSON.stringify(get([]), null, 2)}
       </xmp>
     </pre>
   )
@@ -66,7 +65,7 @@ function createDebugger(windowManager, isFocused = true) {
     },
     children: (props) => {
       return (
-        <DebugComponent {...props}/>
+        <DebugComponent {...props} />
       )
     }
   });

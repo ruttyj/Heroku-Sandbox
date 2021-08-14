@@ -1,32 +1,29 @@
+import React from 'react';
 import roomConfigs from './roomConfigs';
 
-export default function useDataHelper({get, set, socket}) {
+export default function useDataHelper({ get, set, socket }) {
 
-  function getRoomConfigs()
-  {
-    return roomConfigs({get, set, socket});
+  function getRoomConfigs() {
+    return roomConfigs({ get, set, socket });
   }
 
   //////////////////////////////////
   //              ME
   //////////////////////////////////
-  function getMe()
-  {
+  function getMe() {
     let myId = get(['me']);
     let people = get(['people']);
-    let me = get(['people', 'items', myId]);
+    let me = get(['people', 'items', myId], {});
     return me;
   }
 
-  function amIHost()
-  {
+  function amIHost() {
     let me = getMe();
-    let isHost = me ? me.tags.includes("host") : false;
+    let isHost = me && me.tags ? me.tags.includes("host") : false;
     return isHost;
   }
 
-  function getCurrentRoom()
-  {
+  function getCurrentRoom() {
 
   }
 
