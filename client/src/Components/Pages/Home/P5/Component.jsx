@@ -182,7 +182,7 @@ function useParticleSystem() {
   function setup(p5)
   {
     mParticles.current = [];
-    for (let i=0; i< 100; ++i) {
+    for (let i=0; i< 200; ++i) {
       mParticles.current.push(makeParticle(p5));
     }
   }
@@ -238,14 +238,13 @@ export default () => {
   const particleSystem = useParticleSystem();
   
   function setup (p5, parentRef) {
-    p5.createCanvas(400, 500).parent(parentRef);
+    p5.createCanvas(480, 600).parent(parentRef);
     particleSystem.setup(p5);
   };
 
 
   return (
-    <div className="App">
-      <h1>react-p5</h1>
+    <div>
       <Sketch setup={setup} draw={particleSystem.draw} />
     </div>
   );

@@ -68,7 +68,7 @@ function Home(props) {
   useOnMount(() => {
     set([], {
       theme: {
-        wallpaper: els(wallpapers[10], wallpapers[0]), // set default url
+        wallpaper: els(wallpapers[5], wallpapers[0]), // set default url
       }
     })
     windowManager.init();
