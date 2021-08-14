@@ -81,7 +81,7 @@ function Home(props) {
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    //createP5Window(windowManager, true);
+    createP5Window(windowManager, true);
     //createChatWindow(windowManager, true);
     //createMinecraftUI2(windowManager, true);
     createMyDetailsWindow(windowManager, true);

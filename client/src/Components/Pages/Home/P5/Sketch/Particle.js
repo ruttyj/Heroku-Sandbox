@@ -82,6 +82,9 @@ export default class Particle {
 
   draw(p5) {
     if (!this.isDead()) {
+      // Push world transform matrix
+      p5.push();
+
       p5.translate(this.mPosition.x, this.mPosition.y);
       p5.rotate(this.mVelocity.x * 2);
       p5.scale(1, this.mVerticalScale);
@@ -94,7 +97,8 @@ export default class Particle {
         p5.ellipse(0, 0, this.mSize, this.mSize);
       }
 
-      p5.resetMatrix();
+      // Pop world transform matrix
+      p5.pop();
     }
   }
 }
