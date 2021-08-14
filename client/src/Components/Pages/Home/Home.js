@@ -42,6 +42,7 @@ import ExtensionIcon from '@material-ui/icons/Extension';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import SettingsIcon from '@material-ui/icons/Settings';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
+import CakeIcon from '@material-ui/icons/Cake';
 import DnD from './DnD';
 const {
   els,
@@ -253,6 +254,13 @@ function Home(props) {
         <div {...classes("button")} onClick={() => createMinecraftUI2(windowManager, true)}>
           <VideogameAssetIcon />
         </div>
+
+        <div {...classes("button")} onClick={() => createP5Window(windowManager, true)}>
+          <CakeIcon />
+        </div>
+        
+
+
       </AppSidebar>
       <FillContainer>
         <FillContent>
