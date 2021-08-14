@@ -25,34 +25,30 @@ const useBufferedState = () => {
 
   const [grabbingDragItemId, setGrabbingDragItemId] = useState(null);
   const getGrabbingDragItemId = () => grabbingDragItemId;
-  
+
   const [hoveringId, setHoveringId] = useState(null);
   const getHoveringId = () => hoveringId;
-  
+
   //=============================
 
   //        Drag Items
 
   //=============================
-  function internalizeDragItem(dragItem) 
-  {
+  function internalizeDragItem(dragItem) {
     let id = dragItem.id;
     dragItems.current[id] = dragItem;
   }
 
-  function removeDragItem(dragItem)
-  {
+  function removeDragItem(dragItem) {
     let id = dragItem.id;
     delete dragItems.current[id];
   }
 
-  function getDragItems() 
-  {
+  function getDragItems() {
     return dragItems.current;
   }
 
-  function getDragItem(id)
-  {
+  function getDragItem(id) {
     return dragItems.current[id];
   }
 
@@ -61,8 +57,7 @@ const useBufferedState = () => {
   //        Drop Zones
 
   //=============================
-  function internalizeDropZone(dropZone, onDrop)
-  {
+  function internalizeDropZone(dropZone, onDrop) {
     if (dropZone) {
       let id = dropZone.id;
       dropZones.current[id] = dropZone;
@@ -71,35 +66,30 @@ const useBufferedState = () => {
     }
   }
 
-  function getOnDrop(id)
-  {
+  function getOnDrop(id) {
     return dropZoneCallbacksOnDrop.current[id]
   }
 
-  function removeDropZone(dropZone)
-  {
+  function removeDropZone(dropZone) {
     let id = dropZone.id;
     delete dropZones.current[id];
   }
 
-  function getDropZones() 
-  {
+  function getDropZones() {
     return dropZones.current;
   }
 
-  function getDropZone(id)
-  {
+  function getDropZone(id) {
     return dropZones.current[id];
   }
 
-  function getDropZoneByCoord(x, y)
-  {
+  function getDropZoneByCoord(x, y) {
     const hoverElement = document.elementFromPoint(x, y);
     const closestDroppable = hoverElement.closest('.droppable');
 
-    if(closestDroppable && closestDroppable.dataset) {
+    if (closestDroppable && closestDroppable.dataset) {
       return getDropZone(closestDroppable.dataset.id);
-    } 
+    }
 
     return null;
   }
@@ -109,8 +99,7 @@ const useBufferedState = () => {
   //     Drag Item Overlay
 
   //=============================
-  function moveDraggingItemToPos(x, y)
-  {
+  function moveDraggingItemToPos(x, y) {
     // Get bounding box of the dragable area
     let offset;
     if (boundingBox) {
@@ -129,14 +118,13 @@ const useBufferedState = () => {
     setCursorState({
       ...getCursorState(),
       pos: {
-        x: Math.max(offset.left, Math.min(x, offset.right))-offset.left,
-        y: Math.max(offset.top, Math.min(y-20, offset.bottom))-offset.top,
+        x: Math.max(offset.left, Math.min(x, offset.right)) - offset.left,
+        y: Math.max(offset.top, Math.min(y - 20, offset.bottom)) - offset.top,
       }
     });
   }
 
-  function grabItem(id)
-  {
+  function grabItem(id) {
     setIsGrabbing(true);
     setGrabbingDragItemId(id);
   }
@@ -147,9 +135,8 @@ const useBufferedState = () => {
   //     Touch Handeling
 
   //=============================
-  function onTouchStart(e, {dragItem})
-  {
-    if(!getIsDragging() && !getIsGrabbing()) {
+  function onTouchStart(e, { dragItem }) {
+    if (!getIsDragging() && !getIsGrabbing()) {
       grabItem(dragItem.id);
       setIsDragging(true);
 
@@ -159,14 +146,13 @@ const useBufferedState = () => {
     }
   }
 
-  function onTouchMove(e, {dragItem})
-  {
-    if(getIsDragging()) {
+  function onTouchMove(e, { dragItem }) {
+    if (getIsDragging()) {
       let primaryTouch = e.touches[0];
       moveDraggingItemToPos(primaryTouch.clientX, primaryTouch.clientY);
 
       let closestDroppable = getDropZoneByCoord(primaryTouch.clientX, primaryTouch.clientY);
-      if(closestDroppable && closestDroppable.id) {
+      if (closestDroppable && closestDroppable.id) {
         setHoveringId(closestDroppable.id)
       } else {
         setHoveringId(null);
@@ -174,8 +160,7 @@ const useBufferedState = () => {
     }
   }
 
-  function onTouchEnd(e, {dragItem}) 
-  {
+  function onTouchEnd(e, { dragItem }) {
     //getDragItem(getGrabbingDragItemId())
     //
 
@@ -206,31 +191,28 @@ const useBufferedState = () => {
   const getHoverElementFromPos = (pos) => {
     const hoverElement = document.elementFromPoint(pos.clientX, pos.clientY);
 
-    console.log(hoverElement);
     const closestDroppable = hoverElement.closest('.droppable');
-    
+
     return closestDroppable;
   }
 
-  function onMouseMove(e)
-  {
-    if(getIsGrabbing()) {
+  function onMouseMove(e) {
+    if (getIsGrabbing()) {
       moveDraggingItemToPos(e.clientX, e.clientY);
       const closestDroppable = getHoverElementFromPos(e);
-      if(closestDroppable) {
+      if (closestDroppable) {
         setHoveringId(closestDroppable.dataset.id)
       } else {
         setHoveringId(null);
       }
-    } else if(getHoveringId()) {
+    } else if (getHoveringId()) {
       setHoveringId(null);
     }
   }
 
 
-  function onMouseDown(e, {dragItem})
-  {
-    if(!getIsGrabbing() && !getIsDragging()) {
+  function onMouseDown(e, { dragItem }) {
+    if (!getIsGrabbing() && !getIsDragging()) {
       grabItem(dragItem.id);
       setIsDragging(true);
       moveDraggingItemToPos(e.clientX, e.clientY);
@@ -238,9 +220,9 @@ const useBufferedState = () => {
   }
 
   function onMouseUp(e) {
-    if(getIsGrabbing()){
+    if (getIsGrabbing()) {
       const dropZoneId = getHoveringId();
-      if(dropZoneId) {
+      if (dropZoneId) {
         const dropZone = getDropZone(dropZoneId);
         const onDrop = getOnDrop(dropZoneId);
 
@@ -264,11 +246,10 @@ const useBufferedState = () => {
   //      Cursor Click
 
   //=============================
-  function onClick(e, {dragItem})
-  {
+  function onClick(e, { dragItem }) {
 
   }
-  
+
   /////////////////////////////////////////////////////////////////////////////////////
 
   //                                PUBLIC SCOPE
@@ -276,7 +257,7 @@ const useBufferedState = () => {
   /////////////////////////////////////////////////////////////////////////////////////
   const publicScope = {
     boundingBox,
-    
+
     // Drag Items
     internalizeDragItem,
     removeDragItem,
@@ -310,7 +291,7 @@ const useBufferedState = () => {
     onClick,
   }
 
- 
+
 
   // Expose public ----------------
   return publicScope;
@@ -322,7 +303,7 @@ const DroppableContext = React.createContext(null);
 export const useDroppableContext = () => React.useContext(DroppableContext);
 
 // Wrap components with the provider to allow access to state
-export function DroppableContextProvider({children}) {
+export function DroppableContextProvider({ children }) {
   return (
     <DroppableContext.Provider value={useBufferedState()}>
       {children}

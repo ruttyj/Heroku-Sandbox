@@ -1,8 +1,7 @@
 import React from 'react';
 import roomConfigs from './roomConfigs';
 
-export default function useDataHelper({ get, set, socket }) {
-
+export default function ({ get, set, socket }) {
   function getRoomConfigs() {
     return roomConfigs({ get, set, socket });
   }
@@ -23,6 +22,10 @@ export default function useDataHelper({ get, set, socket }) {
     return isHost;
   }
 
+  function changeMyName(name) {
+    socket.emit("change_my_name", name);
+  }
+
   function getCurrentRoom() {
 
   }
@@ -30,6 +33,7 @@ export default function useDataHelper({ get, set, socket }) {
 
   return {
     getMe,
+    changeMyName,
     amIHost,
     getCurrentRoom,
     getRoomConfigs,

@@ -7,22 +7,41 @@ import FillContent from "../../../Containers/FillContainer/FillContent";
 import FillFooter from "../../../Containers/FillContainer/FillFooter";
 import Utils from "../../../../Utils";
 import TextField from '@material-ui/core/TextField';
+import useDataHelper from '../../../../state/StateHelper/roomHelper';
 
 const { classes } = Utils;
 
 
 export default ({ window }) => {
-  const { set, get, remove, windowManager } = useGlobalContext();
-  const initialFormState = {
-    name: get(['me', 'name'], ""),
-  };
-  const [formState, setFormState] = useState(initialFormState);
-
+  const globalContext = useGlobalContext();
+  const { set, get, remove, windowManager } = globalContext;
   const {
     isConnected,
     getSocket,
   } = useConnectionContext();
   const socket = getSocket();
+
+  const {
+    amIHost,
+    getRoomConfigs,
+    changeMyName,
+  } = useDataHelper({ ...globalContext, socket });
+
+
+  const initialFormState = {
+    name: get(['me', 'name'], ""),
+  };
+  const [formState, setFormState] = useState(initialFormState);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (formState.name.length > 0) {
+      if (isConnected) {
+        changeMyName(formState.name);
+        windowManager.removeWindow(window.id)
+      }
+    }
+    return false;
+  }
 
   const handleOnChange = (e) => {
     let value = e.target.value;
@@ -33,23 +52,11 @@ export default ({ window }) => {
     });
   }
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (isConnected) {
-      if (formState.name.length > 0) {
-        socket.emit("change_my_name", formState.name);
-        windowManager.removeWindow(window.id)
-      }
-    }
-    return false;
-  }
 
 
   let keyPress = (e) => {
     if (e.keyCode == 13) {
-      console.log('value', e);
       onSubmit(e);
-      // put the login here
     }
   }
 
