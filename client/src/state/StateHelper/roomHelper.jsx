@@ -1,6 +1,7 @@
 import React from 'react';
 import roomConfigs from './roomConfigs';
 import personManager from './PersonManager';
+import Game from './Game';
 
 export default function ({ get, set, socket }) {
 
@@ -11,6 +12,8 @@ export default function ({ get, set, socket }) {
   function getPersonManager() {
     return personManager({ get, set, socket });
   }
+
+
 
   //////////////////////////////////
   //              ME
@@ -36,6 +39,18 @@ export default function ({ get, set, socket }) {
   }
 
 
+  //////////////////////////////////
+  //            GAME
+  //////////////////////////////////
+  function getGame() {
+    return new Game({ get, socket });
+  }
+
+  function hasGame() {
+    let game = getGame();
+    return game ? true : false;
+  }
+
   return {
     getMe,
     changeMyName,
@@ -43,5 +58,7 @@ export default function ({ get, set, socket }) {
     getCurrentRoom,
     getRoomConfigs,
     getPersonManager,
+    getGame,
+    hasGame,
   }
 }

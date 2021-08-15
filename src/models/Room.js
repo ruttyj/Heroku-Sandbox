@@ -1,140 +1,151 @@
 const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
-const PlayDealGame = require('./Game/PlayDeal/Game');
 const Person = require('./Person');
-const Player = require('./Game/PlayDeal/Players/Player');
 const RoomConfigs = require('./RoomConfigs');
-module.exports = class Room 
-{
+const BaseGame = require('./Game/Base');
+const SkipBoGame = require('./Game/SkipBo/Game');
+const PlayDealGame = require('./Game/PlayDeal/Game');
+module.exports = class Room {
 
   static MODE_SETUP = 'setup';
   static MODE_SESSION = 'session';
 
-  constructor(data={})
-  {
+  constructor(data = {}) {
     this.mId = data.id || 0;
     this.mCode = data.code || 'default';
     this.mPeople = new PersonContainer();
     this.mChat = new ChatTranscript();
     this.mGame = null;
     this.mConfigs = new RoomConfigs(this);
+    this.mConfigs.setOnValueChange((key, value) => {
+      // huge code smell
+      switch (key) {
+        case 'GAME_TYPE':
+          switch (value) {
+            case 'SKIPBO':
+              this.setGame(new SkipBoGame());
+              break;
+            case 'PLAYDEAL':
+              this.setGame(new PlayDealGame());
+              break;
+            case 'BASE':
+            default:
+              this.setGame(new BaseGame());
+              break;
+          }
+          this.emitToEveryoneGameState();
+          break;
+        case 'IS_ROOM_OPEN':
+          break;
+        default:
+      }
+    });
   }
 
   /*******************************************************
    *                         Id
    *******************************************************/
-  setId(value)
-  {
-      this.mId = value;
+  setId(value) {
+    this.mId = value;
   }
 
-  getId()
-  {
-      return this.mId;
+  getId() {
+    return this.mId;
   }
 
   /*******************************************************
    *                         Code
    *******************************************************/
-  setCode(value)
-  {
-      this.mCode = value;
+  setCode(value) {
+    this.mCode = value;
   }
 
-  getCode()
-  {
-      return this.mCode;
+  getCode() {
+    return this.mCode;
   }
 
   /*******************************************************
    *                      People
    *******************************************************/
-  addPerson(person)
-  {
+  addPerson(person) {
     this.mPeople.add(person);
   }
 
-  getPerson(personId)
-  {
+  getPerson(personId) {
     return this.mPeople.get(personId);
   }
 
-  getPeople()
-  {
+  getPeople() {
     return this.mPeople;
   }
 
-  getPersonContainer()
-  {
+  getPersonContainer() {
     return this.mPeople;
   }
 
-  getAllPeople()
-  {
+  getAllPeople() {
     return this.mPeople.list();
   }
 
-  getEveryone()
-  {
+  getEveryone() {
     return this.getAllPeople();
   }
 
-  getEveryoneElse(model)
-  {
+  getEveryoneElse(model) {
     return this.mPeople.getEveryoneElse(model);
   }
 
-  removePerson(personId)
-  {
+  removePerson(personId) {
     this.mPeople.remove(personId);
   }
 
-  hasPerson(personId)
-  {
+  hasPerson(personId) {
     return this.mPeople.has(personId);
   }
 
-  hasPeople()
-  {
+  hasPeople() {
     return !this.mPeople.isEmpty();
   }
 
-
-  emitToEveryone(eventType, payload)
-  {
+  /*******************************************************
+    *                        Socket
+    *******************************************************/
+  emitToEveryone(eventType, payload) {
     this.mPeople.emitToEveryone(eventType, payload);
   }
 
-  emitToEveryoneElse(model, eventType, payload)
-  {
+  emitToEveryoneElse(model, eventType, payload) {
     this.mPeople.emitToEveryone(model, eventType, payload);
   }
 
-
-  destroy() 
-  {
+  destroy() {
     // @TODO
   }
+
+  emitToEveryoneGameState() {
+    const gameData = this.getGame();
+    if (gameData) {
+      this.emitToEveryone('game', gameData.serialize());
+    }
+  }
+
 
   /*******************************************************
    *                        Chat
    *******************************************************/
-  getChat()
-  {
+  getChat() {
     return this.mChat;
   }
 
-
   // ----------------------------------------
-  hasOrAutoAssignHost() 
-  {
+  hasOrAutoAssignHost() {
     // Update host
     let hasHost = false;
     const connectedPeople = this.getPeople()
-                                .filter((p) => p.hasTag(Person.STATUS_CONNECTED));
-    const host            = connectedPeople
-                                .find(p => p.hasTag(Person.TYPE_HOST)); 
-    
+      .filter((p) => p.hasTag(Person.STATUS_CONNECTED));
+    const host = connectedPeople
+      .find(p => p.hasTag(Person.TYPE_HOST));
+
     if (host) {
       hasHost = true;
     } else {
@@ -148,41 +159,33 @@ module.exports = class Room
           }
         })
       }
-    }                                            
-    
+    }
+
     return hasHost;
   }
 
   /*******************************************************
    *                        Game
    *******************************************************/
-  createGame()
-  {
-    let game = new PlayDealGame();
-    this.mGame = game;
-    let people = this.mPeople.filter((person) => person.getStatus() === Person.getIsReady());
-
-    people.forEach(person => {
-      let player = new Player();
-      player.setName(person.getName());
-      player.setPersonId(person.getId());
-      game.addPlayer(player);
-    })
-
+  createGame() {
+    const game = this.getGame();
     game.startGame();
+    this.emitToEveryoneGameState();
   }
 
-  getGame()
-  {
+  getGame() {
     return this.mGame;
   }
 
+  hasGame() {
+    return this.getGame() ? true : false;
+  }
 
+  setGame(game) {
+    this.mGame = game;
+  }
 
-
-
-  getConfig()
-  {
+  getConfig() {
     return this.mConfigs;
   }
 
@@ -191,8 +194,7 @@ module.exports = class Room
   /*******************************************************
    *                      Serialize
    *******************************************************/
-  serialize()
-  {
+  serialize() {
     return {
       id: this.getId(),
       code: this.getCode(),

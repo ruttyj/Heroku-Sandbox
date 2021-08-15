@@ -46,7 +46,6 @@ import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import SettingsIcon from '@material-ui/icons/Settings';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import CakeIcon from '@material-ui/icons/Cake';
-import DnD from './DnD';
 import { getRandomAnimal } from '../../../Data/Animals';
 
 const {
@@ -74,7 +73,7 @@ function Home(props) {
   useOnMount(() => {
     set([], {
       theme: {
-        wallpaper: els(wallpapers[5], wallpapers[0]), // set default url
+        wallpaper: els(wallpapers[11], wallpapers[0]), // set default url
       }
     })
     windowManager.init();
@@ -88,7 +87,7 @@ function Home(props) {
     openPeopleListWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
-    //createRoomConfigWindow(windowManager, true);
+    createRoomConfigWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);
@@ -154,6 +153,14 @@ function Home(props) {
         console.log('room_people_all_keyed', payload);
         set(['people'], payload);
       })
+
+      socket.on('game', (payload) => {
+        console.log('game', payload);
+        set(['game'], payload);
+      })
+
+
+
 
       socket.emit('join_room', 'test');
       socket.emit('register_in_room', `Anonymous ${getRandomAnimal()}`);

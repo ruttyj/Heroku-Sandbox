@@ -24,6 +24,12 @@ export default () => {
   let isSystemActive = particleSystem.getIsActive();
   const toggleSystem = () => particleSystem.setIsActive(!isSystemActive);
 
+  const absolute = {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  }
+
   return (
     <div style={{
       position: 'relative',
@@ -31,16 +37,12 @@ export default () => {
       height: '100%',
     }}>
       <div style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        ...absolute
       }}>
         <button onClick={toggleSystem}>{isSystemActive ? "System On" : "System Off"}</button>
       </div>
       <div style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
+        ...absolute,
         pointerEvents: 'none'
       }}>
         <Sketch setup={setup} draw={draw} />
