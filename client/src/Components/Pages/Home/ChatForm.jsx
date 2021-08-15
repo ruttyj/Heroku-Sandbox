@@ -89,6 +89,12 @@ export default (props) => {
     }
   }
 
+  let keyPress = (e) => {
+    if (e.keyCode == 13) {
+      onSubmit(e);
+    }
+  }
+
   const PERSON_TYPE_HOST = 'host';
   const peopleItems = get(["people", "items"], {});
   const peopleOrder = get(["people", "order"], []);
@@ -214,7 +220,13 @@ export default (props) => {
         <div {...classes("spacer")} />
         <form {...classes("flex", "row", "full-width")}>
           <div className="form-input chat-form full-width">
-            <input type="text" name="message" {...classes("full-width", "full-height", 'flex')} value={formState.message} placeholder="Aa" onChange={handleOnChange} />
+            <input
+              type="text"
+              name="message" {...classes("full-width", "full-height", 'flex')}
+              value={formState.message} placeholder="Aa"
+              onChange={handleOnChange}
+              onKeyDown={(e) => keyPress(e)}
+            />
           </div>
           <div {...classes("button")} onClick={onSubmit}><SendIcon /></div>
         </form>

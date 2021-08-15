@@ -47,6 +47,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import CakeIcon from '@material-ui/icons/Cake';
 import { getRandomAnimal } from '../../../Data/Animals';
+import useDataHelper from '../../../state/StateHelper/roomHelper';
 
 const {
   els,
@@ -63,17 +64,27 @@ function Home(props) {
   const { set, get, remove, windowManager } = bufferedState;
 
   // Socket Connection to serverside
-  const {
-    isConnected,
-    getSocket,
-  } = useConnectionContext();
+  const { isConnected, getSocket } = useConnectionContext();
   const socket = getSocket();
+
+  const {
+    amIHost,
+    getRoomConfigs,
+    getGame,
+    hasGame,
+    addConnectionListeners,
+    removeConnectionListeners,
+    addRoomListeners,
+    removeRoomListeners,
+    joinRoom,
+    registerInRoom,
+  } = useDataHelper();
 
 
   useOnMount(() => {
     set([], {
       theme: {
-        wallpaper: els(wallpapers[11], wallpapers[0]), // set default url
+        wallpaper: els(wallpapers[12], wallpapers[0]), // set default url
       }
     })
     windowManager.init();
@@ -81,13 +92,13 @@ function Home(props) {
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
     createP5Window(windowManager, true);
-    //createChatWindow(windowManager, true);
     //createMinecraftUI2(windowManager, true);
     createMyDetailsWindow(windowManager, true);
     openPeopleListWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     createRoomConfigWindow(windowManager, true);
+    createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);
@@ -106,67 +117,15 @@ function Home(props) {
   // Set listeners
   useEffect(() => {
     if (isConnected) {
+      addConnectionListeners();
+      addRoomListeners();
 
-      socket.on('time', (timeString) => {
-        set(['time'], timeString);
-      });
-
-
-      socket.on('chat_transcript', (transcript) => {
-        let chatMessages = transcript.messages;
-        set(['chat_messages'], chatMessages);
-      })
-
-      socket.on('connection', (data) => {
-        set(['connection'], data);
-      })
-
-      socket.on('debug', (data) => {
-        console.log('debug', data);
-      })
-
-      socket.on('leave_room', (data) => {
-        console.log('left room');
-      })
-
-
-      socket.on('room', (data) => {
-        console.log('room', data);
-        set(['room'], data);
-      })
-
-      socket.on('connection_type', (data) => {
-        set(['connection_type'], data);
-      })
-
-      socket.on('me', (data) => {
-        console.log('me', (data));
-        set(['me'], data);
-      })
-
-      socket.on('room_list', (payload) => {
-        set(['room_list'], payload.data);
-      })
-
-
-      socket.on('room_people_all_keyed', (payload) => {
-        console.log('room_people_all_keyed', payload);
-        set(['people'], payload);
-      })
-
-      socket.on('game', (payload) => {
-        console.log('game', payload);
-        set(['game'], payload);
-      })
-
-
-
-
-      socket.emit('join_room', 'test');
-      socket.emit('register_in_room', `Anonymous ${getRandomAnimal()}`);
-
+      // Join room for testing purposes
+      joinRoom('test');
+      registerInRoom();
     } else if (socket) {
-      socket.off('time');
+      removeRoomListeners();
+      removeConnectionListeners();
     }
   }, [isConnected])
 

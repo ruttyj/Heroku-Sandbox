@@ -35,7 +35,7 @@ export default function ({ children }) {
     getRoomConfigs,
     getGame,
     hasGame,
-  } = useDataHelper({ get, set, socket });
+  } = useDataHelper();
 
   const roomConfigs = getRoomConfigs();
   let isHost = amIHost();
