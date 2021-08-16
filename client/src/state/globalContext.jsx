@@ -14,6 +14,7 @@ const {
   setImmutableValue,
   deleteImmutableValue,
 } = utils;
+const print = (v) => <pre>{JSON.stringify(v, null, 2)}</pre>;
 
 /**
  * Buffered Context
@@ -200,6 +201,7 @@ const useBufferedState = () => {
     map,
     list,
     state,
+    print,
   }
 
   //////////////////////////////////////////////////////////

@@ -11,25 +11,17 @@ import useDataHelper from '../../../../state/StateHelper/roomHelper';
 
 const { classes } = Utils;
 
-
 export default ({ window }) => {
-  const globalContext = useGlobalContext();
-  const { set, get, remove, windowManager } = globalContext;
-  const {
-    isConnected,
-    getSocket,
-  } = useConnectionContext();
-  const socket = getSocket();
+  const { windowManager } = useGlobalContext();
+  const { isConnected } = useConnectionContext();
 
   const {
-    amIHost,
-    getRoomConfigs,
+    getMyName,
     changeMyName,
-  } = useDataHelper({ ...globalContext, socket });
-
+  } = useDataHelper();
 
   const initialFormState = {
-    name: get(['me', 'name'], ""),
+    name: getMyName(),
   };
   const [formState, setFormState] = useState(initialFormState);
   const onSubmit = (e) => {
@@ -52,14 +44,11 @@ export default ({ window }) => {
     });
   }
 
-
-
   let keyPress = (e) => {
     if (e.keyCode == 13) {
       onSubmit(e);
     }
   }
-
 
   return (
     <FillContainer>
@@ -79,6 +68,7 @@ export default ({ window }) => {
             {...classes("full-width", "full-height", 'flex')}
             value={formState.message}
             placeholder="Aa"
+            autoComplete="off"
             onChange={handleOnChange}
             onKeyDown={(e) => keyPress(e)}
           />

@@ -12,9 +12,14 @@ export default function ({ get, socket }) {
     return get(['game', 'isInProgress'], false);
   }
 
+  function getType() {
+    return get(['game', 'type'], null);
+  }
+
   return {
     startGame,
     isInProgress,
     serialize,
+    getType,
   }
 }

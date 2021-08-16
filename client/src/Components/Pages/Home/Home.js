@@ -33,7 +33,7 @@ import createRoomConfigWindow from './RoomConfig/Window';
 import createP5Window from './P5/Window';
 import createMyDetailsWindow from './MyDetails/Window';
 import openPeopleListWindow from './PeopleList/Window';
-
+import openSkipBoWindow from './SkipBo/Window';
 
 import createMinecraftUI2 from './MinecraftUI2/Window';
 import createClickerWindow from './Clicker/Window';
@@ -98,7 +98,8 @@ function Home(props) {
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     createRoomConfigWindow(windowManager, true);
-    createChatWindow(windowManager, true);
+    openSkipBoWindow(windowManager, true);
+    //createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
     //createDebugger(windowManager);
@@ -123,6 +124,16 @@ function Home(props) {
       // Join room for testing purposes
       joinRoom('test');
       registerInRoom();
+
+      setTimeout(() => {
+        if (amIHost()) {
+          const roomConfigs = getRoomConfigs();
+          roomConfigs.updateFieldValue('GAME_TYPE', 'SKIPBO');
+          const game = getGame();
+          game.startGame();
+        }
+      }, 2000);
+      
     } else if (socket) {
       removeRoomListeners();
       removeConnectionListeners();

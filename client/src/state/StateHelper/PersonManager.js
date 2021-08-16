@@ -13,6 +13,11 @@ export default function ({ get, socket }) {
     return me;
   }
 
+  function getMyName() {
+    const me = getMe();
+    return me.name || "";
+  }
+
   function amIHost() {
     let me = getMe();
     let isHost = me && me.tags ? me.tags.includes("host") : false;
@@ -27,6 +32,7 @@ export default function ({ get, socket }) {
   return {
     getPeople,
     getMe,
+    getMyName,
     amIHost,
     changeMyName,
   }

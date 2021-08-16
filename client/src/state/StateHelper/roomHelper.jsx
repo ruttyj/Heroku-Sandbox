@@ -28,6 +28,10 @@ export default function () {
     return getPersonManager().getMe();
   }
 
+  function getMyName() {
+    return getPersonManager().getMyName();
+  }
+
   function amIHost() {
     return getPersonManager().amIHost();
   }
@@ -135,6 +139,7 @@ export default function () {
     joinRoom,
     registerInRoom,
     getMe,
+    getMyName,
     changeMyName,
     amIHost,
     getCurrentRoom,

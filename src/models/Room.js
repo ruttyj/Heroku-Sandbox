@@ -2,9 +2,11 @@ const PersonContainer = require('../containers/Person');
 const ChatTranscript = require('./Chat/Transcript');
 const Person = require('./Person');
 const RoomConfigs = require('./RoomConfigs');
+
 const BaseGame = require('./Game/Base');
 const SkipBoGame = require('./Game/SkipBo/Game');
 const PlayDealGame = require('./Game/PlayDeal/Game');
+const UnoGame = require('./Game/Uno/Game');
 module.exports = class Room {
 
   static MODE_SETUP = 'setup';
@@ -27,6 +29,9 @@ module.exports = class Room {
               break;
             case 'PLAYDEAL':
               this.setGame(new PlayDealGame());
+              break;
+            case 'UNO':
+              this.setGame(new UnoGame());
               break;
             case 'BASE':
             default:
