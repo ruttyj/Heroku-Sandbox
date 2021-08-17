@@ -149,13 +149,28 @@ export default ({ window }) => {
         className="row" 
         style={{
           width: "100%",
-          justifyContent: "center",
         }}
         >
-          <Pile></Pile>
-          <Pile></Pile>
-          <Pile></Pile>
-          <Pile></Pile>
+          <div 
+            className="row" 
+          >
+            <div style={{
+              width: "60px",
+            }}>
+              Piles
+            </div>
+            <div 
+              className="row" 
+              style={{
+                justifyContent: "center",
+              }}
+            >
+              <Pile></Pile>
+              <Pile></Pile>
+              <Pile></Pile>
+              <Pile></Pile>
+            </div>
+          </div>
         </div>
         <Pile></Pile>
       </div>
@@ -163,16 +178,25 @@ export default ({ window }) => {
 
     // My Hand
     myHandContents = <>
-     <div 
+      <div 
         className="row" 
       >
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
+        <div style={{
+          width: "60px",
+        }}>
+          Hand
+        </div>
+        <div 
+          className="row" 
+        >
+          <Pile></Pile>
+          <Pile></Pile>
+          <Pile></Pile>
+          <Pile></Pile>
+          <Pile></Pile>
+        </div>
       </div>
-  </>;
+    </>;
 
     // The screen
     contents = <>
@@ -223,7 +247,7 @@ export default ({ window }) => {
         </FillContent>
         <FillFooter
           height={40}
-          classNames={["footer", "actions", "center-center"]}
+          classNames={["footer", "actions"]}
         >
           {myHandContents}
         </FillFooter>
