@@ -11,13 +11,12 @@ import useDataHelper from '../../../../state/StateHelper/roomHelper';
 
 const { classes } = Utils;
 
-
 function Pile({children}) {
   return <div style={{
     display: 'inline-block',
     height: '55px',
     width: '35px',
-    backgroundColor: '#00000090',
+    backgroundColor: '#0871bc',
     margin: "3px",
     content: "",
   }}>
@@ -25,14 +24,14 @@ function Pile({children}) {
   </div>
 }
 
-
 function PlayerCard() {
   return <>
     <div className="row" 
       style={{
         justifyContent: "space-between",
         width: "100%",
-        backgroundColor: "#00000020",
+        backgroundColor: "#00000070",
+        marginTop: "6px",
       }}
     >
       <div>
@@ -62,9 +61,6 @@ export default ({ window }) => {
 
   const game = getGame();
 
-
-
-
   let contents = null;
 
   if(game.getType() == 'SKIPBO') {
@@ -75,54 +71,49 @@ export default ({ window }) => {
     let reservePiles;
     let myHandContents;
 
-    otherPlayerContents = <div>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-      <PlayerCard></PlayerCard>
-    </div>;
-   
+    otherPlayerContents = <>
+      <div>
+        <PlayerCard></PlayerCard>
+        <div style={{
+          justifyContents: 'center-center',
+          backgroundColor: '#00000070',
+          marginTop: '6px',
+        }}>
+          You
+        </div>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+        <PlayerCard></PlayerCard>
+      </div>
+    </>;
 
-
-    reservePiles = <>
+    tableContents = <>
       <div 
         className="row" 
+        style={{
+          justifyContent: "space-between",
+          width: "100%",
+        }}
       >
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
+        <div
+        className="row" 
+        style={{
+          width: "100%",
+          justifyContent: "center",
+        }}
+        >
+          <Pile></Pile>
+          <Pile></Pile>
+          <Pile></Pile>
+          <Pile></Pile>
+        </div>
         <Pile></Pile>
       </div>
-    </>
-
-
-  tableContents = <>
-    <div 
-      className="row" 
-      style={{
-        justifyContent: "space-between",
-        width: "100%",
-      }}
-    >
-      <div
-       className="row" 
-       style={{
-         width: "100%",
-         justifyContent: "center",
-       }}
-      >
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-      </div>
-      <Pile></Pile>
-    </div>
-  </>;
+    </>;
 
     myTableContents = <>
       <div 
@@ -132,13 +123,22 @@ export default ({ window }) => {
           width: "100%",
         }}
       >
-        {reservePiles}
+        <>
+          <div 
+            className="row" 
+            style={{}}
+          >
+            <Pile></Pile>
+            <Pile></Pile>
+            <Pile></Pile>
+            <Pile></Pile>
+          </div>
+        </>
         <Pile></Pile>
       </div>
     </>;
 
-
-  myHandContents = <>
+    myHandContents = <>
      <div 
         className="row" 
       >
@@ -211,13 +211,7 @@ export default ({ window }) => {
     </>
   }
 
-
-
-
-
-
-
-
+  // Display the combined contents
   return (
   <>
     {contents}
