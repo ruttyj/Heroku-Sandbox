@@ -15,9 +15,11 @@ const { classes } = Utils;
 function Pile({children}) {
   return <div style={{
     display: 'inline-block',
-    height: '150px',
-    width: '75px',
-    backgroundColor: '#00000010',
+    height: '55px',
+    width: '35px',
+    backgroundColor: '#00000090',
+    margin: "3px",
+    content: "",
   }}>
     {children}
   </div>
@@ -26,24 +28,23 @@ function Pile({children}) {
 
 function PlayerCard() {
   return <>
-    <div className="row" style={{
-      width: "100%",
-      alignContent: "space-between",
-      display: "flex",
-      backgroundColor: "#00000020",
-    }}>
+    <div className="row" 
+      style={{
+        justifyContent: "space-between",
+        width: "100%",
+        backgroundColor: "#00000020",
+      }}
+    >
       <div>
-        Person
+        Name
       </div>
       <div>
-        Cards
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
       </div>
-      <div>
-        Piles
-      </div>
-      <Pile>
-        CardStack
-      </Pile>
+      <Pile></Pile>
     </div>
   </>
 }
@@ -67,36 +68,63 @@ export default ({ window }) => {
   let contents = null;
 
   if(game.getType() == 'SKIPBO') {
-    let gameContents;
-    let gameFooter;
-    let reservePiles;
+    let otherPlayerContents;
+    let tableContents;
 
-    gameContents = <>
-      <div>
-        Skipbo
-        {print(game.getType())}
-        {print(game.serialize())}
-        <PlayerCard></PlayerCard>
-        <PlayerCard></PlayerCard>
-        <PlayerCard></PlayerCard>
-        <PlayerCard></PlayerCard>
-        <PlayerCard></PlayerCard>
-      </div>
-    </>;
+    let myTableContents;
+    let reservePiles;
+    let myHandContents;
+
+    otherPlayerContents = <div>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+      <PlayerCard></PlayerCard>
+    </div>;
+   
 
 
     reservePiles = <>
       <div 
         className="row" 
       >
-        <Pile>Reserve Slot</Pile>
-        <Pile>Reserve Slot</Pile>
-        <Pile>Reserve Slot</Pile>
-        <Pile>Reserve Slot</Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
       </div>
     </>
 
-    gameFooter = <>
+
+  tableContents = <>
+    <div 
+      className="row" 
+      style={{
+        justifyContent: "space-between",
+        width: "100%",
+      }}
+    >
+      <div
+       className="row" 
+       style={{
+         width: "100%",
+         justifyContent: "center",
+       }}
+      >
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+      </div>
+      <Pile></Pile>
+    </div>
+  </>;
+
+    myTableContents = <>
       <div 
         className="row" 
         style={{
@@ -104,27 +132,76 @@ export default ({ window }) => {
           width: "100%",
         }}
       >
-        <Pile>Deck</Pile>
         {reservePiles}
-        <Pile>CardStack</Pile>
+        <Pile></Pile>
       </div>
     </>;
+
+
+  myHandContents = <>
+     <div 
+        className="row" 
+      >
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+        <Pile></Pile>
+      </div>
+  </>;
+
 
     contents = <>
       <FillContainer>
         <FillContent
           classNames={[
-            "window-content",
             "column",
           ]}
+          style={{
+            overflow: "auto",
+          }}
         >
-          {gameContents}
+          <FillContainer>
+            <FillContent
+              classNames={[
+                "column",
+              ]}
+              style={{
+                overflow: "auto",
+              }}
+            >
+              <FillContainer>
+                <FillContent
+                  classNames={[
+                    "column",
+                  ]}
+                  style={{
+                    overflow: "auto",
+                  }}
+                >
+                  {otherPlayerContents}
+                </FillContent>
+                <FillFooter
+                  height={40}
+                  classNames={["footer", "actions", "center-center"]}
+                >
+                  {tableContents}
+                </FillFooter>
+              </FillContainer>
+            </FillContent>
+            <FillFooter
+              height={40}
+              classNames={["footer", "actions", "center-center"]}
+            >
+              {myTableContents}
+            </FillFooter>
+          </FillContainer>
         </FillContent>
         <FillFooter
           height={40}
           classNames={["footer", "actions", "center-center"]}
         >
-          {gameFooter}
+          {myHandContents}
         </FillFooter>
       </FillContainer>
     </>

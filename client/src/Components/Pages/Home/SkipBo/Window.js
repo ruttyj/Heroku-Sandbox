@@ -18,10 +18,10 @@ export default function (windowManager, isFocused = true) {
         top: 0
       },
       size: {
-        width: 400,
-        height: 150
+        width: 350,
+        height: 650
       },
-      isFullSize: true,
+      isFullSize: false,
       children: (props) => {
         return (
           <WindowComponent {...props} />
