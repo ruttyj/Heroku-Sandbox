@@ -84,20 +84,20 @@ function Home(props) {
   useOnMount(() => {
     set([], {
       theme: {
-        wallpaper: els(wallpapers[12], wallpapers[0]), // set default url
+        wallpaper: els(wallpapers[7], wallpapers[0]), // set default url
       }
     })
     windowManager.init();
     //createTreeUIWindow(windowManager, true);
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
-    createP5Window(windowManager, true);
     //createMinecraftUI2(windowManager, true);
     createMyDetailsWindow(windowManager, true);
     openPeopleListWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     createRoomConfigWindow(windowManager, true);
+    createP5Window(windowManager, true);
     openSkipBoWindow(windowManager, true);
     //createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
