@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { motion } from "framer-motion";
 import { useConnectionContext } from '../../../../state/connectionContext';
 import { useGlobalContext } from '../../../../state/globalContext';
 import FillContainer from "../../../Containers/FillContainer/FillContainer";
@@ -14,28 +15,46 @@ import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 const { classes } = Utils;
 
 function Pile({children, color='#0871bc'}) {
-  return <div style={{
-    display: 'inline-block',
-    height: '55px',
-    width: '35px',
-    backgroundColor: color,
-    margin: "3px",
-    content: "",
-  }}>
-    {children}
-  </div>
+  return <>
+    <div
+      style={{
+        display: 'inline-block',
+        height: '61px',
+        width: '41px',
+        backgroundColor: '#00000050',
+        margin: "3px",
+        content: "",
+      }}
+    >
+      <motion.div 
+        drag
+        style={{
+          display: 'inline-block',
+          height: '55px',
+          width: '35px',
+          backgroundColor: color,
+          margin: "3px",
+          content: "",
+      }}>
+        {children}
+      </motion.div>
+    </div>
+  </>
 }
 
-function DrawButton({children, color='#0871bc'})
+function DrawButton({children, onClick=()=>{}, color='#0871bc'})
 {
   return <>
-    <div style={{
-      padding: "10px",
-      height: '55px',
-      width: '70px',
-      backgroundColor: color,
-      textAlign: 'center',
-    }}>
+    <div
+      onCLick={onClick} 
+      style={{
+        padding: "10px",
+        height: '55px',
+        width: '70px',
+        backgroundColor: color,
+        textAlign: 'center',
+      }}
+    >
       Draw
     </div>
   </>
@@ -74,9 +93,9 @@ export default ({ window }) => {
   function setup(p5, parentRef) {
     p5.createCanvas(320, 600).parent(parentRef);
     particleSystem.setup(p5);
-    particleSystem.setIsActive(false);
+    particleSystem.setIsActive(true);
     setTimeout(() => {
-    //  particleSystem.setIsActive(false);
+      particleSystem.setIsActive(false);
     }, 1000)
   };
 
@@ -131,7 +150,7 @@ export default ({ window }) => {
           padding: '5px',
         }}
       >
-        <DrawButton color="#2d8c0e">
+        <DrawButton onClick={() => toggleSystem()} color="#2d8c0e">
           Draw
         </DrawButton>
         <div
