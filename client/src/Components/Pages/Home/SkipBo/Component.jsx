@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useConnectionContext } from '../../../../state/connectionContext';
 import { useGlobalContext } from '../../../../state/globalContext';
 import FillContainer from "../../../Containers/FillContainer/FillContainer";
@@ -15,8 +15,34 @@ import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 const { classes } = Utils;
 
 function Pile({children, color='#0871bc'}) {
+  const dragOriginX = useMotionValue(0);
+  const dragOriginY = useMotionValue(0);
+
+
+  function getDropZoneByCoord(x, y) {
+    const hoverElement = document.elementFromPoint(x, y);
+    const closestDroppable = hoverElement.closest('.droppable');
+
+    if (closestDroppable && closestDroppable.dataset) {
+      console.log('closestDroppable', closestDroppable);
+    }
+
+    return null;
+  }
+
+
+  const onDragEnd = (e, info) => {
+    
+    dragOriginX.set(0);
+    dragOriginY.set(0);
+
+    console.log(e);
+    getDropZoneByCoord(e.clientX, e.clientY);
+  }
+  
   return <>
     <div
+      className="droppable"
       style={{
         display: 'inline-block',
         height: '61px',
@@ -28,6 +54,9 @@ function Pile({children, color='#0871bc'}) {
     >
       <motion.div 
         drag
+        onDragEnd={onDragEnd}
+        x={dragOriginX}
+        y={dragOriginY}
         style={{
           display: 'inline-block',
           height: '55px',
