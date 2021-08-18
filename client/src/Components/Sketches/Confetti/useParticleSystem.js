@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 
-import ParticleSystem from './Sketch/ParticleSystem';
+import ParticleSystem from './ParticleSystem';
 
 export default function useParticleSystem() {
   const mConfetti = useRef();

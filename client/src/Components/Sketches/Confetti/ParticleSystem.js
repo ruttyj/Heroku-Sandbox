@@ -1,4 +1,4 @@
-import Particle from './Particle';
+import Particle from './Particles';
 
 export default class ParticleSystem {
   constructor(p5, maxNumber, position, gravity) {

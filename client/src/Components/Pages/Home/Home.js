@@ -97,7 +97,7 @@ function Home(props) {
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
     createRoomConfigWindow(windowManager, true);
-    createP5Window(windowManager, true);
+    //createP5Window(windowManager, true);
     openSkipBoWindow(windowManager, true);
     //createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);

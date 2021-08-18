@@ -8,6 +8,8 @@ import FillFooter from "../../../Containers/FillContainer/FillFooter";
 import Utils from "../../../../Utils";
 import TextField from '@material-ui/core/TextField';
 import useDataHelper from '../../../../state/StateHelper/roomHelper';
+import Sketch from 'react-p5';
+import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 
 const { classes } = Utils;
 
@@ -66,6 +68,24 @@ function PlayerCard() {
 export default ({ window }) => {
   const { windowManager, print } = useGlobalContext();
   const { isConnected } = useConnectionContext();
+
+  const particleSystem = useParticleSystem();
+
+  function setup(p5, parentRef) {
+    p5.createCanvas(320, 600).parent(parentRef);
+    particleSystem.setup(p5);
+    particleSystem.setIsActive(false);
+    setTimeout(() => {
+    //  particleSystem.setIsActive(false);
+    }, 1000)
+  };
+
+  function draw(p5) {
+    particleSystem.render(p5);
+  }
+
+  let isSystemActive = particleSystem.getIsActive();
+  const toggleSystem = () => particleSystem.setIsActive(!isSystemActive);
 
   const {
     getMyName,
@@ -259,10 +279,31 @@ export default ({ window }) => {
     </>
   }
 
+
+  const absolute = {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  }
+
   // Display the combined contents
-  return (
-  <>
-    {contents}
+  return <>
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    }}>
+      <div style={{
+        ...absolute
+      }}>
+        {contents}
+      </div>
+      <div style={{
+        ...absolute,
+        pointerEvents: 'none'
+      }}>
+        <Sketch setup={setup} draw={draw} />
+      </div>
+    </div>
   </>  
-  )
 }

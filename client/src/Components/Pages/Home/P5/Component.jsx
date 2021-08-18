@@ -1,6 +1,6 @@
 import React from 'react';
 import Sketch from 'react-p5';
-import useParticleSystem from './useParticleSystem';
+import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 
 ///////////////////////////////////////////////////////////////////
 //                          COMPONENT
