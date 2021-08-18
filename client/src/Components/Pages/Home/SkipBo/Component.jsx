@@ -11,12 +11,13 @@ import TextField from '@material-ui/core/TextField';
 import useDataHelper from '../../../../state/StateHelper/roomHelper';
 import Sketch from 'react-p5';
 import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
+import DragHandle from '../../../Functional/DragHandle/DragHandle';
 
 const { classes } = Utils;
 
 function Pile({children, color='#0871bc'}) {
-  const dragOriginX = useMotionValue(0);
-  const dragOriginY = useMotionValue(0);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
 
 
   function getDropZoneByCoord(x, y) {
@@ -29,13 +30,13 @@ function Pile({children, color='#0871bc'}) {
 
     return null;
   }
-
+  const [hsh, setHash] = useState(0);
 
   const onDragEnd = (e, info) => {
-    
-    dragOriginX.set(0);
-    dragOriginY.set(0);
-
+  
+    x.set(0);
+    y.set(0);
+    setHash(hsh+1);
     console.log(e);
     getDropZoneByCoord(e.clientX, e.clientY);
   }
@@ -54,10 +55,11 @@ function Pile({children, color='#0871bc'}) {
     >
       <motion.div 
         drag
-        onDragEnd={onDragEnd}
-        x={dragOriginX}
-        y={dragOriginY}
+        onPanEnd={onDragEnd}
+        dragMomentum={false}
         style={{
+          x,
+          y,
           display: 'inline-block',
           height: '55px',
           width: '35px',

@@ -56,6 +56,7 @@ function DragHandle(props) {
       onTouchStart={handleOnDown}
       onMouseEnter={setActive}
       onMouseLeave={setInactive}
+      onMouseUp={setInactive}
       onTapStart={setActive}
       onTouchEnd={setInactive}
       onPanEnd={setInactive}
