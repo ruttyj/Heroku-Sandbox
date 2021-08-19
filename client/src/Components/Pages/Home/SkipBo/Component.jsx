@@ -12,6 +12,7 @@ import useDataHelper from '../../../../state/StateHelper/roomHelper';
 import Sketch from 'react-p5';
 import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 import DragHandle from '../../../Functional/DragHandle/DragHandle';
+import { useContextProvider, ContextWrapper } from './State';
 
 const { classes } = Utils;
 
@@ -73,11 +74,12 @@ function Pile({children, color='#0871bc'}) {
   </>
 }
 
-function DrawButton({children, onClick=()=>{}, color='#0871bc'})
+function DrawButton({children, onClick, color='#0871bc'})
 {
   return <>
     <div
-      onCLick={onClick} 
+      onCLick={(e) => onClick(e)} 
+      onTap={(e) => onClick(e)} 
       style={{
         padding: "10px",
         height: '55px',
@@ -181,9 +183,25 @@ export default ({ window }) => {
           padding: '5px',
         }}
       >
-        <DrawButton onClick={() => toggleSystem()} color="#2d8c0e">
+
+
+        <div
+          onMouseDown={(e) => {
+            console.log('hi');
+            toggleSystem();
+          }} 
+          style={{
+            padding: "10px",
+            height: '55px',
+            width: '70px',
+            backgroundColor: '#2d8c0e',
+            textAlign: 'center',
+          }}
+        >
           Draw
-        </DrawButton>
+        </div>
+
+
         <div
         className="row" 
         style={{
@@ -338,22 +356,24 @@ export default ({ window }) => {
 
   // Display the combined contents
   return <>
-    <div style={{
-      position: 'relative',
-      width: '100%',
-      height: '100%',
-    }}>
+    <ContextWrapper>
       <div style={{
-        ...absolute
+        position: 'relative',
+        width: '100%',
+        height: '100%',
       }}>
-        {contents}
+        <div style={{
+          ...absolute
+        }}>
+          {contents}
+        </div>
+        <div style={{
+          ...absolute,
+          pointerEvents: 'none'
+        }}>
+          <Sketch setup={setup} draw={draw} />
+        </div>
       </div>
-      <div style={{
-        ...absolute,
-        pointerEvents: 'none'
-      }}>
-        <Sketch setup={setup} draw={draw} />
-      </div>
-    </div>
+    </ContextWrapper>
   </>  
 }
