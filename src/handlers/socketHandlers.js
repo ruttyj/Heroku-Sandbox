@@ -158,7 +158,7 @@ handlers.public('message', requirePersonInRoom(new Message()));
 
 handlers.public('start_game', new StartGame());
 
-
+//handlers.public('SKIPBO.get_everything', )
 
 
 

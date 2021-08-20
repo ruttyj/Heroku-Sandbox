@@ -1,19 +1,21 @@
 import * as React from "react";
 import { useState, useRef } from 'react';
+import { useConnectionContext } from '../../../../state/connectionContext';
+import { useGlobalContext } from '../../../../state/globalContext';
 
 const useRefState = () => {
  
+  const listeners = useRef([]).current;
+  const { windowManager, print } = useGlobalContext();
+  const { socket, isConnected } = useConnectionContext();
 
   
-
-
-  /////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////
 
   //                                PUBLIC SCOPE
 
   /////////////////////////////////////////////////////////////////////////////////////
   return {
-   
   };
 }
 

@@ -1,4 +1,6 @@
 const List = require('../../../../lib/List');
+const Hand = require('./Hand');
+
 module.exports = class Player
 {
   constructor()
@@ -20,7 +22,7 @@ module.exports = class Player
     ];
 
     this.mDeck = new List();
-    this.mHand = new List();
+    this.mHand = new Hand();
   }
 
   getHand()
@@ -40,4 +42,6 @@ module.exports = class Player
     }
     return null;
   }
+
+ 
 }

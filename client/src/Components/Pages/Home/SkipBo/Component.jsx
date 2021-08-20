@@ -12,7 +12,7 @@ import useDataHelper from '../../../../state/StateHelper/roomHelper';
 import Sketch from 'react-p5';
 import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 import DragHandle from '../../../Functional/DragHandle/DragHandle';
-import { useContextProvider, ContextWrapper } from './State';
+import { Socket } from 'socket.io-client';
 
 const { classes } = Utils;
 
@@ -118,11 +118,13 @@ function PlayerCard() {
 }
 
 export default ({ window }) => {
-  const { windowManager, print } = useGlobalContext();
-  const { isConnected } = useConnectionContext();
+  const [isInit, setIsInit] = useState(false);
+  const { set, get, windowManager, print } = useGlobalContext();
 
+
+
+  // Particle System ---------------------------------
   const particleSystem = useParticleSystem();
-
   function setup(p5, parentRef) {
     p5.createCanvas(320, 600).parent(parentRef);
     particleSystem.setup(p5);
@@ -131,13 +133,14 @@ export default ({ window }) => {
       particleSystem.setIsActive(false);
     }, 1000)
   };
-
   function draw(p5) {
     particleSystem.render(p5);
   }
-
   let isSystemActive = particleSystem.getIsActive();
   const toggleSystem = () => particleSystem.setIsActive(!isSystemActive);
+  //_________________________________________________
+
+
 
   const {
     getMyName,
@@ -149,6 +152,19 @@ export default ({ window }) => {
   const game = getGame();
 
   let contents = null;
+
+  useEffect(() => {
+
+    if(game.getType()  == 'SKIPBO') {
+      console.log(game.getType());
+      socket.on('SKIPBO.game', (v) => set('SKIPBO.game', v))
+      socket.emit('SKIPBO.get_everything');
+    } else {
+
+    }
+  }, [
+    game.getType()
+  ])
 
   if(game.getType() == 'SKIPBO') {
     let otherPlayerContents;
@@ -356,24 +372,22 @@ export default ({ window }) => {
 
   // Display the combined contents
   return <>
-    <ContextWrapper>
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    }}>
       <div style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
+        ...absolute
       }}>
-        <div style={{
-          ...absolute
-        }}>
-          {contents}
-        </div>
-        <div style={{
-          ...absolute,
-          pointerEvents: 'none'
-        }}>
-          <Sketch setup={setup} draw={draw} />
-        </div>
+        {contents}
       </div>
-    </ContextWrapper>
+      <div style={{
+        ...absolute,
+        pointerEvents: 'none'
+      }}>
+        <Sketch setup={setup} draw={draw} />
+      </div>
+    </div>
   </>  
 }
