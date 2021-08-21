@@ -158,7 +158,29 @@ handlers.public('message', requirePersonInRoom(new Message()));
 
 handlers.public('start_game', new StartGame());
 
-//handlers.public('SKIPBO.get_everything', )
+
+
+// @TODO wrap handler in skipbo protection
+handlers.public('SKIPBO.get_everything', requirePersonInRoom((req, res) => {
+  const con = req.getConnection();
+  const room = req.get('room');
+
+  // Assuming Game has been selected and no game is in progress
+  const game = room.getGame();
+  con.emit('SKIPBO.piles', game.serializePiles());
+  con.emit('SKIPBO.deck',  game.serializeDeck());
+
+  // me
+    // my_hand
+    // my_piles
+    // my_deck
+  // other_players
+    // other_hands
+    // other_piles
+    // other_decks
+
+  console.log('get everything');
+}))
 
 
 

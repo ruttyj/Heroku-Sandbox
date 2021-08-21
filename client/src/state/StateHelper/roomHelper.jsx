@@ -92,35 +92,44 @@ export default function () {
       set(['me'], data);
     })
 
-    socket.on('room_list', (payload) => {
-      set(['room_list'], payload.data);
-    })
-
-
     socket.on('room_people_all_keyed', (payload) => {
       console.log('room_people_all_keyed', payload);
       set(['people'], payload);
     })
 
     socket.on('game', (payload) => {
+      let currentGame = get(['game'], false);
       console.log('game', payload);
       set(['game'], payload);
+
+      if (payload && payload.type === 'SKIPBO' && !currentGame){
+        socket.emit('SKIPBO.get_everything');
+        console.log('get everything');
+      }
     })
 
     socket.on('chat_transcript', (transcript) => {
       let chatMessages = transcript.messages;
       set(['chat_messages'], chatMessages);
     })
+
+    const SKB = (txt) => `SKIPBO.${txt}`;
+    console.log('test', SKB('test'));
+    // What to do with everything
+    socket.on(SKB('game'),  (v) => set([SKB('game')], v));
+    socket.on(SKB('piles'), (v) => set([SKB('piles')], v));
+    socket.on(SKB('deck'),  (v) => set([SKB('deck')], v));
+
   }
 
   function removeRoomListeners() {
     socket.off('room');
     socket.off('leave_room');
     socket.off('me');
-    socket.off('room_list');
     socket.off('room_people_all_keyed');
     socket.off('game');
     socket.on('chat_transcript');
+    socket.off('SKIPBO.game');
   }
 
   //////////////////////////////////

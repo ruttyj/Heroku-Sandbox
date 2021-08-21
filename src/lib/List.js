@@ -60,6 +60,15 @@ module.exports = class List
             this.mList.push(value);
         })
     }
+    peek()
+    {
+        const lastIndex = this.getCount() - 1;
+        if (lastIndex > -1) {
+            return this.mList[lastIndex];
+        }
+
+        return null;
+    }
     pop()
     {
         return this.mList.pop();

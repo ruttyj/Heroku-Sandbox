@@ -22,4 +22,22 @@ module.exports = class SkipBo extends Base {
       new List(),
     ];
   }
+
+  serializePiles()
+  {
+    return this.mPiles.map((pile, key) => {
+      return {
+        index:    key,
+        topValue: pile.getCount(),  // value of the card not of the card ID
+        cards:    pile.toArray(),   // array of card IDs
+      }
+    })
+  }
+
+  serializeDeck()
+  {
+    return {
+      count:    this.mDeck.getCount()
+    }
+  }
 }

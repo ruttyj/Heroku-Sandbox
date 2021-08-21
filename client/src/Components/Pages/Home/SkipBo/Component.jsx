@@ -120,7 +120,7 @@ function PlayerCard() {
 export default ({ window }) => {
   const [isInit, setIsInit] = useState(false);
   const { set, get, windowManager, print } = useGlobalContext();
-
+  const { socket, isConnected } = useConnectionContext();
 
 
   // Particle System ---------------------------------
@@ -154,16 +154,23 @@ export default ({ window }) => {
   let contents = null;
 
   useEffect(() => {
+    if(socket){
+      if(game.getType() == 'SKIPBO') {
+        const wrapName = (txt) => `SKIPBO.${txt}`;
+        console.log('test', wrapName('test'));
+        // What to do with everything
+        socket.on(wrapName('game'),  (v) => set([wrapName('game')], v));
+        socket.on(wrapName('piles'), (v) => set([wrapName('piles')], v));
+        socket.on(wrapName('deck'),  (v) => set([wrapName('deck')], v));
 
-    if(game.getType()  == 'SKIPBO') {
-      console.log(game.getType());
-      socket.on('SKIPBO.game', (v) => set('SKIPBO.game', v))
-      socket.emit('SKIPBO.get_everything');
-    } else {
-
+        // Execute get everything
+        socket.emit('SKIPBO.get_everything', true);
+      } else {
+        socket.off('SKIPBO.game');
+      }
     }
   }, [
-    game.getType()
+    game.getType(), socket
   ])
 
   if(game.getType() == 'SKIPBO') {
