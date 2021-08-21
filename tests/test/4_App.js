@@ -100,9 +100,17 @@ describe("Client 1 can join room", () => {
     //log(people.serialize());
     // 2 and 3 should remain; person 2 should be the host
 
-    client2.emit('change_room_config', {key: 'IS_ROOM_OPEN', value: false});
-    log(room.serialize());
+    let roomConfig = room.getConfig();
+    let roomConfigData = roomConfig.serialize();
+    client2.emit('change_room_config', {key: 'GAME_TYPE', value: 'SKIPBO'});
+    client2.emit('start_game');
 
+
+    let game = room.getGame();
+    log(game.serializeDeck());
+    //log(game.serializePiles());
+    //log(game.serializePlayers());
+    //log(game.serializeCards());
   })
 
   /*

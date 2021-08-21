@@ -92,11 +92,11 @@ function Home(props) {
     //createGreedyWindow(windowManager, true);
     //createFramerMotionDrop(windowManager, true);
     //createMinecraftUI2(windowManager, true);
-    createMyDetailsWindow(windowManager, true);
-    openPeopleListWindow(windowManager, true);
+    //createMyDetailsWindow(windowManager, true);
+    //openPeopleListWindow(windowManager, true);
     //createRoomLobby(windowManager, true);
     //createClickerWindow(windowManager, true);
-    createRoomConfigWindow(windowManager, true);
+    //createRoomConfigWindow(windowManager, true);
     //createP5Window(windowManager, true);
     openSkipBoWindow(windowManager, true);
     //createChatWindow(windowManager, true);

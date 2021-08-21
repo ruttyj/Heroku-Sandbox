@@ -13,17 +13,17 @@ module.exports = class
     this.mCards = new OrderedMap();
   }
 
-  addCard(cardId)
+  add(cardId)
   {
     this.mCards.add(cardId);
   }
 
-  removeCard(cardId)
+  remove(cardId)
   {
     this.mCards.remove(cardId);
   }
 
-  hasCard(cardId)
+  has(cardId)
   {
     return this.mCards.has(cardId);
   }
@@ -33,7 +33,7 @@ module.exports = class
     return this.mCards.getCount();
   }
 
-  getCards()
+  getAll()
   {
     return this.mCards.toArray();
   }
