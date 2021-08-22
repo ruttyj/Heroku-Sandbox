@@ -2,6 +2,7 @@ import React from 'react';
 import roomConfigs from './roomConfigs';
 import personManager from './PersonManager';
 import Game from './Game';
+import SkipBo from './Skipbo/Skipbo';
 import { useGlobalContext } from "../globalContext";
 import { useConnectionContext } from '../connectionContext';
 import { getRandomAnimal } from '../../Data/Animals';
@@ -138,7 +139,14 @@ export default function () {
   //            GAME
   //////////////////////////////////
   function getGame() {
-    return new Game({ get, socket });
+    switch(get(['game', 'type'], null))
+    {
+      case 'SKIPBO':
+        return new SkipBo({ get, socket });
+      default:
+        return new Game({ get, socket });
+    }
+    //SkipBo
   }
 
   function hasGame() {

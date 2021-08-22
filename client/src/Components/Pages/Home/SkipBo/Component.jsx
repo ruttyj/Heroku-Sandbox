@@ -179,6 +179,32 @@ export default ({ window }) => {
     let myTableContents;
     let myHandContents;
 
+    const myPlayer = game.getMyPlayer();
+    const myCards = myPlayer.getCards();
+    const myDeckTopCard = myPlayer.getDeckTopCard();
+
+    
+    let myDeckContents;
+    if (myDeckTopCard) {
+      switch (myDeckTopCard.type)
+      {
+        case 'NUMBER':
+          myDeckContents = <>
+            <Pile>
+              {myDeckTopCard.value}
+            </Pile>
+          </>
+          break;
+        case 'WILD':
+          myDeckContents = <>
+            <Pile>
+              W
+            </Pile>
+          </>
+      }
+    }
+   
+
     // The contents of other players
     otherPlayerContents = <>
       <div>
@@ -283,7 +309,7 @@ export default ({ window }) => {
             </div>
           </div>
         </div>
-        <Pile></Pile>
+        {myDeckContents}
       </div>
     </>;
 
@@ -300,11 +326,23 @@ export default ({ window }) => {
         <div 
           className="row" 
         >
-          <Pile></Pile>
-          <Pile></Pile>
-          <Pile></Pile>
-          <Pile></Pile>
-          <Pile></Pile>
+          {myCards.map(card => {
+            switch (card.type)
+            {
+              case 'NUMBER':
+                return <>
+                  <Pile key={card.id}>
+                    {card.value}
+                  </Pile>
+                </>
+              case 'WILD':
+                return <>
+                  <Pile key={card.id}>
+                    W
+                  </Pile>
+                </>
+            }
+          })}
         </div>
       </div>
     </>;
