@@ -72,6 +72,7 @@ function Home(props) {
     getRoomConfigs,
     getGame,
     hasGame,
+    toggleReady,
     addConnectionListeners,
     removeConnectionListeners,
     addRoomListeners,
@@ -102,7 +103,7 @@ function Home(props) {
     //createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
     //createSocketWindow(windowManager, true);
-    //createDebugger(windowManager);
+    createDebugger(windowManager, true);
     //createDnDWindow(windowManager, true);
   })
 
@@ -129,6 +130,8 @@ function Home(props) {
         if (amIHost()) {
           const roomConfigs = getRoomConfigs();
           roomConfigs.updateFieldValue('GAME_TYPE', 'SKIPBO');
+          
+          toggleReady();
           const game = getGame();
           game.startGame();
         }

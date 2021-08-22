@@ -28,20 +28,6 @@ function DebugComponent({ size, position, containerSize }) {
 
   return (
     <pre {...classes("column", "align-left", "full-width")}>
-      {personOrder.map(personId => {
-
-        let person = get([...pathItems, personId], {});
-
-        return <>
-          <div className={"person-item"}>
-            {person.name}<br />
-            <div style={{ color: statusColors.get(person.status) }}>
-              {person.status}
-            </div>
-          </div>
-        </>
-      })
-      }
       <xmp>
         {JSON.stringify(get([]), null, 2)}
       </xmp>

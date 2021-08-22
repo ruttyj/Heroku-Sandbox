@@ -130,6 +130,7 @@ handlers.public('set_host', ((new IsHost((req, res) => {
 
 handlers.public('toggle_ready', requirePersonInRoom((req, res) => {
   (new ToggleReadyUp(new NotifyRoomOfAllPeople())).execute(req, res);
+  console.log('toggleReady');
 }));
 
 
@@ -163,12 +164,29 @@ handlers.public('start_game', new StartGame());
 // @TODO wrap handler in skipbo protection
 handlers.public('SKIPBO.get_everything', requirePersonInRoom((req, res) => {
   const con = req.getConnection();
+  const me = req.get('person');
   const room = req.get('room');
 
   // Assuming Game has been selected and no game is in progress
   const game = room.getGame();
-  con.emit('SKIPBO.piles', game.serializePiles());
-  con.emit('SKIPBO.deck',  game.serializeDeck());
+  con.emit('SKIPBO.game',     game.serialize());
+  con.emit('SKIPBO.cards',    game.serializeCards());
+  con.emit('SKIPBO.players',  game.serializePlayers());
+  con.emit('SKIPBO.deck',     game.serializeDeck());
+  con.emit('SKIPBO.piles',    game.serializePiles());
+  con.emit('SKIPBO.players',  game.serializePlayers());
+
+  const personManager = game.getPlayerManager();
+  const playerList = personManager.getPlayerList();
+
+  const myId = me.getId();
+  const myPlayer = playerList.find(player => player.getPersonId() === myId);
+  console.log('myPlayer', myPlayer);
+  con.emit('SKIPBO.me',  myPlayer.serializeMe());
+
+  
+
+
 
   // me
     // my_hand

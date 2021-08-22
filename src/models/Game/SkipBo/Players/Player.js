@@ -79,7 +79,14 @@ module.exports = class Player
   serializeMe()
   {
     return {
-
+      id:         this.getId(),
+      personId:   this.getPersonId(),
+      piles:      this.getPiles().map(pile => pile.serialize()),
+      hand:       this.getHand().serializeForMe(),
+      deck: {
+        count:      this.getDeck().getCount(),
+        topCardId:  this.getDeck().peek(),
+      },
     }
   }
 
@@ -87,12 +94,14 @@ module.exports = class Player
   serializeOther()
   {
     return {
-      hand: this.getHand().serializeForOthers(),
+      id:         this.getId(),
+      personId:   this.getPersonId(),
+      piles:      this.getPiles().map(pile => pile.serialize()),
+      hand:       this.getHand().serializeForOthers(),
       deck: {
         count:      this.getDeck().getCount(),
         topCardId:  this.getDeck().peek(),
       },
-      piles: this.getPiles().map(pile => pile.serialize())
     }
   }
 

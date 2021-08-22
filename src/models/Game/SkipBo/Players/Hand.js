@@ -28,6 +28,11 @@ module.exports = class
     return this.mCards.has(cardId);
   }
 
+  getCards()
+  {
+    return this.mCards.toArray();
+  }
+
   getCount()
   {
     return this.mCards.getCount();

@@ -384,16 +384,19 @@ export default ({ window }) => {
       width: '100%',
       height: '100%',
     }}>
-      <div style={{
-        ...absolute
-      }}>
-        {contents}
-      </div>
+      {/* ------- Confetti ------- */}
       <div style={{
         ...absolute,
         pointerEvents: 'none'
       }}>
         <Sketch setup={setup} draw={draw} />
+      </div>
+
+      {/* ------- Game ------- */}
+      <div style={{
+        ...absolute
+      }}>
+        {contents}
       </div>
     </div>
   </>  

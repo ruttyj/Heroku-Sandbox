@@ -120,7 +120,22 @@ module.exports = class SkipBo extends Base {
 
   serializePlayers()
   {
+    let result = {
+      items: {},
+      order: [],
+    }
     const playerManager = this.getPlayerManager();
-    return playerManager.getPlayerList().map(player => player.serializeOther())
+    playerManager.getPlayerList().forEach(player => {
+      const playerId = player.getId();
+      result.items[playerId] = player.serializeOther();
+      result.order.push(playerId);
+    })
+  
+    return result;
+  }
+
+  serializeMe(playerId)
+  {
+
   }
 }

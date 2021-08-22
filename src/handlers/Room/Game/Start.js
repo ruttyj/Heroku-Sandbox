@@ -25,12 +25,9 @@ module.exports = class extends SocketHandler {
       readyPeople.forEach(person => {
         game.addPerson(person);
       })
-      console.log('YZ');
 
       game.dealInitialCards();
-      console.log('Z');
       
-      console.log(game.serializePlayers());
 
       //---------------------------------
       // Exxecute next handler

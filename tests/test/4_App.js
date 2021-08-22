@@ -107,7 +107,7 @@ describe("Client 1 can join room", () => {
 
 
     let game = room.getGame();
-    log(game.serializeDeck());
+    //log(game.serializeDeck());
     //log(game.serializePiles());
     //log(game.serializePlayers());
     //log(game.serializeCards());

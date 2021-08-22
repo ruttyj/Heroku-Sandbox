@@ -116,10 +116,12 @@ export default function () {
     const SKB = (txt) => `SKIPBO.${txt}`;
     console.log('test', SKB('test'));
     // What to do with everything
-    socket.on(SKB('game'),  (v) => set([SKB('game')], v));
-    socket.on(SKB('piles'), (v) => set([SKB('piles')], v));
-    socket.on(SKB('deck'),  (v) => set([SKB('deck')], v));
-
+    socket.on(SKB('game'),    (v) => set([SKB('game')],     v));
+    socket.on(SKB('me'),      (v) => set([SKB('me')],       v));
+    socket.on(SKB('players'), (v) => set([SKB('players')],  v));
+    socket.on(SKB('cards'),   (v) => set([SKB('cards')],    v));
+    socket.on(SKB('piles'),   (v) => set([SKB('piles')],    v));
+    socket.on(SKB('deck'),    (v) => set([SKB('deck')],     v));
   }
 
   function removeRoomListeners() {
@@ -144,18 +146,32 @@ export default function () {
     return game ? true : false;
   }
 
+
+  function toggleReady()
+  {
+    socket.emit('toggle_ready');
+  }
+
   return {
+    // Room
     joinRoom,
     registerInRoom,
+    // @TODO leaveRoom,
+    // Me
     getMe,
     getMyName,
     changeMyName,
     amIHost,
+    toggleReady,
+    // Room
     getCurrentRoom,
     getRoomConfigs,
+    // People
     getPersonManager,
+    // Game
     getGame,
     hasGame,
+    // Listeners
     addConnectionListeners,
     removeConnectionListeners,
     addRoomListeners,
