@@ -1,0 +1,54 @@
+$bg: #f4f4f4;
+$ribbon: #8c0000;
+$tail: darken($ribbon, 5%);
+$ribbonSize: 0.5em;
+$fontSize: 1.5em;
+$font: "Roboto", sans-serif;
+
+.ribbon-wrapper {
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+    width: 100%;
+
+    .ribbon {
+        margin: 50px;
+        background: $ribbon;
+        display: inline-block;
+        color: $bg;
+        padding: $ribbonSize 0.7em;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        position: relative;
+        font-size: $fontSize;
+        text-transform: uppercase;
+        transform-style: preserve-3d;
+        transform: rotate(-20deg) skew(-20deg, 10deg);
+
+        &:before,
+        &:after {
+            content: "";
+            width: 0;
+            height: 2em;
+            display: block;
+            background: #4993da;
+            position: absolute;
+            border-style: solid;
+            border-width: $ribbonSize;
+            z-index: -1; // only necessary for flat (transform-style)
+            transform: translateZ(-1em); // orders the ribbon tails
+        }
+
+        &:before {
+            left: $ribbonSize * -1;
+            top: $ribbonSize;
+            border-color: $tail darken($tail, 10%) $tail $tail;
+        }
+
+        &:after {
+            right: $ribbonSize * -1;
+            top: $ribbonSize * -1;
+            border-color: $tail $tail $tail darken($tail, 10%);
+        }
+    }
+}

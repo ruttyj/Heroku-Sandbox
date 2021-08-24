@@ -1,142 +1,23 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, useMotionValue } from "framer-motion";
+import React, { useState, useEffect } from 'react';
 import { useConnectionContext } from '../../../../state/connectionContext';
 import { useGlobalContext } from '../../../../state/globalContext';
 import FillContainer from "../../../Containers/FillContainer/FillContainer";
 import FillContent from "../../../Containers/FillContainer/FillContent";
 import FillFooter from "../../../Containers/FillContainer/FillFooter";
-import Utils from "../../../../Utils";
-import TextField from '@material-ui/core/TextField';
 import useDataHelper from '../../../../state/StateHelper/roomHelper';
 import Sketch from 'react-p5';
 import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
-import DragHandle from '../../../Functional/DragHandle/DragHandle';
-import { Socket } from 'socket.io-client';
-import './Style.scss';
-
-const { classes } = Utils;
-
-function Pile({children, color='#0871bc'}) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-
-  function getDropZoneByCoord(x, y) {
-    const hoverElement = document.elementFromPoint(x, y);
-    const closestDroppable = hoverElement.closest('.droppable');
-
-    if (closestDroppable && closestDroppable.dataset) {
-      console.log('closestDroppable', closestDroppable);
-    }
-
-    return null;
-  }
-  const [hsh, setHash] = useState(0);
-
-  const onDragEnd = (e, info) => {
-  
-    x.set(0);
-    y.set(0);
-    setHash(hsh+1);
-    console.log(e);
-    getDropZoneByCoord(e.clientX, e.clientY);
-  }
-  
-  return <>
-    <div
-      className="droppable"
-      style={{
-        display: 'inline-block',
-        height: '61px',
-        width: '41px',
-        backgroundColor: '#00000050',
-        margin: "3px",
-        content: "",
-      }}
-    >
-      <motion.div 
-        drag
-        onPanEnd={onDragEnd}
-        dragMomentum={false}
-        style={{
-          x,
-          y,
-          display: 'inline-block',
-          height: '55px',
-          width: '35px',
-          backgroundColor: color,
-          margin: "3px",
-          content: "",
-      }}>
-        {children}
-      </motion.div>
-    </div>
-  </>
-}
-
-function DrawButton({children, onClick, color='#0871bc'})
-{
-  return <>
-    <div
-      onCLick={(e) => onClick(e)} 
-      onTap={(e) => onClick(e)} 
-      style={{
-        padding: "10px",
-        height: '55px',
-        width: '70px',
-        backgroundColor: color,
-        textAlign: 'center',
-      }}
-    >
-      Draw
-    </div>
-  </>
-}
-
-function PlayerCard() {
-  return <>
-    <div className="row" 
-      style={{
-        justifyContent: "space-between",
-        width: "100%",
-        backgroundColor: "#00000070",
-        marginTop: "6px",
-      }}
-    >
-      <div>
-        Name
-      </div>
-      <div>
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-        <Pile></Pile>
-      </div>
-      <Pile></Pile>
-    </div>
-  </>
-}
-
-
-function YouWonMessage()
-{
-  return <>
-    <div 
-      className='ribbon-wrapper' 
-    >
-      <div 
-        className='ribbon' 
-        contenteditable='true'
-      >
-      You Won!
-      </div>
-    </div>
-  </>
-}
+import YouLoseMessage from './Components/YouLoseMessage/YouLoseMessage';
+import YouWonMessage from './Components/YouWonMessage/YouWonMessage';
+import Pile from './Components/Pile/Pile';
+import PlayerCard from './Components/PlayerCard/PlayerCard';
+import DrawButton from './Components/DrawButton/DrawButton';
+import RelLayer  from './Components/RelLayer/RelLayer';
 
 export default ({ window }) => {
-  const [isInit, setIsInit] = useState(false);
+  const [isWinStateActive, setWinStateActive] = useState(true);
+  const [gameStatus, setGameStatus] = useState('WIN');
   const { set, get, windowManager, print } = useGlobalContext();
   const { socket, isConnected } = useConnectionContext();
 
@@ -148,7 +29,7 @@ export default ({ window }) => {
     particleSystem.setup(p5);
     particleSystem.setIsActive(true);
     setTimeout(() => {
-      particleSystem.setIsActive(false);
+      //particleSystem.setIsActive(false);
     }, 1000)
   };
   function draw(p5) {
@@ -161,8 +42,6 @@ export default ({ window }) => {
 
 
   const {
-    getMyName,
-    changeMyName,
     getGame,
     getType,
   } = useDataHelper();
@@ -252,21 +131,11 @@ export default ({ window }) => {
       >
 
 
-        <div
-          onMouseDown={(e) => {
+        <DrawButton
+          onClick={(e) => {
             console.log('hi');
-            toggleSystem();
           }} 
-          style={{
-            padding: "10px",
-            height: '55px',
-            width: '70px',
-            backgroundColor: '#2d8c0e',
-            textAlign: 'center',
-          }}
-        >
-          Draw
-        </div>
+        />
 
 
         <div
@@ -440,13 +309,7 @@ export default ({ window }) => {
       width: '100%',
       height: '100%',
     }}>
-      {/* ------- Confetti ------- */}
-      <div style={{
-        ...absolute,
-        pointerEvents: 'none'
-      }}>
-        <Sketch setup={setup} draw={draw} />
-      </div>
+      
 
       {/* ------- Game ------- */}
       <div style={{
@@ -455,14 +318,38 @@ export default ({ window }) => {
         {contents}
       </div>
 
-      {/* ------- YouWonMessage ------- */}
-      <div style={{
-        ...absolute,
-        pointerEvents: 'none'
-      }}>
-        <YouWonMessage></YouWonMessage>
-      </div>
-      
+
+      { gameStatus == 'WIN' && 
+        <>
+          {/* ------- Confetti ------- */}
+          <div style={{
+            ...absolute,
+            pointerEvents: 'none'
+          }}>
+            <Sketch setup={setup} draw={draw} />
+          </div>
+          {/* ------- YouWonMessage ------- */}
+          <div style={{
+            ...absolute,
+            pointerEvents: 'none'
+          }}>
+            <YouWonMessage></YouWonMessage>
+          </div>
+        </>
+      }
+
+
+      { gameStatus == 'LOSE' && 
+        <>
+          {/* ------- YouLoseMessage ------- */}
+          <div style={{
+            ...absolute,
+            backgroundColor: '#000000c2',
+          }}>
+            <YouLoseMessage></YouLoseMessage>
+          </div>
+        </>
+      }
     </div>
   </>  
 }
