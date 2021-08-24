@@ -39,7 +39,7 @@ module.exports = class CardManager
   // Make 1 set of cards from 1 to 12
   _makeSetOfNumberCards()
   {
-    for(let i=0; i<12; ++i)
+    for(let i=1; i<=12; ++i)
     {
       const card = new NumberCard();
       const cardId = this._getNewId();

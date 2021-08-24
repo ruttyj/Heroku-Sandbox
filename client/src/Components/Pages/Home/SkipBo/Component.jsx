@@ -13,6 +13,7 @@ import Sketch from 'react-p5';
 import useParticleSystem from '../../../Sketches/Confetti/useParticleSystem';
 import DragHandle from '../../../Functional/DragHandle/DragHandle';
 import { Socket } from 'socket.io-client';
+import './Style.scss';
 
 const { classes } = Utils;
 
@@ -113,6 +114,23 @@ function PlayerCard() {
         <Pile></Pile>
       </div>
       <Pile></Pile>
+    </div>
+  </>
+}
+
+
+function YouWonMessage()
+{
+  return <>
+    <div 
+      className='ribbon-wrapper' 
+    >
+      <div 
+        className='ribbon' 
+        contenteditable='true'
+      >
+      You Won!
+      </div>
     </div>
   </>
 }
@@ -436,6 +454,15 @@ export default ({ window }) => {
       }}>
         {contents}
       </div>
+
+      {/* ------- YouWonMessage ------- */}
+      <div style={{
+        ...absolute,
+        pointerEvents: 'none'
+      }}>
+        <YouWonMessage></YouWonMessage>
+      </div>
+      
     </div>
   </>  
 }
