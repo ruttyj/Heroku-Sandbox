@@ -43,6 +43,11 @@ module.exports = class SkipBo extends Base {
     this.mDeck.shuffle();
   }
 
+  getCardManager()
+  {
+    return this.mCardManager;
+  }
+
   getDeck()
   {
     return this.mDeck;
@@ -88,6 +93,61 @@ module.exports = class SkipBo extends Base {
     })
   }
 
+
+  dealCheatCards()
+  {
+    const playerManager = this.getPlayerManager();
+    const cardManager = this.getCardManager();
+    const deck = this.getDeck();
+
+    //------------------------------------
+    // Initialize Card Map
+    const cardMap = new Map();
+    cardMap.set('WILD', new List());
+    for (let i=1; i<13; ++i) {
+      cardMap.set(i, new List());
+    }
+    deck.forEach(cardId => {
+      const card = cardManager.getCard(cardId);
+      if(card.getType() === 'NUMBER') {
+        cardMap.get(card.getValue()).push(cardId);
+      } else if (card.getType() === 'WILD') {
+        cardMap.get('WILD').push(cardId);
+      }
+      console.log('card', card)
+    })
+    //------------------------------------
+
+
+    //------------------------------------
+    // Deal 5 cards to each player
+    playerManager.getPlayerList().forEach(player => {
+      const hand = player.getHand();
+      for (let i=1; i<6; ++i)
+      {
+        let cardId = cardMap.get(i).pop();
+        deck.removeItemByValue(cardId);
+        hand.add(cardId);
+      }
+    })
+    //------------------------------------
+
+
+    //------------------------------------
+    // Deal each player their deck
+    const deckSize = 25;
+    for (let i=0; i<deckSize; ++i)
+    {
+      // For each player deal a card
+      playerManager.getPlayerList().forEach(player => {
+        // Deal 1 card to the players deck
+        const cardId = deck.pop();
+        const playerDeck = player.getDeck();
+        playerDeck.push(cardId);
+      })
+    }
+    //------------------------------------
+  }
 
   serializePiles()
   {

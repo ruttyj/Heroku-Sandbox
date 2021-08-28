@@ -31,6 +31,14 @@ module.exports = class CardManager
     }
   }
 
+  getCard(id)
+  {
+    if (this.mCardMap.has(id)) {
+      return this.mCardMap.get(id);
+    }
+    return null;
+  }
+
   getCards()
   {
     return this.mCardMap;

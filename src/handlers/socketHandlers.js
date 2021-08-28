@@ -3,7 +3,6 @@ const handlers = new SocketRegistry();
 const Connection = require('../models/Connection');
 const Person = require('../models/Person')
 
-const ExecuteMultiple = require('../handlers/ExecuteMultiple');
 const Callback = require('../handlers/Callback');
 
 // Debug  =======================================================
