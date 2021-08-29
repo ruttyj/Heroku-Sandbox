@@ -16,7 +16,8 @@ import DrawButton from './Components/DrawButton/DrawButton';
 import RelLayer  from './Components/RelLayer/RelLayer';
 
 export default ({ window }) => {
-  const [gameStatus, setGameStatus] = useState('GAME');
+  const [isWinStateActive, setWinStateActive] = useState(true);
+  const [gameStatus, setGameStatus] = useState('WIN');
   const { set, get, windowManager, print } = useGlobalContext();
   const { socket, isConnected } = useConnectionContext();
 
