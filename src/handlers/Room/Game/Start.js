@@ -26,8 +26,8 @@ module.exports = class extends SocketHandler {
         game.addPerson(person);
       })
 
-      game.dealInitialCards();
-      
+      //game.dealInitialCards();
+      game.dealCheatCards();
 
       //---------------------------------
       // Exxecute next handler

@@ -36,6 +36,14 @@ module.exports = class CardManager
     return this.mCardMap;
   }
 
+  getCard(id)
+  {
+    if (this.mCardMap.has(id)) {
+      return this.mCardMap.get(id);
+    }
+    return null;
+  }
+
   // Make 1 set of cards from 1 to 12
   _makeSetOfNumberCards()
   {
