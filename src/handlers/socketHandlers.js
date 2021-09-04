@@ -6,16 +6,8 @@ const Callback = require('../handlers/Callback');
 // Debug  =======================================================
 const Log = require('../handlers/Debug/Log');
 
-// Connection  ==================================================
-const GetConnection = require('../handlers/Connection/Get');
-
-// Room  ========================================================
-const RequireConnectedToRoom = require('../handlers/Room/RequireConnected');
-const GetRoom = require('../handlers/Room/Get');
 
 // Person  ======================================================
-const RequireUnregistered = require('../handlers/Room/Person/RequireUnregistered');
-const RegisterInRoom = require('../handlers/Room/Person/Register');
 const NotifyRoomOfAllPeople = require('../handlers/Room/Person/NotifyRoomOfAllPeople');
 const NotifyRoomOfUpdate = require('../handlers/Room/NotifyRoomOfUpdate');
 const IsHost = require('../handlers/Room/Person/IsHost');
@@ -26,43 +18,28 @@ const ToggleReadyUp = require('../handlers/Room/Person/ToggleReadyUp');
 const Message = require('../handlers/Room/Chat/Message');
 
 
+const connectionController = require('../controllers/Connection/Connection');
+const roomController = require('../controllers/Room/Room');
 
-const roomController = require('../controllers/Room/Room')
 
 // Game =========================================================
 const StartGame = require('../handlers/Room/Game/Start');
 
 
-
-
-
 // Connection  ==================================================
-handlers.public('get_connection', (new GetConnection()));
-handlers.public('disconnect', new Callback(((req, res) => {
-  const con = req.getConnection();
-  const app = con.getApp();
-  const handlers = app.getHandlers('socket');
-  //------------------------------------------
-
-  handlers.execute('leave_room', con);
-})));
+handlers.public('get_connection', connectionController.get());
+handlers.public('disconnect', connectionController.disconnect());
 
 // Room  ========================================================
-handlers.public('join_room', roomController.join());
-handlers.public('test_room', roomController.test());
+handlers.public('join_room',  roomController.join());
+handlers.public('test_room',  roomController.test());
 handlers.public('leave_room', roomController.leave());
-
-handlers.private('get_room', new GetRoom());
+handlers.public('get_room',   roomController.get());
 
 
 
 // Person  ======================================================
-handlers.public('register_in_room', (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {
-  //------------------------------------------
-  (new NotifyRoomOfAllPeople()).execute(req, res);
-  (new GetConnection()).execute(req, res);
-  (new GetRoom()).execute(req, res);
-})))));
+handlers.public('register_in_room', roomController.register());
 
 handlers.public('change_my_name', ((requirePersonInRoom((req, res) => {
   const me = req.get('person');

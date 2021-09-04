@@ -4,25 +4,10 @@ const SocketHandler = require('../../lib/ActionHandler');
 const HandlerFunc = require('../../handlers/Callback');
 const ProtectedHandler = require('../../lib/ProtectedHandler');
 const NotifyRoomOfAllPeople = require('../../handlers/Room/Person/NotifyRoomOfAllPeople');
-const RequireConnectedToRoom = require('../../handlers/Room/RequireConnected');
-const RequireRegistered = require('../../handlers/Room/Person/RequireRegistered');
-const LeaveRoom = require('../../handlers/Room/Leave');
 const GetConnection = require('../../handlers/Connection/Get');
-
-const controller = {
-  /*
-  // Template
-  handlerName: () => new (class extends ProtectedHandler {
-    require() 
-    {
-    }
-    run()
-    {
-    }
-  })(),
-  //*/
-
-
+const connectionController = require('../../controllers/Connection/Connection');
+const Person  = require('../../models/Person')
+const roomController = {
   ////////////////////////////////////////
   // REQUIRED
   requireConnected: () => new (class extends ProtectedHandler {
@@ -57,16 +42,16 @@ const controller = {
     require() 
     {
       return [
-        controller.requireConnected(),
+        roomController.requireConnected(),
       ]
     }
     run(req, res, next)
     {
       console.log('requireRegistered');
-      const connection = req.getConnection();
+      const con = req.getConnection();
       const room = req.get('room');
       const people = room.getPeople();
-      const personId = connection.getPersonId();
+      const personId = con.getPersonId();
       if (personId) {
         const person = people.get(personId);
         req.set('person', person);
@@ -75,13 +60,51 @@ const controller = {
     }
   })(),
 
+  requireUnregistered: () => new (class extends ProtectedHandler {
+    require() 
+    {
+      return [
+        roomController.requireConnected(),
+      ]
+    }
+    run(req, res, next)
+    {
+      const con = req.getConnection();
+      const personId = con.getPersonId();
+      if (!personId) {
+        next(req, res);
+      }
+    }
+  })(),
+
+
+  ////////////////////////////////////////
+  // GET
+  get: () => new (class extends ProtectedHandler {
+    run(req, res) {
+      const con = req.getConnection();
+      const room = req.get('room');
+      //---------------------------------
+      
+      if (room) {
+        con.emit('room', room.serialize());
+      } else {
+        con.emit('room', null);
+      }
+  
+      //---------------------------------
+      // Exxecute next handler
+      this.next(req, res);
+    }
+  })(),
+
 
   ////////////////////////////////////////
   // JOIN ROOM
   join: () => new (class extends SocketHandler {
     execute(req, res) {
-      const connection = req.getConnection();
-      const app = connection.getApp();
+      const con = req.getConnection();
+      const app = con.getApp();
       const roomManager = app.getManager('room');
       const roomCode = req.getPayload();
       //---------------------------------
@@ -96,7 +119,7 @@ const controller = {
       }
 
       let room;
-      let roomId = connection.getRoomId();
+      let roomId = con.getRoomId();
       if (roomId) {
         // Already connected to room
         room = roomManager.get(roomId);
@@ -108,18 +131,65 @@ const controller = {
           // Create room
           room = roomManager.make(roomData);
         }
-        connection.setRoomId(room.getId());
-        connection.setType(Connection.TYPE_REGISTER);
+        con.setRoomId(room.getId());
+        con.setType(Connection.TYPE_REGISTER);
       }
 
       // Set context
       req.set('room', room);
-      //connection.emit('room', room.serialize());
+      //con.emit('room', room.serialize());
 
       //---------------------------------
       this.next(req, res);
     }
   })(), 
+
+  ////////////////////////////////////////
+  // REGISTER
+  register: () => new (class extends ProtectedHandler {
+    require()
+    {
+      return [
+        roomController.requireUnregistered(),
+      ]
+    }
+    run(req, res, next) {
+     
+      const room = req.get('room');
+      const con = req.getConnection();
+      const personName = req.getPayload();
+      //---------------------------------
+
+      // Create person
+      const person = new Person({
+        name: personName,
+      });
+      person.addTag(Person.TYPE_MEMBER);
+      person.addTag(Person.STATUS_CONNECTED);
+
+      room.addPerson(person);
+
+      person.connect(con);
+
+      // Assign host if none exists
+      room.hasOrAutoAssignHost();
+
+      con.emit('me', person.getId());
+      con.setType(Connection.TYPE_IN_ROOM);
+
+      // Set person context for following handlers
+      req.set('person', person);
+
+      //---------------------------------
+      // Exxecute next handler
+      (new NotifyRoomOfAllPeople()).execute(req, res);
+      connectionController.get().execute(req, res);
+      roomController.get().execute(req, res);
+      //---------------------------------
+      next(req, res);
+    }
+  })(), 
+
 
   ////////////////////////////////////////
   // TEST
@@ -138,7 +208,7 @@ const controller = {
           req.set('message3', 'hello world3');
           next(req, res);
         }),
-        controller.requireRegistered(),
+        roomController.requireRegistered(),
       ]
     }
     run(req, res, next) {
@@ -152,7 +222,7 @@ const controller = {
   leave: () => new (class extends ProtectedHandler { 
     require() {
       return [
-        controller.requireRegistered(),
+        roomController.requireRegistered(),
       ]
     }
     run(req, res, next) {
@@ -167,19 +237,17 @@ const controller = {
       room.getPeople().remove(person.getId());
       con.emit('me', null);
 
-      console.log('before leave');
       // Leave room
       con.setRoomId(null);
       con.setPersonId(null);
       con.setType(Connection.TYPE_PICK_ROOM);
 
+      //------------------------------------------
       // now that I have left the rooom
-
-      console.log('after leave');
 
       // update connection
       con.setType(Connection.TYPE_PICK_ROOM);
-      (new GetConnection()).execute(req, res);
+      connectionController.get().execute(req, res);
 
       // Assign another host if nessary
       const hasHost = room.hasOrAutoAssignHost();
@@ -197,4 +265,4 @@ const controller = {
   })(),
 }
 
-module.exports = controller;
+module.exports = roomController;
