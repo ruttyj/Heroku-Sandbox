@@ -1,10 +1,11 @@
-const Callback = require('../handlers/Callback');
 module.exports = class ActionHandler
 {
   constructor(next = null)
   {
-    if (typeof next === 'function') {
-      this.setNext(new Callback(next));
+    const HandlerFunc = require('../handlers/Callback');
+
+    if (typeof(next) === 'function') {
+      this.setNext(new HandlerFunc(next));
       // do something
     } else {
       this.setNext(next);

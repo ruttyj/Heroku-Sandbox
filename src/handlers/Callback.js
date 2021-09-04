@@ -1,5 +1,5 @@
 const SocketHandler = require('../lib/ActionHandler');
-module.exports = class ActionHandler
+module.exports = class HandlerFunc
 {
   constructor(callback, next=null)
   {

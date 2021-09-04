@@ -1,9 +1,6 @@
 const SocketRegistry = require('../lib/Registry');
 const handlers = new SocketRegistry();
-const Connection = require('../models/Connection');
 const Person = require('../models/Person')
-
-const ExecuteMultiple = require('../handlers/ExecuteMultiple');
 const Callback = require('../handlers/Callback');
 
 // Debug  =======================================================
@@ -13,15 +10,11 @@ const Log = require('../handlers/Debug/Log');
 const GetConnection = require('../handlers/Connection/Get');
 
 // Room  ========================================================
-const RequireNotConnectedToRoom = require('../handlers/Room/RequireNotConnected');
 const RequireConnectedToRoom = require('../handlers/Room/RequireConnected');
-const JoinRoom = require('../handlers/Room/Join');
 const GetRoom = require('../handlers/Room/Get');
-const LeaveRoom = require('../handlers/Room/Leave');
 
 // Person  ======================================================
 const RequireUnregistered = require('../handlers/Room/Person/RequireUnregistered');
-const RequireRegistered = require('../handlers/Room/Person/RequireRegistered');
 const RegisterInRoom = require('../handlers/Room/Person/Register');
 const NotifyRoomOfAllPeople = require('../handlers/Room/Person/NotifyRoomOfAllPeople');
 const NotifyRoomOfUpdate = require('../handlers/Room/NotifyRoomOfUpdate');
@@ -57,45 +50,11 @@ handlers.public('disconnect', new Callback(((req, res) => {
 // Room  ========================================================
 handlers.public('join_room', roomController.join());
 handlers.public('test_room', roomController.test());
+handlers.public('leave_room', roomController.leave());
 
-handlers.private('get_room', (new RequireConnectedToRoom((...props) => {
-  (new GetRoom()).execute(...props);
-
-})));
+handlers.private('get_room', new GetRoom());
 
 
-handlers.public('leave_room', (requirePersonInRoom((req, res) => {
-  const con = req.getConnection();
-  const person = req.get('person');
-  const room = req.get('room');
-  const app = con.getApp();
-  const roomManager = app.getManager('room');
-  //------------------------------------------
-  // Remove person from room
-  room.getPeople().remove(person.getId());
-  con.emit('me', null);
-
-  // Leave room
-  (new LeaveRoom((req, res) => {
-    // now that I have left the rooom
-
-    // update connection
-    con.setType(Connection.TYPE_PICK_ROOM);
-    (new GetConnection()).execute(req, res);
-
-    // Assign another host if nessary
-    const hasHost = room.hasOrAutoAssignHost();
-    if (!hasHost) {
-      // destroy room
-      room.destroy();
-      roomManager.remove(room.getId());
-    }
-
-    con.emit('room', null);
-
-    (new NotifyRoomOfAllPeople()).execute(req, res);
-  })).execute(req, res);
-})));
 
 // Person  ======================================================
 handlers.public('register_in_room', (new RequireConnectedToRoom(new RequireUnregistered(new RegisterInRoom((req, res) => {

@@ -25,8 +25,12 @@ module.exports = class ActionHandler
     next(req, res);
   }
 
+  require()
+  {
+    return [];
+  }
   execute(req, res) {
-    const doTheThing = new Callback(this.run);
+    const doTheThing = new Callback(this.run, this.mNext);
 
     // Link up the requirements to this handler inside out -> new hander(new hander(new hander(new hander(HERE))))
     let entryPoint = doTheThing;
