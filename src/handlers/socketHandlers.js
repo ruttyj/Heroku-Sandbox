@@ -1,7 +1,6 @@
 const SocketRegistry = require('../lib/Registry');
 const handlers = new SocketRegistry();
 const Person = require('../models/Person')
-const Callback = require('../handlers/Callback');
 
 // Debug  =======================================================
 const Log = require('../handlers/Debug/Log');
@@ -13,13 +12,13 @@ const NotifyRoomOfUpdate = require('../handlers/Room/NotifyRoomOfUpdate');
 const IsHost = require('../handlers/Room/Person/IsHost');
 const requirePersonInRoom = require('./requirePersonInRoom');
 
-const ToggleReadyUp = require('../handlers/Room/Person/ToggleReadyUp');
 // Chat =========================================================
 const Message = require('../handlers/Room/Chat/Message');
 
 
 const connectionController = require('../controllers/Connection/Connection');
 const roomController = require('../controllers/Room/Room');
+const personController = require('../controllers/Person/Person');
 
 
 // Game =========================================================
@@ -28,27 +27,20 @@ const StartGame = require('../handlers/Room/Game/Start');
 
 // Connection  ==================================================
 handlers.public('get_connection', connectionController.get());
-handlers.public('disconnect', connectionController.disconnect());
+handlers.public('disconnect',     connectionController.disconnect());
 
 // Room  ========================================================
 handlers.public('join_room',  roomController.join());
-handlers.public('test_room',  roomController.test());
-handlers.public('leave_room', roomController.leave());
 handlers.public('get_room',   roomController.get());
 
-
-
 // Person  ======================================================
-handlers.public('register_in_room', roomController.register());
+handlers.public('register_in_room', personController.register());
+handlers.public('change_my_name',   personController.changeMyName());
+handlers.public('toggle_ready',     personController.toggleReady());
+handlers.public('leave_room',       personController.leave());
 
-handlers.public('change_my_name', ((requirePersonInRoom((req, res) => {
-  const me = req.get('person');
-  const newName = req.getPayload();
-  //------------------------------------------
 
-  me.setName(String(newName));
-  (new NotifyRoomOfAllPeople()).execute(req, res);
-}))))
+
 
 handlers.public('set_host', ((new IsHost((req, res) => {
   const me = req.get('person');
@@ -66,10 +58,6 @@ handlers.public('set_host', ((new IsHost((req, res) => {
   }
 }))));
 
-handlers.public('toggle_ready', requirePersonInRoom((req, res) => {
-  (new ToggleReadyUp(new NotifyRoomOfAllPeople())).execute(req, res);
-  console.log('toggleReady');
-}));
 
 
 handlers.public('change_room_config', new IsHost((req, res) => {

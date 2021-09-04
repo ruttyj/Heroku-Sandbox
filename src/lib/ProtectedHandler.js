@@ -1,10 +1,10 @@
-const Callback = require('../handlers/Callback');
+const HandlerFunc = require('../handlers/Callback');
 module.exports = class ActionHandler
 {
   constructor(next = null)
   {
     if (typeof next === 'function') {
-      this.setNext(new Callback(next));
+      this.setNext(new HandlerFunc(next));
       // do something
     } else {
       this.setNext(next);
@@ -21,16 +21,33 @@ module.exports = class ActionHandler
     return res.isFailure();
   }
 
-  run(req, res, next) {
+  /**
+   * Logic to run for this handler
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  run(req, res, next) 
+  {
     next(req, res);
   }
 
+  /**
+   * List of handlers to be assembled in a chain of responsibility
+   * @returns 
+   */
   require()
   {
     return [];
   }
+
+  /**
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   */
   execute(req, res) {
-    const doTheThing = new Callback(this.run, this.mNext);
+    const doTheThing = new HandlerFunc(this.run, this.mNext);
 
     // Link up the requirements to this handler inside out -> new hander(new hander(new hander(new hander(HERE))))
     let entryPoint = doTheThing;
