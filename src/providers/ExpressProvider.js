@@ -5,15 +5,9 @@ const morgan = require('morgan');
 const http = require('http');
 const BaseProvider = require('./BaseProvider');
 const apiRoutes = require('../routes/api');
-const { getNestedValue, isDef } = require('../lib/utils');
-const CookieTokenManager = require('../managers/CookieTokenManager');
-
 module.exports = class ExpressProvider extends BaseProvider {
   register(app)
   {
-    app.addManager('cookieToken', new CookieTokenManager(app));
-    const cookieTokenManager = app.getManager('cookieToken');
-
     // Express =======================================
     // HTTP request logger
     const PORT = process.env.PORT || 8080;

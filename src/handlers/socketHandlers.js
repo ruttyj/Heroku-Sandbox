@@ -26,7 +26,7 @@ const RegisterInRoom = require('../handlers/Room/Person/Register');
 const NotifyRoomOfAllPeople = require('../handlers/Room/Person/NotifyRoomOfAllPeople');
 const NotifyRoomOfUpdate = require('../handlers/Room/NotifyRoomOfUpdate');
 const IsHost = require('../handlers/Room/Person/IsHost');
-const requirePersonInRoom = (next = null) => new RequireConnectedToRoom(new RequireRegistered(next));
+const requirePersonInRoom = require('./requirePersonInRoom');
 
 const ToggleReadyUp = require('../handlers/Room/Person/ToggleReadyUp');
 // Chat =========================================================
@@ -55,7 +55,9 @@ handlers.public('disconnect', new Callback(((req, res) => {
 })));
 
 // Room  ========================================================
-handlers.public('join_room', new roomController.join());
+handlers.public('join_room', roomController.join());
+handlers.public('test_room', roomController.test());
+
 handlers.private('get_room', (new RequireConnectedToRoom((...props) => {
   (new GetRoom()).execute(...props);
 

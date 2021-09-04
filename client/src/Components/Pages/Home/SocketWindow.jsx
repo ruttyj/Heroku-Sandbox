@@ -21,6 +21,7 @@ function ChatWindow(props) {
     <button onClick={() => {socket.emit("register_in_room", "jordan")}}>register_in_room jordan</button>
     <button onClick={() => {socket.emit("register_in_room", "bob")}}>register_in_room bob</button>
     <button onClick={() => {socket.emit("leave_room")}}>leave_room</button>
+    <button onClick={() => {socket.emit("test_room")}}>test_room</button>
 
     
     

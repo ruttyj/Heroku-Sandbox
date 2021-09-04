@@ -1,11 +1,17 @@
 const Room = require('../../models/Room');
 const Connection = require('../../models/Connection');
 const SocketHandler = require('../../lib/ActionHandler');
+const requirePersonInRoom = require('../../handlers/requirePersonInRoom');
+const Callback = require('../../handlers/Callback');
+const ProtectedHandler = require('../../lib/ProtectedHandler');
+const NotifyRoomOfAllPeople = require('../../handlers/Room/Person/NotifyRoomOfAllPeople');
 
-module.exports = {
+const LeaveRoom = require('../../handlers/Room/Leave');
+
+const controller = {
   ////////////////////////////////////////
   // JOIN ROOM
-  join: class extends SocketHandler {
+  join: () => new (class extends SocketHandler {
     execute(req, res) {
       const connection = req.getConnection();
       const app = connection.getApp();
@@ -46,7 +52,43 @@ module.exports = {
       //---------------------------------
       this.next(req, res);
     }
-  }, 
+  })(), 
+
+  test: () => new (class extends ProtectedHandler {
+    require() {
+      return [
+        new Callback((req, res, next) => {
+          req.set('message', 'hello world');
+          next(req, res);
+        }),
+        new Callback((req, res, next) => {
+          req.set('message2', 'hello world2');
+          next(req, res);
+        }),
+        new Callback((req, res, next) => {
+          req.set('message3', 'hello world3');
+          next(req, res);
+        }),
+      ]
+    }
+    run(req, res, next) {
+      console.log('doTheThing', '@@@@@@@@@@@@@@@@@@@@@@@@@@', req.get('message'),  req.get('message2'), req.get('message3'));
+      next(req, res);
+    }
+  })(),
 
 
+  leave: () => new (class extends ProtectedHandler { 
+    require() {
+      return [
+        requirePersonInRoom(),
+      ]
+    }
+    run(req, res, next) {
+      
+      next(req, res);
+    }
+  })(),
 }
+
+module.exports = controller;
