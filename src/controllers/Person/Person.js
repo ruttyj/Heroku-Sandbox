@@ -10,7 +10,6 @@ const personController = {
   requireRegistered: () => new (class extends ProtectedHandler {
     require() 
     {
-      console.log('roomController', roomController);
       return [
         roomController.requireConnected(),
       ]
@@ -25,6 +24,23 @@ const personController = {
       if (personId) {
         const person = people.get(personId);
         req.set('person', person);
+        next(req, res);
+      }
+    }
+  })(),
+
+
+  requireIsHost: () => new (class extends ProtectedHandler {
+    require() 
+    {
+      return [
+        personController.requireRegistered(),
+      ]
+    }
+    run(req, res, next)
+    {
+      const me = req.get('person');
+      if (me.hasTag(Person.TYPE_HOST)) {
         next(req, res);
       }
     }
@@ -87,6 +103,33 @@ const personController = {
 
       me.setName(String(newName));
       personController.notifyRoomOfAllPeople().execute(req, res);
+    }
+  })(),
+
+  ////////////////////////////////////////
+  // SET HOST
+  setHost: () => new (class extends ProtectedHandler {
+    require() 
+    {
+      return [
+        personController.requireIsHost(),
+      ]
+    }
+    run(req, res, next)
+    {
+      const me = req.get('person');
+      const room = req.get('room');
+      const newHostId = req.getPayload();
+      //------------------------------------------
+    
+      const people = room.getPeople();
+      if (people.has(newHostId)) {
+        const newHost = people.get(newHostId);
+        newHost.addTag(Person.TYPE_HOST);
+        me.removeTag(Person.TYPE_HOST);
+    
+        personController.notifyRoomOfAllPeople().execute(req, res);
+      }
     }
   })(),
 
