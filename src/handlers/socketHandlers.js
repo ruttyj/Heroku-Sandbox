@@ -1,4 +1,4 @@
-const SocketRegistry = require('../lib/Registry');
+const HandlerRegistry = require('../lib/Registry');
 
 // Controllers ==================================================
 const connectionController = require('../controllers/Connection/Connection');
@@ -14,7 +14,7 @@ const baseGameCntroller = require('../controllers/Games/BaseGame');
 
 
 
-const handlers = new SocketRegistry();
+const handlers = new HandlerRegistry();
 
 // Connection  ==================================================
 handlers.public('get_connection',   connectionController.get());
