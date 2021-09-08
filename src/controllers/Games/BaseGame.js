@@ -1,10 +1,18 @@
-const SocketHandler = require('../../../lib/ActionHandler');
-const IsHost = require('../Person/IsHost');
-const Person = require('../../../models/Person');
+const ProtectedHandler = require('../../lib/ProtectedHandler');
+const personController = require('../Person/Person');
+const Person = require('../../models/Person');
 
-module.exports = class extends SocketHandler {
-  execute(req, res) {
-    const fn = () => {
+const baseGameCntroller = {
+
+  startGame: (next = null) => new (class extends ProtectedHandler {
+    require() 
+    {
+      return [
+        personController.requireIsHost(),
+      ]
+    }
+    run(req, res, next)
+    {
       const room = req.get('room');
 
       console.log('X');
@@ -31,9 +39,23 @@ module.exports = class extends SocketHandler {
 
       //---------------------------------
       // Exxecute next handler
-      this.next(req, res);
+      next(req, res);
     }
-    const handler = new IsHost(fn);
-    handler.execute(req, res);
-  }
+  })(next),
+
+
+  endGame: (next = null) => new (class extends ProtectedHandler {
+    require() 
+    {
+      return [
+        personController.requireIsHost(),
+      ]
+    }
+    run(req, res, next)
+    {
+      next(req, res);
+    }
+  })(next),
 }
+
+module.exports = baseGameCntroller;

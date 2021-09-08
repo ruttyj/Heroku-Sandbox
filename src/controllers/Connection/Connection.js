@@ -1,15 +1,9 @@
-const Room = require('../../models/Room');
-const Connection = require('../../models/Connection');
-const SocketHandler = require('../../lib/ActionHandler');
-const HandlerFunc = require('../../handlers/Callback');
 const ProtectedHandler = require('../../lib/ProtectedHandler');
-const NotifyRoomOfAllPeople = require('../../handlers/Room/Person/NotifyRoomOfAllPeople');
-const GetConnection = require('../../handlers/Connection/Get');
 
 const controller = {
   ////////////////////////////////////////
   // GET
-  get: () => new (class extends ProtectedHandler { 
+  get: (next = null) => new (class extends ProtectedHandler { 
     require() {
       return [
       ]
@@ -24,12 +18,12 @@ const controller = {
       //---------------------------------
       next(req, res);
     }
-  })(),
+  })(next),
 
 
   ////////////////////////////////////////
   // DISCONNECT
-  disconnect: () => new (class extends ProtectedHandler {
+  disconnect: (next = null) => new (class extends ProtectedHandler {
     run(req, res, next)
     {
       const con = req.getConnection();
@@ -42,7 +36,7 @@ const controller = {
       //---------------------------------
       next(req, res);
     }
-  })(),
+  })(next),
 }
 
 module.exports = controller;

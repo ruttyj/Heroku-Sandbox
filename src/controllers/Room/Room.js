@@ -1,19 +1,16 @@
 const Room = require('../../models/Room');
 const Connection = require('../../models/Connection');
 const SocketHandler = require('../../lib/ActionHandler');
-const HandlerFunc = require('../../handlers/Callback');
 const ProtectedHandler = require('../../lib/ProtectedHandler');
-const NotifyRoomOfAllPeople = require('../../handlers/Room/Person/NotifyRoomOfAllPeople');
-const GetConnection = require('../../handlers/Connection/Get');
 const connectionController = require('../../controllers/Connection/Connection');
-const Person  = require('../../models/Person')
 const roomController = {
   ////////////////////////////////////////
   // REQUIRED
-  requireConnected: () => new (class extends ProtectedHandler {
+  requireConnected: (next = null) => new (class extends ProtectedHandler {
     run(req, res, next)
     {
       console.log('requireConnected');
+
 
       const connection = req.getConnection();
       const app = connection.getApp();
@@ -36,9 +33,9 @@ const roomController = {
       // else failure
       res.setIsFailure(true);
     }
-  })(),
+  })(next),
 
-  requireUnregistered: () => new (class extends ProtectedHandler {
+  requireUnregistered: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -53,12 +50,32 @@ const roomController = {
         next(req, res);
       }
     }
-  })(),
+  })(next),
+
+
+  ////////////////////////////////////////
+  // NOTIFY ROOM OF UPDATE
+  notifyRoomOfUpdate: (next = null) => new (class extends ProtectedHandler {
+    run(req, res)
+    {
+      // get from context
+      const room = req.get('room');
+      const myConnection = req.getConnection();
+      const person = req.get('person');
+      const personId = person.getId();
+      //---------------------------------
+      // update everyone who is in the room
+      room.emitToEveryone('room', room.serialize());
+      //---------------------------------
+      // Exxecute next handler
+      this.next(req, res);
+    }
+  })(next),
 
 
   ////////////////////////////////////////
   // GET
-  get: () => new (class extends ProtectedHandler {
+  get: (next = null) => new (class extends ProtectedHandler {
     run(req, res) {
       const con = req.getConnection();
       const room = req.get('room');
@@ -74,12 +91,16 @@ const roomController = {
       // Exxecute next handler
       this.next(req, res);
     }
-  })(),
-
+  })(next),
 
   ////////////////////////////////////////
   // JOIN ROOM
-  join: () => new (class extends SocketHandler {
+  join: (next = null) => new (class extends SocketHandler {
+    require() {
+      return [
+        roomController.requireUnregistered(),
+      ]
+    }
     execute(req, res) {
       const con = req.getConnection();
       const app = con.getApp();
@@ -120,8 +141,7 @@ const roomController = {
       //---------------------------------
       this.next(req, res);
     }
-  })(), 
-
+  })(next), 
 }
 
 module.exports = roomController;

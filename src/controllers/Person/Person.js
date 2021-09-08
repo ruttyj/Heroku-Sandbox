@@ -1,13 +1,18 @@
 const ProtectedHandler = require('../../lib/ProtectedHandler');
-const Person  = require('../../models/Person');
-const connectionController = require('../Connection/Connection');
+
+// Controllers
+const connectionController = require('../../controllers/Connection/Connection');
 const roomController = require('../Room/Room');
+
+// Models
 const Connection = require('../../models/Connection');
+const Person  = require('../../models/Person');
+
 
 const personController = {
   ////////////////////////////////////////
   // REQUIRED REGISTERED
-  requireRegistered: () => new (class extends ProtectedHandler {
+  requireRegistered: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -27,10 +32,10 @@ const personController = {
         next(req, res);
       }
     }
-  })(),
+  })(next),
 
 
-  requireIsHost: () => new (class extends ProtectedHandler {
+  requireIsHost: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -44,12 +49,12 @@ const personController = {
         next(req, res);
       }
     }
-  })(),
+  })(next),
 
 
   ////////////////////////////////////////
   // SEND EVERYONE IN ROOM TO EVERYONE
-  notifyRoomOfAllPeople: () => new (class extends ProtectedHandler {
+  notifyRoomOfAllPeople: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       console.log('roomController', roomController);
@@ -83,12 +88,12 @@ const personController = {
       // Exxecute next handler
       next(req, res);
     }
-  })(),
+  })(next),
 
 
   ////////////////////////////////////////
   // CHANGE MY NAME
-  changeMyName: () => new (class extends ProtectedHandler {
+  changeMyName: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -104,11 +109,11 @@ const personController = {
       me.setName(String(newName));
       personController.notifyRoomOfAllPeople().execute(req, res);
     }
-  })(),
+  })(next),
 
   ////////////////////////////////////////
   // SET HOST
-  setHost: () => new (class extends ProtectedHandler {
+  setHost: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -131,12 +136,12 @@ const personController = {
         personController.notifyRoomOfAllPeople().execute(req, res);
       }
     }
-  })(),
+  })(next),
 
 
   ////////////////////////////////////////
   // TOGGLE READY
-  toggleReady: () => new (class extends ProtectedHandler {
+  toggleReady: (next = null) => new (class extends ProtectedHandler {
     require() 
     {
       return [
@@ -161,11 +166,11 @@ const personController = {
       // Exxecute next handler
       next(req, res);
     }
-  })(),
+  })(next),
 
   ////////////////////////////////////////
   // REGISTER
-  register: () => new (class extends ProtectedHandler {
+  register: (next = null) => new (class extends ProtectedHandler {
     require()
     {
       return [
@@ -207,12 +212,12 @@ const personController = {
       //---------------------------------
       next(req, res);
     }
-  })(),
+  })(next),
 
 
   ////////////////////////////////////////
   // LEAVE
-  leave: () => new (class extends ProtectedHandler { 
+  leave: (next = null) => new (class extends ProtectedHandler { 
     require() {
       return [
         personController.requireRegistered(),
@@ -254,7 +259,7 @@ const personController = {
       personController.notifyRoomOfAllPeople().execute(req, res);
       next(req, res);
     }
-  })(),
+  })(next),
 }
 
 module.exports = personController;

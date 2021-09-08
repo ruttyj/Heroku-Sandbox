@@ -35,7 +35,7 @@ function createChatWindow(windowManager, isFocused = true) {
     key: 'socketCommands',
     isFocused,
     position: {
-      left: 50,
+      left: 400,
       top: 50
     },
     size: {

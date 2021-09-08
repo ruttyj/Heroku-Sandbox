@@ -99,11 +99,11 @@ function Home(props) {
     //createClickerWindow(windowManager, true);
     //createRoomConfigWindow(windowManager, true);
     //createP5Window(windowManager, true);
-    openSkipBoWindow(windowManager, true);
-    //createChatWindow(windowManager, true);
+    //openSkipBoWindow(windowManager, true);
+    createChatWindow(windowManager, true);
     //createGameWindow(windowManager, true);
-    //createSocketWindow(windowManager, true);
     createDebugger(windowManager, true);
+    createSocketWindow(windowManager, true);
     //createDnDWindow(windowManager, true);
   })
 
